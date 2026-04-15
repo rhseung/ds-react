@@ -6,7 +6,7 @@ import { Text } from './text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta = {
-  title: 'Typography',
+  title: 'Primitive/Typography',
   tags: ['autodocs'],
 };
 
