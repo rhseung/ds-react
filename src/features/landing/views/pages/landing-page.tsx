@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '../components/button';
+import { Button } from '@/common/components/ui';
+
 import { DateLocaleDemo } from '../components/date-locale-demo';
 
 export function LandingPage() {
@@ -56,7 +57,7 @@ export function LandingPage() {
           {t('landing.hero.description')}
         </p>
         <div className="flex gap-3">
-          <Button label={t('landing.hero.start')} variant="primary" />
+          <Button variant="solid">{t('landing.hero.start')}</Button>
           <a
             href="https://github.com/gsainfoteam/template-csr-fe"
             className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:bg-transparent dark:text-gray-100 dark:hover:bg-gray-800"
@@ -101,16 +102,12 @@ export function LandingPage() {
               {t('landing.demo.button')}
             </p>
             <div className="flex gap-3">
-              <Button
-                label={theme === 'light' ? t('landing.demo.darkMode') : t('landing.demo.lightMode')}
-                variant="primary"
-                onClick={toggleTheme}
-              />
-              <Button
-                label={i18n.language === 'ko' ? 'English' : '한국어'}
-                variant="secondary"
-                onClick={toggleLocale}
-              />
+              <Button variant="solid" onClick={toggleTheme}>
+                {theme === 'light' ? t('landing.demo.darkMode') : t('landing.demo.lightMode')}
+              </Button>
+              <Button variant="outline" onClick={toggleLocale}>
+                {i18n.language === 'ko' ? 'English' : '한국어'}
+              </Button>
             </div>
           </div>
           <div className="flex flex-col gap-3">

@@ -5,6 +5,7 @@ import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanst
 import { I18nextProvider } from 'react-i18next';
 
 import '@/common/lib/dayjs';
+import { ThemeProvider } from '@/common/components/utils';
 import { ErrorPage, NotFoundPage } from '@/common/pages';
 
 import type { i18n as I18nType } from 'i18next';
@@ -42,7 +43,9 @@ function RootComponent() {
       <body>
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>
-            <Outlet />
+            <ThemeProvider accent="blue">
+              <Outlet />
+            </ThemeProvider>
           </I18nextProvider>
         </QueryClientProvider>
         <Scripts />
