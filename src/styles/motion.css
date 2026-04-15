@@ -1,0 +1,50 @@
+/* =============================================================
+   IDS Motion & State Tokens
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   State Mask
+   Components overlay this on their background to express
+   hover / pressed states — no per-color hover tokens needed.
+
+   --ids-state-mask stores opacity only (0–1), no color.
+   The overlay color (currentColor) is set by the StateMask
+   component, keeping the token color-independent.
+
+   See: src/common/components/utils/state-mask.tsx
+   ------------------------------------------------------------- */
+
+:root {
+  --ids-state-mask: 0;
+  --ids-state-mask-hovered: 0.06;
+  --ids-state-mask-pressed: 0.12;
+}
+
+[data-theme='dark'] {
+  --ids-state-mask-hovered: 0.08;
+  --ids-state-mask-pressed: 0.14;
+}
+
+[data-hovered] {
+  --ids-state-mask: var(--ids-state-mask-hovered);
+}
+
+[data-pressed] {
+  --ids-state-mask: var(--ids-state-mask-pressed);
+}
+
+/* -------------------------------------------------------------
+   Reduced Motion
+   Duration tokens collapse to 0ms when the user has requested
+   reduced motion. Any component using var(--duration-*) or
+   Tailwind's duration-* utilities inherits this automatically.
+   ------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+}

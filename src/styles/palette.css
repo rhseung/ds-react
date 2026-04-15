@@ -1,0 +1,129 @@
+/* =============================================================
+   IDS Palette — Primitive color values
+   For internal use only. Reference semantic tokens in components.
+   ============================================================= */
+
+:root {
+  /* Blue */
+  --ids-blue-50: #eff6ff;
+  --ids-blue-100: #dbeafe;
+  --ids-blue-200: #bfdbfe;
+  --ids-blue-300: #93c5fd;
+  --ids-blue-400: #60a5fa;
+  --ids-blue-500: #3b82f6;
+  --ids-blue-600: #2563eb;
+  --ids-blue-700: #1d4ed8;
+  --ids-blue-800: #1e40af;
+  --ids-blue-900: #1e3a8a;
+  --ids-blue-950: #172554;
+
+  /* Gray */
+  --ids-gray-50: #f9fafb;
+  --ids-gray-100: #f3f4f6;
+  --ids-gray-200: #e5e7eb;
+  --ids-gray-300: #d1d5db;
+  --ids-gray-400: #9ca3af;
+  --ids-gray-500: #6b7280;
+  --ids-gray-600: #4b5563;
+  --ids-gray-700: #374151;
+  --ids-gray-800: #1f2937;
+  --ids-gray-900: #111827;
+  --ids-gray-950: #030712;
+
+  /* Red */
+  --ids-red-50: #fef2f2;
+  --ids-red-100: #fee2e2;
+  --ids-red-200: #fecaca;
+  --ids-red-300: #fca5a5;
+  --ids-red-400: #f87171;
+  --ids-red-500: #ef4444;
+  --ids-red-600: #dc2626;
+  --ids-red-700: #b91c1c;
+  --ids-red-900: #7f1d1d;
+  --ids-red-950: #450a0a;
+
+  /* Amber */
+  --ids-amber-50: #fffbeb;
+  --ids-amber-100: #fef3c7;
+  --ids-amber-200: #fde68a;
+  --ids-amber-300: #fcd34d;
+  --ids-amber-400: #fbbf24;
+  --ids-amber-500: #f59e0b;
+  --ids-amber-600: #d97706;
+  --ids-amber-700: #b45309;
+  --ids-amber-800: #92400e;
+  --ids-amber-900: #78350f;
+  --ids-amber-950: #451a03;
+
+  /* Green */
+  --ids-green-50: #f0fdf4;
+  --ids-green-100: #dcfce7;
+  --ids-green-200: #bbf7d0;
+  --ids-green-300: #86efac;
+  --ids-green-400: #4ade80;
+  --ids-green-500: #22c55e;
+  --ids-green-600: #16a34a;
+  --ids-green-700: #15803d;
+  --ids-green-900: #14532d;
+  --ids-green-950: #052e16;
+
+  /* Sky */
+  --ids-sky-50: #f0f9ff;
+  --ids-sky-100: #e0f2fe;
+  --ids-sky-200: #bae6fd;
+  --ids-sky-300: #7dd3fc;
+  --ids-sky-400: #38bdf8;
+  --ids-sky-500: #0ea5e9;
+  --ids-sky-600: #0284c7;
+  --ids-sky-700: #0369a1;
+  --ids-sky-900: #0c4a6e;
+  --ids-sky-950: #082f49;
+
+  /* Violet */
+  --ids-violet-50: #f5f3ff;
+  --ids-violet-100: #ede9fe;
+  --ids-violet-200: #ddd6fe;
+  --ids-violet-300: #c4b5fd;
+  --ids-violet-400: #a78bfa;
+  --ids-violet-500: #8b5cf6;
+  --ids-violet-600: #7c3aed;
+  --ids-violet-700: #6d28d9;
+  --ids-violet-900: #4c1d95;
+  --ids-violet-950: #2e1065;
+
+  /* Emerald */
+  --ids-emerald-50: #ecfdf5;
+  --ids-emerald-100: #d1fae5;
+  --ids-emerald-200: #a7f3d0;
+  --ids-emerald-300: #6ee7b7;
+  --ids-emerald-400: #34d399;
+  --ids-emerald-500: #10b981;
+  --ids-emerald-600: #059669;
+  --ids-emerald-700: #047857;
+  --ids-emerald-900: #064e3b;
+  --ids-emerald-950: #022c22;
+
+  /* Rose */
+  --ids-rose-50: #fff1f2;
+  --ids-rose-100: #ffe4e6;
+  --ids-rose-200: #fecdd3;
+  --ids-rose-300: #fda4af;
+  --ids-rose-400: #fb7185;
+  --ids-rose-500: #f43f5e;
+  --ids-rose-600: #e11d48;
+  --ids-rose-700: #be123c;
+  --ids-rose-900: #881337;
+  --ids-rose-950: #4c0519;
+
+  /* Orange */
+  --ids-orange-50: #fff7ed;
+  --ids-orange-100: #ffedd5;
+  --ids-orange-200: #fed7aa;
+  --ids-orange-300: #fdba74;
+  --ids-orange-400: #fb923c;
+  --ids-orange-500: #f97316;
+  --ids-orange-600: #ea580c;
+  --ids-orange-700: #c2410c;
+  --ids-orange-900: #7c2d12;
+  --ids-orange-950: #431407;
+}

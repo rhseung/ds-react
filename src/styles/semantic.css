@@ -1,0 +1,85 @@
+/* =============================================================
+   IDS Semantic Color Tokens
+   Maps palette primitives to role-based tokens.
+   Components must reference semantic tokens only — never primitives.
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   Light
+   ------------------------------------------------------------- */
+
+:root {
+  /* Neutral (Surface) */
+  --ids-neutral-bg: #ffffff;
+  --ids-neutral-bg-overlay: rgb(0 0 0 / 0.4);
+  --ids-neutral-bg-disabled: var(--ids-gray-100);
+  --ids-neutral-text: var(--ids-gray-900);
+  --ids-neutral-text-weak: var(--ids-gray-500);
+  --ids-neutral-text-disabled: var(--ids-gray-400);
+  --ids-neutral-border: var(--ids-gray-200);
+  --ids-neutral-border-strong: var(--ids-gray-900);
+
+  /* Danger */
+  --ids-danger: var(--ids-red-600);
+  --ids-danger-weak: var(--ids-red-100);
+  --ids-on-danger: #ffffff;
+  --ids-on-danger-weak: var(--ids-red-700);
+
+  /* Warning — on-warning uses dark text (amber lacks contrast with white) */
+  --ids-warning: var(--ids-amber-500);
+  --ids-warning-weak: var(--ids-amber-100);
+  --ids-on-warning: var(--ids-amber-950);
+  --ids-on-warning-weak: var(--ids-amber-800);
+
+  /* Success */
+  --ids-success: var(--ids-green-600);
+  --ids-success-weak: var(--ids-green-100);
+  --ids-on-success: #ffffff;
+  --ids-on-success-weak: var(--ids-green-700);
+
+  /* Info */
+  --ids-info: var(--ids-sky-600);
+  --ids-info-weak: var(--ids-sky-100);
+  --ids-on-info: #ffffff;
+  --ids-on-info-weak: var(--ids-sky-700);
+}
+
+/* -------------------------------------------------------------
+   Dark
+   ------------------------------------------------------------- */
+
+[data-theme='dark'] {
+  /* Neutral */
+  --ids-neutral-bg: var(--ids-gray-950);
+  --ids-neutral-bg-overlay: rgb(0 0 0 / 0.6);
+  --ids-neutral-bg-disabled: var(--ids-gray-800);
+  --ids-neutral-text: var(--ids-gray-50);
+  --ids-neutral-text-weak: var(--ids-gray-400);
+  --ids-neutral-text-disabled: var(--ids-gray-600);
+  --ids-neutral-border: var(--ids-gray-700);
+  --ids-neutral-border-strong: var(--ids-gray-50);
+
+  /* Danger */
+  --ids-danger: var(--ids-red-400);
+  --ids-danger-weak: var(--ids-red-950);
+  --ids-on-danger: #ffffff;
+  --ids-on-danger-weak: var(--ids-red-300);
+
+  /* Warning */
+  --ids-warning: var(--ids-amber-400);
+  --ids-warning-weak: var(--ids-amber-950);
+  --ids-on-warning: var(--ids-amber-950);
+  --ids-on-warning-weak: var(--ids-amber-300);
+
+  /* Success */
+  --ids-success: var(--ids-green-400);
+  --ids-success-weak: var(--ids-green-950);
+  --ids-on-success: #ffffff;
+  --ids-on-success-weak: var(--ids-green-300);
+
+  /* Info */
+  --ids-info: var(--ids-sky-400);
+  --ids-info-weak: var(--ids-sky-950);
+  --ids-on-info: #ffffff;
+  --ids-on-info-weak: var(--ids-sky-300);
+}

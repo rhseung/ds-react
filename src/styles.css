@@ -1,7 +1,18 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
 @import 'tailwindcss';
+@import './styles/palette.css';
+@import './styles/semantic.css';
+@import './styles/accent.css';
+@import './styles/tailwind.css';
+@import './styles/motion.css';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
+
+html,
+body {
+  background-color: var(--ids-neutral-bg);
+  color: var(--ids-neutral-text);
+}
 
 html {
   @apply m-0;
