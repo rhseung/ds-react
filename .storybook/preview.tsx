@@ -4,6 +4,7 @@ import type { Preview } from '@storybook/react-vite';
 import { RouterContextProvider } from '@tanstack/react-router';
 import { getRouter } from '../src/router';
 
+import { ThemeProvider } from '../src/common/components/utils';
 import { withLocale } from './decorators';
 
 import '../src/styles.css';
@@ -23,9 +24,21 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    accent: {
+      description: 'Accent color',
+      toolbar: {
+        icon: 'paintbrush',
+        items: ThemeProvider.accents.map((value) => ({
+          value,
+          title: value.charAt(0).toUpperCase() + value.slice(1),
+        })),
+        dynamicTitle: true,
+      },
+    },
   },
   initialGlobals: {
     locale: 'ko',
+    accent: 'blue',
   },
   parameters: {
     controls: {
@@ -44,6 +57,11 @@ const preview: Preview = {
       defaultTheme: 'light',
       attributeName: 'data-theme',
     }),
+    (Story, { globals }) => (
+      <ThemeProvider accent={globals.accent ?? 'blue'}>
+        <Story />
+      </ThemeProvider>
+    ),
     withLocale,
     (Story) => (
       <RouterContextProvider router={router}>
