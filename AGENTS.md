@@ -1,4 +1,8 @@
-# Template SSR FE
+# IDS for React
+
+## Design System Principles
+
+This project implements IDS for React. Refer to [PRINCIPLE.md](PRINCIPLE.md) for the full design principles.
 
 ## Environment & Tooling
 
@@ -61,6 +65,17 @@ Enforced by `eslint-plugin-import-x`:
 - Use inline type imports: `import { type Foo } from '...'` (not `import type { Foo }`).
 - No duplicate imports.
 - No unused imports (error).
+
+## Variant Naming Conventions
+
+Do **not** use order-based names like `primary` / `secondary` for component variants. Use visual/structural descriptors instead:
+
+- **`solid`** — filled background (highest emphasis)
+- **`soft`** — tinted/muted background (medium emphasis)
+- **`outline`** — border only, transparent background (low emphasis)
+- **`ghost`** — no border, no background (lowest emphasis)
+
+This applies to all components (Button, Badge, etc.).
 
 ## Components Structure
 
