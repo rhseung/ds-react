@@ -7,45 +7,46 @@ import { tv } from '@/common/utils';
 
 const button = tv({
   base: [
+    // TODO: trigger 이 방식 별로
     StateMask.trigger,
-    'cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold transition-all',
-    // Disabled — IDS 토큰: 모든 variant 공통
-    'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-neutral-bg-disabled disabled:text-neutral-text-disabled',
+    'inline-flex items-center justify-center gap-2 cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold transition-all enabled:active:scale-[0.98]',
+    'disabled:cursor-not-allowed disabled:text-neutral-text-disabled',
   ],
   variants: {
     variant: {
-      solid: 'bg-primary text-on-primary',
-      soft: 'bg-primary-weak text-on-primary-weak',
-      outline: 'border border-primary bg-transparent text-primary',
+      solid: 'bg-primary text-on-primary disabled:bg-neutral-bg-disabled',
+      'solid-elevated':
+        'bg-primary text-on-primary disabled:bg-neutral-bg-disabled shadow-bevel enabled:active:translate-y-px enabled:active:shadow-bevel-active enabled:active:scale-100',
+      soft: 'bg-primary-weak text-on-primary-weak disabled:bg-neutral-bg-disabled',
+      'soft-elevated':
+        'bg-primary-weak text-on-primary-weak disabled:bg-neutral-bg-disabled shadow-bevel enabled:active:translate-y-px enabled:active:shadow-bevel-active enabled:active:scale-100',
+      outline:
+        'inset-ring inset-ring-primary bg-transparent text-primary disabled:inset-ring-neutral-border disabled:bg-transparent',
       ghost: 'bg-transparent text-primary',
     },
-    elevated: {
+    contrast: {
       true: '',
     },
   },
   compoundVariants: [
-    // solid/soft — 배경색이 있어 상단 inset 하이라이트 + 하단 그림자 모두 적용
+    { variant: 'solid', contrast: true, class: 'bg-primary-contrast text-on-primary-contrast' },
     {
-      variant: 'solid',
-      elevated: true,
-      class: 'shadow-bevel enabled:active:translate-y-px enabled:active:shadow-bevel-active',
+      variant: 'solid-elevated',
+      contrast: true,
+      class: 'bg-primary-contrast text-on-primary-contrast',
     },
+    { variant: 'soft', contrast: true, class: 'bg-primary-contrast text-on-primary-contrast' },
     {
-      variant: 'soft',
-      elevated: true,
-      class: 'shadow-bevel enabled:active:translate-y-px enabled:active:shadow-bevel-active',
+      variant: 'soft-elevated',
+      contrast: true,
+      class: 'bg-primary-contrast text-on-primary-contrast',
     },
-    // outline/ghost — 배경 투명, translate만 적용
     {
       variant: 'outline',
-      elevated: true,
-      class: 'enabled:active:translate-y-px',
+      contrast: true,
+      class: 'inset-ring-primary-contrast text-primary-contrast',
     },
-    {
-      variant: 'ghost',
-      elevated: true,
-      class: 'enabled:active:translate-y-px',
-    },
+    { variant: 'ghost', contrast: true, class: 'text-primary-contrast' },
   ],
   defaultVariants: {
     variant: 'solid',
@@ -55,14 +56,14 @@ const button = tv({
 export function Button({
   asChild,
   variant,
-  elevated,
+  contrast,
   className,
   children,
   ...props
 }: Button.Props) {
   const Comp = asChild ? Slot : 'button';
   return (
-    <Comp className={button({ variant, elevated, className })} {...props}>
+    <Comp className={button({ variant, contrast, className })} {...props}>
       {children}
       <StateMask />
     </Comp>

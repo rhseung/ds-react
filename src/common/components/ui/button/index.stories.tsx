@@ -1,3 +1,6 @@
+import { Box, Flex, Text } from '@/common/components/primitive';
+import { Spinner } from '@/common/components/ui/spinner';
+
 import { Button } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -9,11 +12,9 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['solid', 'soft', 'outline', 'ghost'],
+      options: ['solid', 'solid-elevated', 'soft', 'soft-elevated', 'outline', 'ghost'],
     },
-    elevated: {
-      control: 'boolean',
-    },
+    contrast: { control: 'boolean' },
   },
 };
 
@@ -24,8 +25,16 @@ export const Solid: Story = {
   args: { children: '확인', variant: 'solid' },
 };
 
+export const SolidElevated: Story = {
+  args: { children: '확인', variant: 'solid-elevated' },
+};
+
 export const Soft: Story = {
   args: { children: '확인', variant: 'soft' },
+};
+
+export const SoftElevated: Story = {
+  args: { children: '확인', variant: 'soft-elevated' },
 };
 
 export const Outline: Story = {
@@ -36,38 +45,46 @@ export const Ghost: Story = {
   args: { children: '취소', variant: 'ghost' },
 };
 
-export const All: Story = {
+export const Loading: Story = {
   render: () => (
-    <div className="flex gap-3">
-      <Button variant="solid">확인</Button>
-      <Button variant="soft">확인</Button>
-      <Button variant="outline">취소</Button>
-      <Button variant="ghost">취소</Button>
-    </div>
-  ),
-};
-
-export const Elevated: Story = {
-  render: () => (
-    <div className="flex gap-3">
-      <Button variant="solid" elevated>확인</Button>
-      <Button variant="soft" elevated>확인</Button>
-      <Button variant="outline" elevated>취소</Button>
-      <Button variant="ghost" elevated>취소</Button>
-    </div>
-  ),
-};
-
-export const ElevatedComparison: Story = {
-  render: () => (
-    <div className="flex flex-col gap-6">
+    <Flex.Row gap={3}>
       {(['solid', 'soft', 'outline', 'ghost'] as const).map((variant) => (
-        <div key={variant} className="flex items-center gap-4">
-          <span className="w-16 text-xs text-gray-400">{variant}</span>
-          <Button variant={variant}>기본</Button>
-          <Button variant={variant} elevated>elevated</Button>
-        </div>
+        <Button key={variant} variant={variant} disabled>
+          <Spinner size="sm" />
+          로딩 중
+        </Button>
       ))}
-    </div>
+    </Flex.Row>
+  ),
+};
+
+const VARIANTS = ['solid', 'solid-elevated', 'soft', 'soft-elevated', 'outline', 'ghost'] as const;
+
+export const Overview: Story = {
+  render: () => (
+    <Flex.Column gap={2}>
+      <Box className="grid grid-cols-4 gap-3">
+        <span />
+        {(['기본', 'contrast', 'disabled'] as const).map((label) => (
+          <Text key={label} size="xs" color="neutral-text-weak" className="text-center">
+            {label}
+          </Text>
+        ))}
+      </Box>
+      {VARIANTS.map((variant) => (
+        <Box key={variant} className="grid grid-cols-4 items-center gap-3">
+          <Text size="xs" color="neutral-text-weak">
+            {variant}
+          </Text>
+          <Button variant={variant}>확인</Button>
+          <Button variant={variant} contrast>
+            확인
+          </Button>
+          <Button variant={variant} disabled>
+            확인
+          </Button>
+        </Box>
+      ))}
+    </Flex.Column>
   ),
 };
