@@ -1,20 +1,28 @@
 import { type ComponentProps } from 'react';
 
-export function ThemeProvider({ accent, mode, children, ...props }: ThemeProvider.Props) {
+import type { Theme } from '@/common/stores';
+
+import { generateAccentVars } from '../../utils/color';
+
+export function ThemeProvider({
+  accent,
+  theme = 'light',
+  children,
+  style,
+  ...props
+}: ThemeProvider.Props) {
+  const accentVars = generateAccentVars(accent, theme);
+
   return (
-    <div data-accent={accent} data-theme={mode} {...props}>
+    <div data-theme={theme} style={{ ...accentVars, ...style }} {...props}>
       {children}
     </div>
   );
 }
 
 export namespace ThemeProvider {
-  export const accents = ['blue', 'violet', 'emerald', 'rose', 'orange'] as const;
-  export type Accent = (typeof accents)[number];
-  export type Mode = 'light' | 'dark';
-
-  export interface Props extends Omit<ComponentProps<'div'>, 'data-accent' | 'data-theme'> {
-    accent: Accent;
-    mode?: Mode;
+  export interface Props extends Omit<ComponentProps<'div'>, 'data-theme'> {
+    accent: string;
+    theme?: Theme;
   }
 }

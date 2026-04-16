@@ -8,7 +8,8 @@
    Light
    ------------------------------------------------------------- */
 
-:root {
+:root,
+[data-theme='light'] {
   /* Neutral (Surface) */
   --ids-neutral-bg: #ffffff;
   --ids-neutral-bg-overlay: rgb(0 0 0 / 0.4);

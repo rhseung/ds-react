@@ -18,17 +18,17 @@
   --ids-blue-950: #172554;
 
   /* Gray */
-  --ids-gray-50: #f9fafb;
-  --ids-gray-100: #f3f4f6;
-  --ids-gray-200: #e5e7eb;
-  --ids-gray-300: #d1d5db;
-  --ids-gray-400: #9ca3af;
-  --ids-gray-500: #6b7280;
-  --ids-gray-600: #4b5563;
-  --ids-gray-700: #374151;
-  --ids-gray-800: #1f2937;
-  --ids-gray-900: #111827;
-  --ids-gray-950: #030712;
+  --ids-gray-50: #fafafa;
+  --ids-gray-100: #f5f5f5;
+  --ids-gray-200: #e5e5e5;
+  --ids-gray-300: #d4d4d4;
+  --ids-gray-400: #a3a3a3;
+  --ids-gray-500: #737373;
+  --ids-gray-600: #525252;
+  --ids-gray-700: #404040;
+  --ids-gray-800: #262626;
+  --ids-gray-900: #171717;
+  --ids-gray-950: #0a0a0a;
 
   /* Red */
   --ids-red-50: #fef2f2;

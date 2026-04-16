@@ -67,8 +67,10 @@
 @theme inline {
   /* Primary */
   --color-primary: var(--ids-primary);
+  --color-primary-contrast: var(--ids-primary-contrast);
   --color-primary-weak: var(--ids-primary-weak);
   --color-on-primary: var(--ids-on-primary);
+  --color-on-primary-contrast: var(--ids-on-primary-contrast);
   --color-on-primary-weak: var(--ids-on-primary-weak);
 
   /* Neutral */

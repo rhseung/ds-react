@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import '@/common/lib/dayjs';
 import { ThemeProvider } from '@/common/components/utils';
 import { ErrorPage, NotFoundPage } from '@/common/pages';
+import { useTheme } from '@/common/stores/theme';
 
 import type { i18n as I18nType } from 'i18next';
 import '../styles.css';
@@ -34,6 +35,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { queryClient, i18n } = Route.useRouteContext();
+  const { theme } = useTheme();
 
   return (
     <html lang={i18n.language}>
@@ -43,7 +45,7 @@ function RootComponent() {
       <body>
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>
-            <ThemeProvider accent="blue">
+            <ThemeProvider accent="#2563EB" theme={theme}>
               <Outlet />
             </ThemeProvider>
           </I18nextProvider>

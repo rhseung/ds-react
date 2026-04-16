@@ -2,7 +2,6 @@
 @import 'tailwindcss';
 @import './styles/palette.css';
 @import './styles/semantic.css';
-@import './styles/accent.css';
 @import './styles/tailwind.css';
 @import './styles/motion.css';
 
