@@ -3,7 +3,7 @@ import { type VariantProps } from 'tailwind-variants';
 import { tv } from '@/common/utils';
 
 const avatar = tv({
-  base: 'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold',
+  base: 'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-bg-disabled font-semibold text-neutral-text-weak',
   variants: {
     size: {
       sm: 'size-6 text-xs',
@@ -11,18 +11,13 @@ const avatar = tv({
       lg: 'size-10 text-base',
       xl: 'size-12 text-lg',
     },
-    color: {
-      neutral: 'bg-neutral-bg-disabled text-neutral-text-weak',
-      primary: 'bg-primary text-on-primary',
-    },
   },
   defaultVariants: {
     size: 'md',
-    color: 'neutral',
   },
 });
 
-export function Avatar({ src, name, alt, size, color, className }: Avatar.Props) {
+export function Avatar({ src, name, alt, size, className }: Avatar.Props) {
   const initials = name
     ? name
         .split(' ')
@@ -33,7 +28,7 @@ export function Avatar({ src, name, alt, size, color, className }: Avatar.Props)
     : '?';
 
   return (
-    <span className={avatar({ size, color, className })}>
+    <span className={avatar({ size, className })}>
       {src ? (
         <img src={src} alt={alt ?? name ?? ''} className="size-full object-cover" />
       ) : (

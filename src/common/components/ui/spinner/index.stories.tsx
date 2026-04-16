@@ -18,9 +18,7 @@ export default meta;
 type Story = StoryObj<typeof Spinner>;
 
 export const Default: Story = {
-  args: {
-    size: 'md',
-  },
+  args: { size: 'md' },
 };
 
 export const Sizes: Story = {
@@ -29,22 +27,6 @@ export const Sizes: Story = {
       <Spinner size="sm" />
       <Spinner size="md" />
       <Spinner size="lg" />
-    </div>
-  ),
-};
-
-export const WithColor: Story = {
-  render: () => (
-    <div className="flex items-center gap-4">
-      <span className="text-blue-500">
-        <Spinner />
-      </span>
-      <span className="text-green-500">
-        <Spinner />
-      </span>
-      <span className="text-red-500">
-        <Spinner />
-      </span>
     </div>
   ),
 };

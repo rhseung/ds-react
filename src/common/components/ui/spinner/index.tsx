@@ -5,31 +5,25 @@ import { type VariantProps } from 'tailwind-variants';
 import { tv } from '@/common/utils';
 
 const spinner = tv({
-  base: 'animate-spin rounded-full border-2 border-current border-t-transparent',
+  base: 'inline-block animate-spin rounded-full border-2 border-current border-t-transparent',
   variants: {
     size: {
       sm: 'size-4',
       md: 'size-6',
       lg: 'size-8',
     },
-    color: {
-      primary: 'text-primary',
-      neutral: 'text-neutral-text-weak',
-      current: '',
-    },
   },
   defaultVariants: {
     size: 'md',
-    color: 'primary',
   },
 });
 
-export function Spinner({ size, color, className, ...props }: Spinner.Props) {
+export function Spinner({ size, className, ...props }: Spinner.Props) {
   return (
     <span
       role="status"
       aria-label="로딩 중"
-      className={spinner({ size, color, className })}
+      className={spinner({ size, className })}
       {...props}
     />
   );
