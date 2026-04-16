@@ -26,19 +26,13 @@ const preview: Preview = {
     },
     accent: {
       description: 'Accent color',
-      toolbar: {
-        icon: 'paintbrush',
-        items: ThemeProvider.accents.map((value) => ({
-          value,
-          title: value.charAt(0).toUpperCase() + value.slice(1),
-        })),
-        dynamicTitle: true,
-      },
+      defaultValue: '#2563EB',
+      control: { type: 'color' },
     },
   },
   initialGlobals: {
     locale: 'ko',
-    accent: 'blue',
+    accent: '#2563EB',
   },
   parameters: {
     controls: {
@@ -58,7 +52,7 @@ const preview: Preview = {
       attributeName: 'data-theme',
     }),
     (Story, { globals }) => (
-      <ThemeProvider accent={globals.accent ?? 'blue'}>
+      <ThemeProvider accent={globals.accent ?? '#2563EB'} theme={globals.theme as 'light' | 'dark'}>
         <Story />
       </ThemeProvider>
     ),
