@@ -1,0 +1,33 @@
+/* =============================================================
+   IDS Base Tokens
+   Spacing, border radius, and shadow primitives.
+   ============================================================= */
+
+:root {
+  /* Spacing */
+  --ids-spacing-xs: 0.25rem; /* 4px  */
+  --ids-spacing-sm: 0.5rem; /* 8px  */
+  --ids-spacing-md: 1rem; /* 16px */
+  --ids-spacing-lg: 1.5rem; /* 24px */
+  --ids-spacing-xl: 2rem; /* 32px */
+  --ids-spacing-2xl: 3rem; /* 48px */
+  --ids-spacing-3xl: 4rem; /* 64px */
+
+  /* Border Radius */
+  --ids-radius-sm: 0.25rem; /* 4px  */
+  --ids-radius-md: 0.375rem; /* 6px  */
+  --ids-radius-lg: 0.5rem; /* 8px  */
+  --ids-radius-xl: 0.75rem; /* 12px */
+  --ids-radius-2xl: 1rem; /* 16px */
+  --ids-radius-full: 9999px;
+
+  /* Shadow */
+  --ids-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --ids-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --ids-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --ids-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Bevel — 광원 반사(상단 inset). 배경이 있는 filled 컴포넌트에 사용 */
+  --ids-shadow-bevel: inset 0 2px 0 rgb(255 255 255 / 0.25), inset 0 -2px 0 rgb(0 0 0 / 0.2);
+  --ids-shadow-bevel-active: inset 0 2px 4px rgb(0 0 0 / 0.2);
+}

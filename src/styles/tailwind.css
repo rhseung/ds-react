@@ -1,70 +1,46 @@
 /* =============================================================
    Tailwind Theme Tokens
+   Maps --ids-* tokens to Tailwind utilities via @theme inline.
    ============================================================= */
 
-/* -------------------------------------------------------------
-   Static tokens — @theme (not inline)
-   Variables land on :root, enabling overrides at runtime
-   (e.g. prefers-reduced-motion collapses duration tokens).
-   ------------------------------------------------------------- */
-
-@theme {
+@theme inline {
   /* Spacing */
-  --spacing-xs: 0.25rem; /* 4px  */
-  --spacing-sm: 0.5rem; /* 8px  */
-  --spacing-md: 1rem; /* 16px */
-  --spacing-lg: 1.5rem; /* 24px */
-  --spacing-xl: 2rem; /* 32px */
-  --spacing-2xl: 3rem; /* 48px */
-  --spacing-3xl: 4rem; /* 64px */
+  --spacing-xs: var(--ids-spacing-xs);
+  --spacing-sm: var(--ids-spacing-sm);
+  --spacing-md: var(--ids-spacing-md);
+  --spacing-lg: var(--ids-spacing-lg);
+  --spacing-xl: var(--ids-spacing-xl);
+  --spacing-2xl: var(--ids-spacing-2xl);
+  --spacing-3xl: var(--ids-spacing-3xl);
 
   /* Border Radius */
-  --radius-sm: 0.25rem; /* 4px  */
-  --radius-md: 0.375rem; /* 6px  */
-  --radius-lg: 0.5rem; /* 8px  */
-  --radius-xl: 0.75rem; /* 12px */
-  --radius-2xl: 1rem; /* 16px */
-  --radius-full: 9999px;
+  --radius-sm: var(--ids-radius-sm);
+  --radius-md: var(--ids-radius-md);
+  --radius-lg: var(--ids-radius-lg);
+  --radius-xl: var(--ids-radius-xl);
+  --radius-2xl: var(--ids-radius-2xl);
+  --radius-full: var(--ids-radius-full);
 
   /* Motion — Duration */
-  --duration-fast: 100ms;
-  --duration-normal: 200ms;
-  --duration-slow: 300ms;
-  --duration-slower: 500ms;
+  --duration-fast: var(--ids-duration-fast);
+  --duration-normal: var(--ids-duration-normal);
+  --duration-slow: var(--ids-duration-slow);
+  --duration-slower: var(--ids-duration-slower);
 
-  /* Motion — Easing (Material Design naming) */
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* enter + exit    */
-  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1); /* enter (ease-out) */
-  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1); /* exit  (ease-in)  */
+  /* Motion — Easing */
+  --ease-standard: var(--ids-ease-standard);
+  --ease-decelerate: var(--ids-ease-decelerate);
+  --ease-accelerate: var(--ids-ease-accelerate);
+  --ease-press: var(--ids-ease-press);
 
   /* Shadow */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-sm: var(--ids-shadow-sm);
+  --shadow-md: var(--ids-shadow-md);
+  --shadow-lg: var(--ids-shadow-lg);
+  --shadow-xl: var(--ids-shadow-xl);
+  --shadow-bevel: var(--ids-shadow-bevel);
+  --shadow-bevel-active: var(--ids-shadow-bevel-active);
 
-  /* Bevel — 광원 반사(상단 inset). 배경이 있는 filled 컴포넌트에 사용 */
-  --shadow-bevel: inset 0 2px 0 rgb(255 255 255 / 0.25), inset 0 -2px 0 rgb(0 0 0 / 0.2);
-  --shadow-bevel-active: inset 0 2px 4px rgb(0 0 0 / 0.2);
-}
-
-/* -------------------------------------------------------------
-   Dynamic color tokens — @theme inline
-   Tailwind inlines var(--ids-*) into utility output, enabling
-   runtime light/dark/accent theming without extra CSS.
-
-   Naming follows IDS CSS Variable Convention:
-     Brand / Status  →  role omitted     (--color-primary, --color-danger)
-     Neutral         →  role included    (--color-neutral-bg, --color-neutral-text)
-
-   Token → CSS var → Tailwind utility examples:
-     bg-primary        ← --color-primary        ← var(--ids-primary)
-     text-on-primary   ← --color-on-primary      ← var(--ids-on-primary)
-     bg-neutral-bg     ← --color-neutral-bg      ← var(--ids-neutral-bg)
-     border-neutral-border ← --color-neutral-border
-   ------------------------------------------------------------- */
-
-@theme inline {
   /* Primary */
   --color-primary: var(--ids-primary);
   --color-primary-contrast: var(--ids-primary-contrast);

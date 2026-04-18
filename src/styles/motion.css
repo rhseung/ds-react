@@ -3,6 +3,22 @@
    ============================================================= */
 
 /* -------------------------------------------------------------
+   Duration & Easing
+   ------------------------------------------------------------- */
+
+:root {
+  --ids-duration-fast: 100ms;
+  --ids-duration-normal: 200ms;
+  --ids-duration-slow: 300ms;
+  --ids-duration-slower: 500ms;
+
+  --ids-ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* enter + exit    */
+  --ids-ease-decelerate: cubic-bezier(0, 0, 0.2, 1); /* enter (ease-out) */
+  --ids-ease-accelerate: cubic-bezier(0.4, 0, 1, 1); /* exit  (ease-in)  */
+  --ids-ease-press: cubic-bezier(0.2, 0, 0, 1); /* button press — aggressive ease-out */
+}
+
+/* -------------------------------------------------------------
    State Mask
    Components overlay this on their background to express
    hover / pressed states — no per-color hover tokens needed.
@@ -51,9 +67,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --duration-fast: 0ms;
-    --duration-normal: 0ms;
-    --duration-slow: 0ms;
-    --duration-slower: 0ms;
+    --ids-duration-fast: 0ms;
+    --ids-duration-normal: 0ms;
+    --ids-duration-slow: 0ms;
+    --ids-duration-slower: 0ms;
   }
 }
