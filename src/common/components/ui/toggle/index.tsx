@@ -5,15 +5,15 @@ import { type VariantProps } from 'tailwind-variants';
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
 import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
 
-import { useButton } from './use-button';
+import { useToggle } from './use-toggle';
 
-const button = tv({
+const toggle = tv({
   base: [
-    'relative inline-flex items-center justify-center gap-2', // layout
-    'rounded-lg', // shape
-    'text-sm font-semibold', // typography
-    'cursor-pointer transition-transform duration-fast ease-press enabled:active:scale-[0.98]', // interaction
-    'disabled:cursor-not-allowed disabled:text-neutral-text-disabled', // disabled
+    'relative inline-flex items-center justify-center gap-2',
+    'rounded-lg',
+    'text-sm font-semibold',
+    'cursor-pointer transition-transform duration-fast ease-press enabled:active:scale-[0.98]',
+    'disabled:cursor-not-allowed disabled:text-neutral-text-disabled',
   ],
   variants: {
     size: {
@@ -35,7 +35,7 @@ const button = tv({
     },
   },
   compoundVariants: [
-    // soft tone
+    // weak tone
     { tone: 'weak', variant: 'solid', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'solid-elevated', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'outline', class: 'inset-ring-accent-weak text-accent-weak' },
@@ -61,7 +61,7 @@ const button = tv({
   },
 });
 
-export function Button({
+export function Toggle({
   asChild,
   variant = 'solid',
   tone = 'default',
@@ -71,6 +71,9 @@ export function Button({
   style,
   children,
   disabled,
+  pressed: pressedProp,
+  defaultPressed,
+  onPressedChange,
   onClick,
   onPointerEnter,
   onPointerLeave,
@@ -82,9 +85,12 @@ export function Button({
   onKeyDown,
   onKeyUp,
   ...props
-}: Button.Props) {
-  const { handlers, dataProps } = useButton({
+}: Toggle.Props) {
+  const { state, handlers, dataProps } = useToggle({
     disabled,
+    pressed: pressedProp,
+    defaultPressed,
+    onPressedChange,
     onClick,
     onPointerEnter,
     onPointerLeave,
@@ -98,11 +104,12 @@ export function Button({
   });
 
   const Comp = asChild ? Slot : 'button';
-
   return (
     <Comp
+      type="button"
+      aria-pressed={state.pressed}
       disabled={disabled}
-      className={button({ variant, tone, size, className })}
+      className={toggle({ variant, tone, size, className })}
       style={mergeObjects(color ? colorVars(color) : undefined, style)}
       {...props}
       {...dataProps}
@@ -114,9 +121,13 @@ export function Button({
   );
 }
 
-export namespace Button {
+export namespace Toggle {
   export type Props = ComponentProps<'button'> &
-    VariantProps<typeof button> &
+    VariantProps<typeof toggle> &
     SlotProps &
-    AccentProps;
+    AccentProps & {
+      pressed?: boolean;
+      defaultPressed?: boolean;
+      onPressedChange?: (pressed: boolean) => void;
+    };
 }

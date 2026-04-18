@@ -34,7 +34,7 @@
 [data-theme='light'] {
   --ids-state-mask: 0;
   --ids-state-mask-hovered: 0.06;
-  --ids-state-mask-pressed: 0.12;
+  --ids-state-mask-pressed: 0.24;
 }
 
 [data-theme='dark'] {
@@ -47,14 +47,6 @@
 }
 
 [data-pressed] {
-  --ids-state-mask: var(--ids-state-mask-pressed);
-}
-
-*:not([disabled]):has(> [data-ids-state-mask]):hover {
-  --ids-state-mask: var(--ids-state-mask-hovered);
-}
-
-*:not([disabled]):has(> [data-ids-state-mask]):active {
   --ids-state-mask: var(--ids-state-mask-pressed);
 }
 
