@@ -7,9 +7,7 @@ import { tv } from '@/common/utils';
 
 const button = tv({
   base: [
-    // TODO: trigger 이 방식 별로
-    StateMask.trigger,
-    'inline-flex items-center justify-center gap-2 cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold transition-all enabled:active:scale-[0.98]',
+    'relative inline-flex items-center justify-center gap-2 cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold transition-all enabled:active:scale-[0.98]',
     'disabled:cursor-not-allowed disabled:text-neutral-text-disabled',
   ],
   variants: {
