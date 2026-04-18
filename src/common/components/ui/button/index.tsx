@@ -8,12 +8,16 @@ import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
 const button = tv({
   base: [
     'relative inline-flex items-center justify-center gap-2', // layout
-    'rounded-lg px-5 py-2.5', // shape
+    'rounded-lg', // shape
     'text-sm font-semibold', // typography
     'cursor-pointer transition-transform duration-fast ease-press enabled:active:scale-[0.98]', // interaction
     'disabled:cursor-not-allowed disabled:text-neutral-text-disabled', // disabled
   ],
   variants: {
+    size: {
+      default: 'px-5 py-2.5',
+      icon: 'size-9',
+    },
     variant: {
       solid: 'bg-accent text-on-accent disabled:bg-neutral-bg-disabled',
       'solid-elevated':
@@ -51,6 +55,7 @@ const button = tv({
   defaultVariants: {
     variant: 'solid',
     tone: 'default',
+    size: 'default',
   },
 });
 
@@ -58,6 +63,7 @@ export function Button({
   asChild,
   variant = 'solid',
   tone = 'default',
+  size = 'default',
   color,
   className,
   style,
@@ -67,7 +73,7 @@ export function Button({
   const Comp = asChild ? Slot : 'button';
   return (
     <Comp
-      className={button({ variant, tone, className })}
+      className={button({ variant, tone, size, className })}
       style={mergeObjects(color ? colorVars(color) : undefined, style)}
       {...props}
     >

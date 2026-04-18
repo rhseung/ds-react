@@ -1,8 +1,21 @@
 import { useState } from 'react';
 
+import {
+  IconAt,
+  IconCalendar,
+  IconCurrencyWon,
+  IconEye,
+  IconEyeOff,
+  IconFilter,
+  IconHash,
+  IconLink,
+  IconLock,
+  IconSearch,
+  IconX,
+} from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 
-import { Box, Text } from '@/common/components/primitive';
+import { Box, Flex, Label, Text } from '@/common/components/primitive';
 
 import { Button } from '../button';
 
@@ -28,104 +41,194 @@ const meta: Meta<typeof TextField> = {
       options: ['primary', 'secondary', 'tertiary'],
     },
   },
+  args: {
+    placeholder: '입력하세요',
+    tone: 'default',
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof TextField>;
 
-export const Outline: Story = {
-  args: { variant: 'outline', placeholder: '입력하세요' },
-};
-
-export const Filled: Story = {
-  args: { variant: 'filled', placeholder: '입력하세요' },
-};
-
-export const Underline: Story = {
-  args: { variant: 'underline', placeholder: '입력하세요' },
-};
+export const Default: Story = {};
 
 const VARIANTS = ['outline', 'filled', 'underline'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
+const TONES = ['default', 'weak', 'contrast'] as const;
 
 export const Overview: Story = {
   render: () => (
-    <Box className="grid grid-cols-4 gap-3">
-      <span />
-      {COLORS.map((color) => (
-        <Text key={color} size="xs" color="neutral-text-weak" className="text-center">
-          {color}
-        </Text>
-      ))}
+    <Flex.Column gap={6}>
       {VARIANTS.map((variant) => (
-        <>
-          <Text key={variant} size="xs" color="neutral-text-weak">
+        <Flex.Column key={variant} gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
-          {COLORS.map((color) => (
-            <TextField
-              key={color}
-              variant={variant}
-              color={color}
-              tone="default"
-              placeholder="입력하세요"
-            />
-          ))}
-        </>
+          <Box className="grid grid-cols-4 gap-2">
+            <span />
+            {TONES.map((tone) => (
+              <Text key={tone} size="xs" color="neutral-text-weak" className="text-center">
+                {tone}
+              </Text>
+            ))}
+            {COLORS.map((color) => (
+              <>
+                <Text key={color} size="xs" color="neutral-text-weak">
+                  {color}
+                </Text>
+                {TONES.map((tone) => (
+                  <TextField
+                    key={tone}
+                    variant={variant}
+                    color={color}
+                    tone={tone}
+                    placeholder="입력하세요"
+                  />
+                ))}
+              </>
+            ))}
+          </Box>
+        </Flex.Column>
       ))}
-    </Box>
+    </Flex.Column>
   ),
 };
 
 export const Disabled: Story = {
-  args: { variant: 'outline', placeholder: '비활성화', disabled: true },
+  args: { disabled: true },
 };
 
-// 비제어
-export const Uncontrolled: Story = {
-  render: () => {
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const data = new FormData(e.currentTarget);
-      alert(`입력값: ${data.get('username')}`);
-    };
+function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
+  const [query, setQuery] = useState('');
+  const [visible, setVisible] = useState(false);
+  const iconClass = 'text-neutral-text-weak shrink-0';
+  const iconBtnClass =
+    'text-neutral-text-weak shrink-0 rounded-lg p-1 transition-colors bg-neutral-text/5 hover:bg-neutral-text/10 hover:text-neutral-text';
 
-    return (
-      <form onSubmit={handleSubmit} className="flex w-72 flex-col gap-3">
-        <TextField name="username" placeholder="이름" defaultValue="홍길동" tone="default" />
-        <Button type="submit" tone="default">
-          제출
-        </Button>
-      </form>
-    );
-  },
+  return (
+    <Flex.Column gap={2} className="w-80">
+      <TextField
+        variant={variant}
+        tone="default"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="검색하세요"
+      >
+        <IconSearch size={16} className={iconClass} />
+        <TextField.Inner />
+        {query && (
+          <button type="button" onClick={() => setQuery('')} className={iconBtnClass}>
+            <IconX size={16} />
+          </button>
+        )}
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="필터 검색">
+        <IconSearch size={16} className={iconClass} />
+        <TextField.Inner />
+        <button type="button" className={iconBtnClass}>
+          <IconFilter size={16} />
+        </button>
+        <button type="button" className={iconBtnClass}>
+          <IconX size={16} />
+        </button>
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="example@email.com">
+        <IconAt size={16} className={iconClass} />
+        <TextField.Inner />
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="도메인 입력">
+        <span className="text-neutral-text-weak shrink-0 text-sm">https://</span>
+        <TextField.Inner />
+        <IconLink size={16} className={iconClass} />
+      </TextField>
+
+      <TextField
+        variant={variant}
+        tone="default"
+        type={visible ? 'text' : 'password'}
+        placeholder="비밀번호"
+      >
+        <IconLock size={16} className={iconClass} />
+        <TextField.Inner />
+        <button type="button" onClick={() => setVisible((v) => !v)} className={iconBtnClass}>
+          {visible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+        </button>
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="0" type="number">
+        <IconCurrencyWon size={16} className={iconClass} />
+        <TextField.Inner />
+        <span className="text-neutral-text-weak shrink-0 text-sm">원</span>
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="0" type="number">
+        <TextField.Inner />
+        <span className="text-neutral-text-weak shrink-0 text-sm">kg</span>
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="태그명">
+        <IconHash size={16} className={iconClass} />
+        <TextField.Inner />
+      </TextField>
+
+      <TextField variant={variant} tone="default" placeholder="YYYY-MM-DD">
+        <TextField.Inner />
+        <IconCalendar size={16} className={iconClass} />
+      </TextField>
+    </Flex.Column>
+  );
+}
+
+export const WithIcons: Story = {
+  render: () => (
+    <Flex.Row gap={8} className="items-start">
+      {VARIANTS.map((variant) => (
+        <Flex.Column key={variant} gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            {variant}
+          </Text>
+          <IconExamples variant={variant} />
+        </Flex.Column>
+      ))}
+    </Flex.Row>
+  ),
 };
 
-// 제어
-export const Controlled: Story = {
+export const FormBinding: Story = {
   render: () => {
     const [value, setValue] = useState('');
 
     return (
-      <div className="flex w-72 flex-col gap-3">
-        <TextField
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="입력하세요"
-          tone="default"
-        />
-        <p className="text-neutral-text-weak text-sm">
-          현재 값: <span className="text-neutral-text font-medium">{value || '—'}</span>
-        </p>
-        <p className="text-neutral-text-weak text-sm">
-          글자 수: <span className="text-neutral-text font-medium">{value.length}</span>
-        </p>
-      </div>
+      <Flex.Column gap={6} className="w-72">
+        <Flex.Column gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            비제어
+          </Text>
+          <TextField name="username" placeholder="이름" defaultValue="홍길동" tone="default" />
+        </Flex.Column>
+
+        <Flex.Column gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            제어
+          </Text>
+          <TextField
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="입력하세요"
+            tone="default"
+          >
+            <TextField.Inner />
+            <span className="text-neutral-text-weak shrink-0 text-xs">{value.length}</span>
+          </TextField>
+        </Flex.Column>
+      </Flex.Column>
     );
   },
 };
 
-// react-hook-form 제어
 type FormValues = {
   email: string;
   password: string;
@@ -144,8 +247,11 @@ export const WithReactHookForm: Story = {
     return (
       <form onSubmit={handleSubmit(onSubmit)} className="flex w-72 flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <label className="text-neutral-text text-sm font-medium">이메일</label>
+          <Label htmlFor="email" required>
+            이메일
+          </Label>
           <TextField
+            id="email"
             {...register('email', {
               required: '이메일을 입력하세요',
               pattern: { value: /\S+@\S+\.\S+/, message: '올바른 이메일 형식이 아닙니다' },
@@ -157,8 +263,11 @@ export const WithReactHookForm: Story = {
           {errors.email && <p className="text-danger text-xs">{errors.email.message}</p>}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-neutral-text text-sm font-medium">비밀번호</label>
+          <Label htmlFor="password" required>
+            비밀번호
+          </Label>
           <TextField
+            id="password"
             {...register('password', {
               required: '비밀번호를 입력하세요',
               minLength: { value: 8, message: '8자 이상 입력하세요' },

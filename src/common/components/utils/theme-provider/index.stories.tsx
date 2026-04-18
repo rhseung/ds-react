@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Avatar, Badge, Button, Spinner } from '@/common/components/ui';
 import { ThemeProvider } from '@/common/components/utils';
+import { colorVars } from '@/common/utils';
 import type { Theme } from '@/common/stores';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -154,7 +155,18 @@ export const Palette: StoryObj = {
             )}
             {(['sm', 'md', 'lg'] as const).map((size) =>
               TONES.map((tone) => (
-                <Spinner key={`${size}-${tone}`} size={size} color={color} tone={tone} />
+                <Spinner
+                  key={`${size}-${tone}`}
+                  size={size}
+                  className={
+                    tone === 'default'
+                      ? 'text-accent'
+                      : tone === 'weak'
+                        ? 'text-accent-weak'
+                        : 'text-accent-contrast'
+                  }
+                  style={colorVars(color)}
+                />
               ))
             )}
           </div>

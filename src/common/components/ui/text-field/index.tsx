@@ -1,17 +1,29 @@
-import { type ComponentProps } from 'react';
+import {
+  Children,
+  type CSSProperties,
+  type ComponentProps,
+  type ReactNode,
+  createContext,
+  isValidElement,
+  useContext,
+} from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import { type AccentProps, cn, colorVars, mergeObjects, tv } from '@/common/utils';
+
+type InnerContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 'style'>;
+
+const InnerContext = createContext<InnerContextValue>({});
 
 const textField = tv({
-  base: 'w-full text-sm text-neutral-text outline-none transition-colors placeholder:text-neutral-text-weak disabled:cursor-not-allowed disabled:opacity-50',
+  base: 'flex h-10 w-full items-center gap-1.5 text-sm text-neutral-text transition-colors',
   variants: {
     variant: {
-      outline: 'rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2',
+      outline: 'rounded-lg border border-neutral-border bg-neutral-bg px-2.5',
       filled:
-        'rounded-lg border border-transparent bg-neutral-bg-disabled px-3 py-2 focus:bg-neutral-bg',
-      underline: 'rounded-none border-b border-neutral-border px-0 py-2',
+        'rounded-lg border border-transparent bg-neutral-bg-disabled px-2.5 focus-within:bg-neutral-bg',
+      underline: 'rounded-none border-b border-neutral-border px-0',
     },
     tone: {
       default: '',
@@ -23,36 +35,38 @@ const textField = tv({
     {
       variant: 'outline',
       tone: 'default',
-      class: 'focus:border-accent focus:ring-2 focus:ring-accent/20',
+      class: 'focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20',
     },
     {
       variant: 'outline',
       tone: 'weak',
-      class: 'focus:border-accent-weak focus:ring-2 focus:ring-accent-weak/20',
+      class: 'focus-within:border-accent-weak focus-within:ring-2 focus-within:ring-accent-weak/20',
     },
     {
       variant: 'outline',
       tone: 'contrast',
-      class: 'focus:border-accent-contrast focus:ring-2 focus:ring-accent-contrast/20',
+      class:
+        'focus-within:border-accent-contrast focus-within:ring-2 focus-within:ring-accent-contrast/20',
     },
     {
       variant: 'filled',
       tone: 'default',
-      class: 'focus:border-accent focus:ring-2 focus:ring-accent/20',
+      class: 'focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20',
     },
     {
       variant: 'filled',
       tone: 'weak',
-      class: 'focus:border-accent-weak focus:ring-2 focus:ring-accent-weak/20',
+      class: 'focus-within:border-accent-weak focus-within:ring-2 focus-within:ring-accent-weak/20',
     },
     {
       variant: 'filled',
       tone: 'contrast',
-      class: 'focus:border-accent-contrast focus:ring-2 focus:ring-accent-contrast/20',
+      class:
+        'focus-within:border-accent-contrast focus-within:ring-2 focus-within:ring-accent-contrast/20',
     },
-    { variant: 'underline', tone: 'default', class: 'focus:border-accent' },
-    { variant: 'underline', tone: 'weak', class: 'focus:border-accent-weak' },
-    { variant: 'underline', tone: 'contrast', class: 'focus:border-accent-contrast' },
+    { variant: 'underline', tone: 'default', class: 'focus-within:border-accent' },
+    { variant: 'underline', tone: 'weak', class: 'focus-within:border-accent-weak' },
+    { variant: 'underline', tone: 'contrast', class: 'focus-within:border-accent-contrast' },
   ],
   defaultVariants: {
     variant: 'outline',
@@ -66,19 +80,50 @@ export function TextField({
   color,
   className,
   style,
-  ...props
+  children = <TextField.Inner />,
+  ...inputProps
 }: TextField.Props) {
+  const hasInner = Children.toArray(children).some(
+    (child) => isValidElement(child) && child.type === TextField.Inner,
+  );
+
+  if (!hasInner) throw new Error('TextField: children must include <TextField.Inner />');
+
   return (
-    <input
-      className={textField({ variant, tone, className })}
-      style={mergeObjects(color ? colorVars(color) : undefined, style)}
-      {...props}
-    />
+    <InnerContext.Provider value={inputProps}>
+      <div
+        className={textField({ variant, tone, className })}
+        style={mergeObjects(color ? colorVars(color) : undefined, style)}
+      >
+        {children}
+      </div>
+    </InnerContext.Provider>
   );
 }
 
 export namespace TextField {
-  export type Props = Omit<ComponentProps<'input'>, 'size'> &
-    VariantProps<typeof textField> &
-    AccentProps;
+  export function Inner({ className }: Inner.Props) {
+    const ctx = useContext(InnerContext);
+
+    return (
+      <input
+        className={cn(
+          'placeholder:text-neutral-text-weak selection:bg-accent/30 min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+        {...ctx}
+      />
+    );
+  }
+
+  export namespace Inner {
+    export type Props = { className?: string };
+  }
+
+  export type Props = VariantProps<typeof textField> &
+    AccentProps & {
+      className?: string;
+      style?: CSSProperties;
+      children?: ReactNode;
+    } & InnerContextValue;
 }

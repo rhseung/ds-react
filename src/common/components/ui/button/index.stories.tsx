@@ -1,3 +1,5 @@
+import { IconSearch } from '@tabler/icons-react';
+
 import { Box, Flex, Text } from '@/common/components/primitive';
 import { Spinner } from '@/common/components/ui/spinner';
 
@@ -22,18 +24,56 @@ const meta: Meta<typeof Button> = {
       control: 'radio',
       options: ['primary', 'secondary', 'tertiary'],
     },
+    size: {
+      control: 'radio',
+      options: ['default', 'icon'],
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
 
+export const IconOnly: Story = {
+  render: () => (
+    <Flex.Column gap={6}>
+      {VARIANTS.map((variant) => (
+        <Flex.Column key={variant} gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            {variant}
+          </Text>
+          <Box className="grid grid-cols-4 gap-2">
+            <span />
+            {TONES.map((tone) => (
+              <Text key={tone} size="xs" color="neutral-text-weak" className="text-center">
+                {tone}
+              </Text>
+            ))}
+            {COLORS.map((color) => (
+              <>
+                <Text key={color} size="xs" color="neutral-text-weak">
+                  {color}
+                </Text>
+                {TONES.map((tone) => (
+                  <Button key={tone} size="icon" variant={variant} color={color} tone={tone}>
+                    <IconSearch size={16} />
+                  </Button>
+                ))}
+              </>
+            ))}
+          </Box>
+        </Flex.Column>
+      ))}
+    </Flex.Column>
+  ),
+};
+
 export const Loading: Story = {
   render: () => (
     <Flex.Row gap={3}>
       {(['solid', 'outline', 'ghost'] as const).map((variant) => (
         <Button key={variant} variant={variant} tone="default" disabled>
-          <Spinner size="sm" tone="default" />
+          <Spinner size="sm" />
           로딩 중
         </Button>
       ))}
