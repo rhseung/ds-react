@@ -12,45 +12,28 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['solid', 'solid-elevated', 'soft', 'soft-elevated', 'outline', 'ghost'],
+      options: ['solid', 'solid-elevated', 'outline', 'ghost'],
     },
-    contrast: { control: 'boolean' },
+    tone: {
+      control: 'radio',
+      options: ['default', 'weak', 'contrast'],
+    },
+    color: {
+      control: 'radio',
+      options: ['primary', 'secondary', 'tertiary'],
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Solid: Story = {
-  args: { children: '확인', variant: 'solid' },
-};
-
-export const SolidElevated: Story = {
-  args: { children: '확인', variant: 'solid-elevated' },
-};
-
-export const Soft: Story = {
-  args: { children: '확인', variant: 'soft' },
-};
-
-export const SoftElevated: Story = {
-  args: { children: '확인', variant: 'soft-elevated' },
-};
-
-export const Outline: Story = {
-  args: { children: '취소', variant: 'outline' },
-};
-
-export const Ghost: Story = {
-  args: { children: '취소', variant: 'ghost' },
-};
-
 export const Loading: Story = {
   render: () => (
     <Flex.Row gap={3}>
-      {(['solid', 'soft', 'outline', 'ghost'] as const).map((variant) => (
-        <Button key={variant} variant={variant} disabled>
-          <Spinner size="sm" />
+      {(['solid', 'outline', 'ghost'] as const).map((variant) => (
+        <Button key={variant} variant={variant} tone="default" disabled>
+          <Spinner size="sm" tone="default" />
           로딩 중
         </Button>
       ))}
@@ -58,32 +41,39 @@ export const Loading: Story = {
   ),
 };
 
-const VARIANTS = ['solid', 'solid-elevated', 'soft', 'soft-elevated', 'outline', 'ghost'] as const;
+const VARIANTS = ['solid', 'solid-elevated', 'outline', 'ghost'] as const;
+const COLORS = ['primary', 'secondary', 'tertiary'] as const;
+const TONES = ['default', 'weak', 'contrast'] as const;
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={2}>
-      <Box className="grid grid-cols-4 gap-3">
-        <span />
-        {(['기본', 'contrast', 'disabled'] as const).map((label) => (
-          <Text key={label} size="xs" color="neutral-text-weak" className="text-center">
-            {label}
-          </Text>
-        ))}
-      </Box>
+    <Flex.Column gap={6}>
       {VARIANTS.map((variant) => (
-        <Box key={variant} className="grid grid-cols-4 items-center gap-3">
-          <Text size="xs" color="neutral-text-weak">
+        <Flex.Column key={variant} gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
-          <Button variant={variant}>확인</Button>
-          <Button variant={variant} contrast>
-            확인
-          </Button>
-          <Button variant={variant} disabled>
-            확인
-          </Button>
-        </Box>
+          <Box className="grid grid-cols-4 gap-2">
+            <span />
+            {TONES.map((tone) => (
+              <Text key={tone} size="xs" color="neutral-text-weak" className="text-center">
+                {tone}
+              </Text>
+            ))}
+            {COLORS.map((color) => (
+              <>
+                <Text key={color} size="xs" color="neutral-text-weak">
+                  {color}
+                </Text>
+                {TONES.map((tone) => (
+                  <Button key={tone} variant={variant} color={color} tone={tone}>
+                    확인
+                  </Button>
+                ))}
+              </>
+            ))}
+          </Box>
+        </Flex.Column>
       ))}
     </Flex.Column>
   ),

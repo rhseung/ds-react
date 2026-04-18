@@ -9,6 +9,10 @@ import {
 
 import { mergeProps, mergeRefs } from '@/common/utils';
 
+export interface SlotProps {
+  asChild?: boolean;
+}
+
 export const Slot = forwardRef<HTMLElement, PropsWithChildren<HTMLAttributes<HTMLElement>>>(
   ({ children, ...props }, ref) => {
     const child = Children.only(children);

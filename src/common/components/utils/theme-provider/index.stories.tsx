@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Badge, Button, Spinner } from '@/common/components/ui';
+import { Avatar, Badge, Button, Spinner } from '@/common/components/ui';
 import { ThemeProvider } from '@/common/components/utils';
 import type { Theme } from '@/common/stores';
 
@@ -13,25 +13,7 @@ export default meta;
 
 // ─── Token Swatch ────────────────────────────────────────────────────────────
 
-const TOKENS = [
-  { name: '--ids-primary', label: 'primary', textVar: '--ids-on-primary' },
-  { name: '--ids-primary-weak', label: 'primary-weak', textVar: '--ids-on-primary-weak' },
-  {
-    name: '--ids-primary-contrast',
-    label: 'primary-contrast',
-    textVar: '--ids-on-primary-contrast',
-  },
-] as const;
-
-function TokenSwatch({
-  cssVar,
-  label,
-  textVar,
-}: {
-  cssVar: string;
-  label: string;
-  textVar: string;
-}) {
+function TokenSwatch({ cssVar, label, textVar }: { cssVar: string; label: string; textVar: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [color, setColor] = useState('');
 
@@ -46,15 +28,18 @@ function TokenSwatch({
     <div
       ref={ref}
       style={{ backgroundColor: `var(${cssVar})`, color: `var(${textVar})` }}
-      className="flex flex-col justify-end rounded-lg p-3"
+      className="flex min-h-20 flex-1 flex-col justify-end rounded-xl p-3"
     >
       <span className="font-mono text-xs font-semibold">{label}</span>
-      <span className="font-mono text-xs opacity-70">{color}</span>
+      <span className="font-mono text-xs opacity-60">{color}</span>
     </div>
   );
 }
 
 // ─── Story ───────────────────────────────────────────────────────────────────
+
+const COLORS = ['primary', 'secondary', 'tertiary'] as const;
+const TONES = ['default', 'weak', 'contrast'] as const;
 
 export const Nested: StoryObj<{
   outerAccent: string;
@@ -80,14 +65,7 @@ export const Nested: StoryObj<{
     innermostAccent: { control: 'color' },
     innermostTheme: { control: 'radio', options: ['light', 'dark'] },
   },
-  render: ({
-    outerAccent,
-    outerTheme,
-    innerAccent,
-    innerTheme,
-    innermostAccent,
-    innermostTheme,
-  }) => (
+  render: ({ outerAccent, outerTheme, innerAccent, innerTheme, innermostAccent, innermostTheme }) => (
     <div className="flex flex-col gap-6 p-6">
       <ThemeProvider
         accent={outerAccent}
@@ -96,10 +74,9 @@ export const Nested: StoryObj<{
       >
         <p className="text-neutral-text-weak text-xs font-semibold">outer</p>
         <div className="flex gap-3">
-          <Button variant="solid">Outer</Button>
+          <Button variant="solid" tone="default">Outer</Button>
           <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
         </div>
-
         <ThemeProvider
           accent={innerAccent}
           theme={innerTheme}
@@ -107,10 +84,9 @@ export const Nested: StoryObj<{
         >
           <p className="text-neutral-text-weak text-xs font-semibold">inner</p>
           <div className="flex gap-3">
-            <Button variant="solid">Inner</Button>
+            <Button variant="solid" tone="default">Inner</Button>
             <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
           </div>
-
           <ThemeProvider
             accent={innermostAccent}
             theme={innermostTheme}
@@ -118,7 +94,7 @@ export const Nested: StoryObj<{
           >
             <p className="text-neutral-text-weak text-xs font-semibold">innermost</p>
             <div className="flex gap-3">
-              <Button variant="solid">Innermost</Button>
+              <Button variant="solid" tone="default">Innermost</Button>
               <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
             </div>
           </ThemeProvider>
@@ -130,64 +106,60 @@ export const Nested: StoryObj<{
 
 export const Palette: StoryObj = {
   render: () => (
-    <div className="flex flex-col gap-10 p-6">
-      {/* Color tokens */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-neutral-text-weak text-sm font-semibold">Accent Tokens</h2>
-        <div className="grid grid-cols-4 gap-3">
-          {TOKENS.map(({ name, label, textVar }) => (
-            <TokenSwatch key={name} cssVar={name} label={label} textVar={textVar} />
-          ))}
-        </div>
-      </section>
+    <div className="flex flex-col gap-10 p-8">
 
-      {/* Buttons */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-neutral-text-weak text-sm font-semibold">Button</h2>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="solid">Solid</Button>
-          <Button variant="solid-elevated">Solid Elevated</Button>
-          <Button variant="soft">Soft</Button>
-          <Button variant="soft-elevated">Soft Elevated</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="solid" contrast>
-            Solid Contrast
-          </Button>
-          <Button variant="soft" contrast>
-            Soft Contrast
-          </Button>
-          <Button variant="outline" contrast>
-            Outline Contrast
-          </Button>
-          <Button variant="ghost" contrast>
-            Ghost Contrast
-          </Button>
-        </div>
-      </section>
+      {/* Color swatches — all 9 at once */}
+      <div className="flex gap-2">
+        {COLORS.map((color) =>
+          TONES.map((tone) => (
+            <TokenSwatch
+              key={`${color}-${tone}`}
+              cssVar={tone === 'default' ? `--ids-${color}` : `--ids-${color}-${tone}`}
+              textVar={tone === 'default' ? `--ids-on-${color}` : `--ids-on-${color}-${tone}`}
+              label={tone === 'default' ? color : `${color} ${tone}`}
+            />
+          ))
+        )}
+      </div>
 
-      {/* Badges */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-neutral-text-weak text-sm font-semibold">Badge</h2>
-        <div className="flex flex-wrap gap-3">
-          <Badge variant="solid">Solid</Badge>
-          <Badge variant="soft">Soft</Badge>
-          <Badge variant="outline">Outline</Badge>
-          <Badge variant="ghost">Ghost</Badge>
-        </div>
-      </section>
+      {/* Components — one row per color, all tones/variants mixed */}
+      {COLORS.map((color) => (
+        <div key={color} className="flex flex-col gap-3">
+          <p className="text-neutral-text-weak text-xs font-semibold uppercase tracking-widest">{color}</p>
 
-      {/* Spinner */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-neutral-text-weak text-sm font-semibold">Spinner</h2>
-        <div className="flex items-center gap-4">
-          <Spinner size="sm" />
-          <Spinner size="md" />
-          <Spinner size="lg" />
+          {/* Buttons — all variants × all tones */}
+          <div className="flex flex-wrap items-center gap-2">
+            {(['solid', 'solid-elevated', 'outline', 'ghost'] as const).map((variant) =>
+              TONES.map((tone) => (
+                <Button key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
+                  {variant}
+                </Button>
+              ))
+            )}
+          </div>
+
+          {/* Badges + Avatars + Spinners — all together */}
+          <div className="flex flex-wrap items-center gap-3">
+            {(['solid', 'outline', 'ghost'] as const).map((variant) =>
+              TONES.map((tone) => (
+                <Badge key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
+                  {tone}
+                </Badge>
+              ))
+            )}
+            {(['sm', 'md', 'lg', 'xl'] as const).map((size) =>
+              TONES.map((tone) => (
+                <Avatar key={`${size}-${tone}`} name="Hong Gildong" size={size} color={color} tone={tone} />
+              ))
+            )}
+            {(['sm', 'md', 'lg'] as const).map((size) =>
+              TONES.map((tone) => (
+                <Spinner key={`${size}-${tone}`} size={size} color={color} tone={tone} />
+              ))
+            )}
+          </div>
         </div>
-      </section>
+      ))}
     </div>
   ),
 };

@@ -41,6 +41,14 @@
   --shadow-bevel: var(--ids-shadow-bevel);
   --shadow-bevel-active: var(--ids-shadow-bevel-active);
 
+  /* Accent (active color role — defaults to primary, overridable per-component via colorVars()) */
+  --color-accent: var(--ids-accent);
+  --color-accent-contrast: var(--ids-accent-contrast);
+  --color-accent-weak: var(--ids-accent-weak);
+  --color-on-accent: var(--ids-on-accent);
+  --color-on-accent-contrast: var(--ids-on-accent-contrast);
+  --color-on-accent-weak: var(--ids-on-accent-weak);
+
   /* Primary */
   --color-primary: var(--ids-primary);
   --color-primary-contrast: var(--ids-primary-contrast);
@@ -48,6 +56,22 @@
   --color-on-primary: var(--ids-on-primary);
   --color-on-primary-contrast: var(--ids-on-primary-contrast);
   --color-on-primary-weak: var(--ids-on-primary-weak);
+
+  /* Secondary */
+  --color-secondary: var(--ids-secondary);
+  --color-secondary-contrast: var(--ids-secondary-contrast);
+  --color-secondary-weak: var(--ids-secondary-weak);
+  --color-on-secondary: var(--ids-on-secondary);
+  --color-on-secondary-contrast: var(--ids-on-secondary-contrast);
+  --color-on-secondary-weak: var(--ids-on-secondary-weak);
+
+  /* Tertiary */
+  --color-tertiary: var(--ids-tertiary);
+  --color-tertiary-contrast: var(--ids-tertiary-contrast);
+  --color-tertiary-weak: var(--ids-tertiary-weak);
+  --color-on-tertiary: var(--ids-on-tertiary);
+  --color-on-tertiary-contrast: var(--ids-on-tertiary-contrast);
+  --color-on-tertiary-weak: var(--ids-on-tertiary-weak);
 
   /* Neutral */
   --color-neutral-bg: var(--ids-neutral-bg);

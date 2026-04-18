@@ -1,8 +1,7 @@
 import { type ComponentProps } from 'react';
 
 import type { Theme } from '@/common/stores';
-
-import { generateAccentVars } from '../../utils/color';
+import { generateAccentVars } from '@/common/utils';
 
 export function ThemeProvider({
   accent,
