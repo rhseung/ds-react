@@ -1,6 +1,11 @@
-import { type ChangeEvent, useState } from 'react';
+import type { ChangeEvent } from 'react';
 
-import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
+import {
+  interactionDataProps,
+  useControllable,
+  useInteraction,
+  type UseInteractionOptions,
+} from '@/common/hooks';
 
 type UseCheckboxOptions = UseInteractionOptions<HTMLSpanElement> & {
   checked?: boolean;
@@ -18,17 +23,12 @@ export function useCheckbox({
   indeterminate = false,
   ...eventHandlers
 }: UseCheckboxOptions = {}) {
-  const isControlled = checkedProp !== undefined;
-  const [internalChecked, setInternalChecked] = useState(defaultChecked);
-  const checked = isControlled ? checkedProp! : internalChecked;
-
   const { state, handlers } = useInteraction<HTMLSpanElement>({ disabled, ...eventHandlers });
+  const [checked, setChecked] = useControllable(checkedProp, defaultChecked, onChange);
   const newState = { ...state, checked, indeterminate };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const next = e.target.checked;
-    if (!isControlled) setInternalChecked(next);
-    onChange?.(next);
+    setChecked(e.target.checked);
   };
 
   return {

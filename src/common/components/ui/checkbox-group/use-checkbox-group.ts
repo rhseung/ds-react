@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { union, without, xor } from 'es-toolkit';
 
+import { useControllable } from '@/common/hooks';
+
 export type CheckboxGroupState<T> = {
   values: readonly T[];
   allValues: readonly T[];
@@ -18,26 +20,20 @@ type UseCheckboxGroupOptions<T> = {
 };
 
 export function useCheckboxGroupState<T>({
-  value: valueProp,
+  value,
   defaultValue = [],
   onChange,
 }: UseCheckboxGroupOptions<T> = {}): CheckboxGroupState<T> {
-  const isControlled = valueProp !== undefined;
-  const [internalValues, setInternalValues] = useState<T[]>(defaultValue);
+  const [values, setValues] = useControllable(value, defaultValue, onChange);
   const [allValues, setAllValues] = useState<T[]>([]);
-  const values = isControlled ? valueProp! : internalValues;
 
   function toggle(v: T) {
-    const next = xor(values, [v]);
-    if (!isControlled) setInternalValues(next);
-    onChange?.(next);
+    setValues(xor(values, [v]));
   }
 
   function toggleAll() {
     const allChecked = allValues.length > 0 && values.length === allValues.length;
-    const next = allChecked ? [] : [...allValues];
-    if (!isControlled) setInternalValues(next);
-    onChange?.(next);
+    setValues(allChecked ? [] : [...allValues]);
   }
 
   function register(v: T) {
