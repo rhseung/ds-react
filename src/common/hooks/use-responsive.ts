@@ -60,6 +60,16 @@ export const useResponsive = create<ResponsiveState>((set) => {
 
 // --- hooks ---
 
+/**
+ * 현재 브레이크포인트에 맞는 반응형 값을 반환합니다.
+ *
+ * @param value - 단일 값 또는 브레이크포인트 맵 (`{ sm: ..., lg: ... }`).
+ *   모바일 퍼스트 방식으로 동작하며, 현재 브레이크포인트 이하에서 정의된 가장 큰 키의 값을 사용합니다.
+ *
+ * @example
+ * useResponsiveValue('center')           // → 'center' at all sizes
+ * useResponsiveValue({ xs: 12, lg: 16 })  // → 12 below lg, 16 at lg+
+ */
 export function useResponsiveValue<T>(value: ResponsiveValue<T> | undefined): T | undefined {
   const breakpoint = useResponsive((s) => s.breakpoint);
 

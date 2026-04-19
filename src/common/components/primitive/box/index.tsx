@@ -1,6 +1,6 @@
 import { type ComponentProps } from 'react';
 
-import { Slot } from '@/common/components/utils';
+import { Slot, type SlotProps } from '@/common/components/utils';
 import { cn } from '@/common/utils';
 
 export function Box({ asChild, className, children, ...props }: Box.Props) {
@@ -14,5 +14,5 @@ export function Box({ asChild, className, children, ...props }: Box.Props) {
 }
 
 export namespace Box {
-  export type Props = ComponentProps<'div'> & { asChild?: boolean };
+  export type Props = ComponentProps<'div'> & SlotProps;
 }
