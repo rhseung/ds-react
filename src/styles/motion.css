@@ -34,7 +34,7 @@
 [data-theme='light'] {
   --ids-state-mask: 0;
   --ids-state-mask-hovered: 0.06;
-  --ids-state-mask-pressed: 0.24;
+  --ids-state-mask-pressed: 0.2;
 }
 
 [data-theme='dark'] {
@@ -46,7 +46,11 @@
   --ids-state-mask: var(--ids-state-mask-hovered);
 }
 
-[data-pressed] {
+[data-active] {
+  --ids-state-mask: var(--ids-state-mask-pressed);
+}
+
+[data-toggled] {
   --ids-state-mask: var(--ids-state-mask-pressed);
 }
 

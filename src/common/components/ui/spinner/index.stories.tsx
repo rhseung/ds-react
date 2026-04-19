@@ -5,7 +5,7 @@ import { Spinner } from '.';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Spinner> = {
-  title: 'Common/Spinner',
+  title: 'UI/Spinner',
   component: Spinner,
   tags: ['autodocs'],
   argTypes: {
@@ -23,7 +23,7 @@ export const Default: Story = {
   args: { size: 'md' },
 };
 
-export const Sizes: Story = {
+export const Overview: Story = {
   render: () => (
     <Flex.Row gap={4} className="items-center text-accent">
       <Spinner size="sm" />

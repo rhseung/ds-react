@@ -1,25 +1,13 @@
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useInteraction, type InteractionState, type UseInteractionOptions } from '@/common/hooks';
+import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
 
 type UseToggleOptions = UseInteractionOptions<HTMLButtonElement> & {
   pressed?: boolean;
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-};
-
-export type UseToggleReturn = {
-  state: InteractionState & { pressed: boolean };
-  handlers: ReturnType<typeof useInteraction<HTMLButtonElement>>['handlers'] & {
-    onClick: (e: MouseEvent<HTMLButtonElement>) => void;
-  };
-  dataProps: {
-    'data-pressed'?: true;
-    'data-focused'?: true;
-    'data-focus-visible'?: true;
-  };
 };
 
 export function useToggle({
@@ -29,27 +17,23 @@ export function useToggle({
   onPressedChange,
   onClick,
   ...eventHandlers
-}: UseToggleOptions = {}): UseToggleReturn {
+}: UseToggleOptions = {}) {
   const isControlled = pressedProp !== undefined;
-  const [internalPressed, setInternalPressed] = useState(defaultPressed);
-  const pressed = isControlled ? pressedProp! : internalPressed;
+  const [internalToggled, setInternalToggled] = useState(defaultPressed);
+  const toggled = isControlled ? pressedProp! : internalToggled;
 
-  const { state, handlers } = useInteraction({ disabled, ...eventHandlers });
+  const { state, handlers } = useInteraction<HTMLButtonElement>({ disabled, ...eventHandlers });
+  const newState = { ...state, toggled };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    if (!isControlled) setInternalPressed((p) => !p);
-    onPressedChange?.(!pressed);
+    if (!isControlled) setInternalToggled((p) => !p);
+    onPressedChange?.(!toggled);
     onClick?.(e);
   };
 
   return {
-    state: { ...state, pressed },
+    state: newState,
     handlers: { ...handlers, onClick: handleClick },
-    dataProps: {
-      // data-pressed = toggle on/off state (persistent), not interaction active state
-      ...(pressed && { 'data-pressed': true }),
-      ...(state.focused && { 'data-focused': true }),
-      ...(state.focusVisible && { 'data-focus-visible': true }),
-    },
+    dataProps: interactionDataProps(newState),
   };
 }

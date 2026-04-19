@@ -1,9 +1,11 @@
+import { Flex } from '@/common/components/primitive';
+
 import { Divider } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Divider> = {
-  title: 'Common/Divider',
+  title: 'UI/Divider',
   component: Divider,
   tags: ['autodocs'],
   argTypes: {
@@ -12,27 +14,46 @@ const meta: Meta<typeof Divider> = {
       options: ['horizontal', 'vertical'],
     },
   },
+  args: {
+    orientation: 'horizontal',
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Divider>;
 
-export const Horizontal: Story = {
-  render: () => (
-    <div className="w-64">
-      <p className="text-sm text-gray-600 dark:text-gray-400">위 영역</p>
-      <Divider className="my-3" />
-      <p className="text-sm text-gray-600 dark:text-gray-400">아래 영역</p>
-    </div>
-  ),
+export const Default: Story = {
+  decorators: [
+    (Story, { args }) =>
+      args.orientation === 'vertical' ? (
+        <div className="border-neutral-border flex h-12 items-center gap-3 rounded-lg border p-3">
+          <span className="text-neutral-text-weak text-sm">왼쪽</span>
+          <Story />
+          <span className="text-neutral-text-weak text-sm">오른쪽</span>
+        </div>
+      ) : (
+        <div className="border-neutral-border w-64 rounded-lg border p-3">
+          <p className="text-neutral-text-weak text-sm">위 영역</p>
+          <Story />
+          <p className="text-neutral-text-weak text-sm">아래 영역</p>
+        </div>
+      ),
+  ],
 };
 
-export const Vertical: Story = {
+export const Overview: Story = {
   render: () => (
-    <div className="flex h-12 items-center gap-3">
-      <span className="text-sm text-gray-600 dark:text-gray-400">왼쪽</span>
-      <Divider orientation="vertical" />
-      <span className="text-sm text-gray-600 dark:text-gray-400">오른쪽</span>
-    </div>
+    <Flex.Column gap={4}>
+      <div className="border-neutral-border w-64 rounded-lg border p-3">
+        <p className="text-neutral-text-weak text-sm">위 영역</p>
+        <Divider className="my-3" />
+        <p className="text-neutral-text-weak text-sm">아래 영역</p>
+      </div>
+      <div className="border-neutral-border flex h-12 items-center gap-3 self-start rounded-lg border p-3">
+        <span className="text-neutral-text-weak text-sm">왼쪽</span>
+        <Divider orientation="vertical" />
+        <span className="text-neutral-text-weak text-sm">오른쪽</span>
+      </div>
+    </Flex.Column>
   ),
 };

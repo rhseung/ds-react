@@ -5,7 +5,7 @@ import { Avatar } from '.';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Common/Avatar',
+  title: 'UI/Avatar',
   component: Avatar,
   tags: ['autodocs'],
   argTypes: {
@@ -22,49 +22,37 @@ const meta: Meta<typeof Avatar> = {
       options: ['primary', 'secondary', 'tertiary'],
     },
   },
+  args: {
+    name: 'Hong Gildong',
+    size: 'md',
+    tone: 'default',
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Avatar>;
 
-export const WithInitials: Story = {
-  args: {
-    name: 'Hong Gildong',
-    size: 'md',
-  },
-};
+export const Default: Story = {};
 
 export const WithImage: Story = {
   args: {
     src: 'https://i.pravatar.cc/150?img=1',
-    name: 'Hong Gildong',
-    size: 'md',
   },
 };
 
 export const Fallback: Story = {
   args: {
-    size: 'md',
+    name: undefined,
   },
-};
-
-export const Sizes: Story = {
-  render: () => (
-    <Flex.Row gap={3} className="items-center">
-      <Avatar name="Hong Gildong" size="sm" tone="default" />
-      <Avatar name="Hong Gildong" size="md" tone="default" />
-      <Avatar name="Hong Gildong" size="lg" tone="default" />
-      <Avatar name="Hong Gildong" size="xl" tone="default" />
-    </Flex.Row>
-  ),
 };
 
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
+const SIZES = ['sm', 'md', 'lg', 'xl'] as const;
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={3}>
+    <Flex.Column gap={4}>
       {COLORS.map((color) => (
         <Flex.Row key={color} gap={3} className="items-center">
           {TONES.map((tone) => (
@@ -72,6 +60,11 @@ export const Overview: Story = {
           ))}
         </Flex.Row>
       ))}
+      <Flex.Row gap={3} className="items-center">
+        {SIZES.map((size) => (
+          <Avatar key={size} name="Hong Gildong" size={size} tone="default" />
+        ))}
+      </Flex.Row>
     </Flex.Column>
   ),
 };

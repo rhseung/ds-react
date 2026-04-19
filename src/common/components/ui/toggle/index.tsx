@@ -12,8 +12,8 @@ const toggle = tv({
     'relative inline-flex items-center justify-center gap-2',
     'rounded-lg',
     'text-sm font-semibold',
-    'cursor-pointer transition-transform duration-fast ease-press enabled:active:scale-[0.98]',
-    'disabled:cursor-not-allowed disabled:text-neutral-text-disabled',
+    'cursor-pointer transition-transform duration-fast ease-press data-active:scale-[0.98]',
+    'data-disabled:cursor-not-allowed data-disabled:text-neutral-text-disabled',
   ],
   variants: {
     size: {
@@ -21,11 +21,11 @@ const toggle = tv({
       icon: 'size-9',
     },
     variant: {
-      solid: 'bg-accent text-on-accent disabled:bg-neutral-bg-disabled',
+      solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
       'solid-elevated':
-        'bg-accent text-on-accent disabled:bg-neutral-bg-disabled shadow-bevel enabled:active:translate-y-px enabled:active:shadow-bevel-active enabled:active:scale-100',
+        'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled shadow-bevel data-active:translate-y-px data-active:shadow-bevel-active data-active:scale-100 data-toggled:translate-y-px data-toggled:shadow-bevel-active',
       outline:
-        'inset-ring inset-ring-accent bg-transparent text-accent disabled:inset-ring-neutral-border disabled:bg-transparent',
+        'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:inset-ring-neutral-border data-disabled:bg-transparent',
       ghost: 'bg-transparent text-accent',
     },
     tone: {
@@ -107,7 +107,7 @@ export function Toggle({
   return (
     <Comp
       type="button"
-      aria-pressed={state.pressed}
+      aria-pressed={state.toggled}
       disabled={disabled}
       className={toggle({ variant, tone, size, className })}
       style={mergeObjects(color ? colorVars(color) : undefined, style)}

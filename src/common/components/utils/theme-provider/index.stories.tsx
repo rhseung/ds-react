@@ -8,7 +8,7 @@ import type { Theme } from '@/common/stores';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta = {
-  title: 'Common/ThemeProvider',
+  title: 'Utils/ThemeProvider',
 };
 export default meta;
 

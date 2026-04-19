@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { FocusEvent, KeyboardEvent, PointerEvent } from 'react';
 
+import { kebabCase, mapKeys, pickBy } from 'es-toolkit';
+
 export type InteractionState = {
   hovered: boolean;
   active: boolean; // being physically pressed right now
@@ -85,4 +87,8 @@ export function useInteraction<T extends Element = Element>({
   };
 
   return { state: { ...state, disabled: disabled ?? false }, handlers };
+}
+
+export function interactionDataProps(state: Record<string, boolean>) {
+  return mapKeys(pickBy(state, Boolean), (_, k) => `data-${kebabCase(k)}`);
 }

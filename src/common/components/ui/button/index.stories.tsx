@@ -8,7 +8,7 @@ import { Button } from '.';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Button> = {
-  title: 'Common/Button',
+  title: 'UI/Button',
   component: Button,
   tags: ['autodocs'],
   argTypes: {
@@ -29,10 +29,16 @@ const meta: Meta<typeof Button> = {
       options: ['default', 'icon'],
     },
   },
+  args: {
+    children: '확인',
+    tone: 'default',
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
+
+export const Default: Story = {};
 
 export const IconOnly: Story = {
   render: () => (
