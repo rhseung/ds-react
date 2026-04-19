@@ -1,4 +1,5 @@
-import { Flex } from '@/common/components/primitive';
+import { Flex, Text } from '@/common/components/primitive';
+import { SizeContext } from '@/common/hooks';
 
 import { Spinner } from '.';
 
@@ -30,5 +31,24 @@ export const Overview: Story = {
       <Spinner size="md" />
       <Spinner size="lg" />
     </Flex.Row>
+  ),
+};
+
+const SIZES = ['sm', 'md', 'lg'] as const;
+
+export const ContextPropagation: Story = {
+  render: () => (
+    <Flex.Column gap={3}>
+      {SIZES.map((size) => (
+        <Flex.Row key={size} gap={2} className="items-center text-accent">
+          <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
+            {size}
+          </Text>
+          <SizeContext.Provider value={size}>
+            <Spinner />
+          </SizeContext.Provider>
+        </Flex.Row>
+      ))}
+    </Flex.Column>
   ),
 };

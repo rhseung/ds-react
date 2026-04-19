@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { Box, Flex, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
+import { SizeContext } from '@/common/hooks';
 
 import { Toggle } from '.';
 
@@ -29,7 +30,7 @@ const meta: Meta<typeof Toggle> = {
     },
     size: {
       control: 'radio',
-      options: ['default', 'icon'],
+      options: ['sm', 'md', 'lg'],
     },
   },
   args: {
@@ -46,6 +47,7 @@ export const Default: Story = {};
 const VARIANTS = ['solid', 'solid-elevated', 'outline', 'ghost'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
+const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Overview: Story = {
   render: () => (
@@ -131,7 +133,7 @@ export const WithReactHookForm: Story = {
                   id={name}
                   variant="outline"
                   tone="default"
-                  size="default"
+                  size="md"
                   pressed={field.value}
                   onPressedChange={field.onChange}
                 >
@@ -157,20 +159,14 @@ export const ToolbarGroup: Story = {
 
     return (
       <Flex.Row gap={1}>
-        <Toggle size="icon" variant="ghost" tone="default" pressed={bold} onPressedChange={setBold}>
+        <Toggle icon variant="ghost" tone="default" pressed={bold} onPressedChange={setBold}>
           <IconBold size={16} />
         </Toggle>
-        <Toggle
-          size="icon"
-          variant="ghost"
-          tone="default"
-          pressed={italic}
-          onPressedChange={setItalic}
-        >
+        <Toggle icon variant="ghost" tone="default" pressed={italic} onPressedChange={setItalic}>
           <IconItalic size={16} />
         </Toggle>
         <Toggle
-          size="icon"
+          icon
           variant="ghost"
           tone="default"
           pressed={underline}
@@ -181,4 +177,48 @@ export const ToolbarGroup: Story = {
       </Flex.Row>
     );
   },
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <Flex.Column gap={3}>
+      {SIZES.map((size) => (
+        <Flex.Row key={size} gap={2} className="items-center">
+          <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
+            {size}
+          </Text>
+          <Toggle size={size} tone="default" defaultPressed>
+            굵게
+          </Toggle>
+          <Toggle size={size} icon tone="default" defaultPressed>
+            <IconBold size={16} />
+          </Toggle>
+        </Flex.Row>
+      ))}
+    </Flex.Column>
+  ),
+};
+
+export const ContextPropagation: Story = {
+  render: () => (
+    <Flex.Column gap={4}>
+      {SIZES.map((size) => (
+        <Flex.Column key={size} gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            SizeContext: {size}
+          </Text>
+          <SizeContext.Provider value={size}>
+            <Flex.Row gap={2} className="items-center">
+              <Toggle tone="default" defaultPressed>
+                굵게
+              </Toggle>
+              <Toggle icon tone="default" defaultPressed>
+                <IconBold size={16} />
+              </Toggle>
+            </Flex.Row>
+          </SizeContext.Provider>
+        </Flex.Column>
+      ))}
+    </Flex.Column>
+  ),
 };

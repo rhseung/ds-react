@@ -16,8 +16,8 @@ import {
 import { useForm } from 'react-hook-form';
 
 import { Box, Flex, Label, Text } from '@/common/components/primitive';
-
-import { Button } from '../button';
+import { Button } from '@/common/components/ui/button';
+import { SizeContext } from '@/common/hooks';
 
 import { TextField } from '.';
 
@@ -55,6 +55,7 @@ export const Default: Story = {};
 const VARIANTS = ['outline', 'filled', 'underline'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
+const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Overview: Story = {
   render: () => (
@@ -96,6 +97,21 @@ export const Overview: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <Flex.Column gap={3} className="w-72">
+      {SIZES.map((size) => (
+        <Flex.Row key={size} gap={2} className="items-center">
+          <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
+            {size}
+          </Text>
+          <TextField size={size} placeholder="입력하세요" tone="default" />
+        </Flex.Row>
+      ))}
+    </Flex.Column>
+  ),
 };
 
 function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
@@ -285,4 +301,31 @@ export const WithReactHookForm: Story = {
       </form>
     );
   },
+};
+
+export const ContextPropagation: Story = {
+  render: () => (
+    <Flex.Column gap={4} className="w-72">
+      {SIZES.map((size) => (
+        <Flex.Column key={size} gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            SizeContext: {size}
+          </Text>
+          <SizeContext.Provider value={size}>
+            {/* 컨텍스트 상속 */}
+            <TextField placeholder="상속" tone="default">
+              <IconSearch size={16} className="text-neutral-text-weak shrink-0" />
+              <TextField.Inner />
+            </TextField>
+            {/* 명시값이 컨텍스트보다 우선, 자식에게도 명시값을 전파 */}
+            <TextField
+              size={size === 'lg' ? 'sm' : 'lg'}
+              placeholder={`override → ${size === 'lg' ? 'sm' : 'lg'}`}
+              tone="default"
+            />
+          </SizeContext.Provider>
+        </Flex.Column>
+      ))}
+    </Flex.Column>
+  ),
 };

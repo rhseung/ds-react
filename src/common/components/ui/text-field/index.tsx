@@ -10,6 +10,7 @@ import {
 
 import { type VariantProps } from 'tailwind-variants';
 
+import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
 import { type AccentProps, cn, colorVars, mergeObjects, tv } from '@/common/utils';
 
 type InnerContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 'style'>;
@@ -17,12 +18,17 @@ type InnerContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 's
 const InnerContext = createContext<InnerContextValue>({});
 
 const textField = tv({
-  base: 'flex h-10 w-full items-center gap-1.5 text-sm text-neutral-text transition-colors',
+  base: 'flex w-full items-center text-neutral-text transition-colors',
   variants: {
+    size: {
+      sm: 'h-8 gap-1 px-2 text-xs',
+      md: 'h-9 gap-1.5 px-2.5 text-sm',
+      lg: 'h-10 gap-1.5 px-3 text-base',
+    },
     variant: {
-      outline: 'rounded-lg border border-neutral-border bg-neutral-bg px-2.5',
+      outline: 'rounded-lg border border-neutral-border bg-neutral-bg',
       filled:
-        'rounded-lg border border-transparent bg-neutral-bg-disabled px-2.5 focus-within:bg-neutral-bg',
+        'rounded-lg border border-transparent bg-neutral-bg-disabled focus-within:bg-neutral-bg',
       underline: 'rounded-none border-b border-neutral-border px-0',
     },
     tone: {
@@ -71,18 +77,22 @@ const textField = tv({
   defaultVariants: {
     variant: 'outline',
     tone: 'default',
+    size: 'md',
   },
 });
 
 export function TextField({
   variant = 'outline',
   tone = 'default',
+  size: localSize,
   color,
   className,
   style,
   children = <TextField.Inner />,
   ...inputProps
 }: TextField.Props) {
+  const size = useComponentSize(localSize);
+
   const hasInner = Children.toArray(children).some(
     (child) => isValidElement(child) && child.type === TextField.Inner,
   );
@@ -90,14 +100,16 @@ export function TextField({
   if (!hasInner) throw new Error('TextField: children must include <TextField.Inner />');
 
   return (
-    <InnerContext.Provider value={inputProps}>
-      <div
-        className={textField({ variant, tone, className })}
-        style={mergeObjects(color ? colorVars(color) : undefined, style)}
-      >
-        {children}
-      </div>
-    </InnerContext.Provider>
+    <SizeContext.Provider value={size}>
+      <InnerContext.Provider value={inputProps}>
+        <div
+          className={textField({ variant, tone, size, className })}
+          style={mergeObjects(color ? colorVars(color) : undefined, style)}
+        >
+          {children}
+        </div>
+      </InnerContext.Provider>
+    </SizeContext.Provider>
   );
 }
 
@@ -120,11 +132,11 @@ export namespace TextField {
     export type Props = { className?: string };
   }
 
-  export type Props = PropsWithChildren<
-    VariantProps<typeof textField> &
-      AccentProps & {
-        className?: string;
-        style?: CSSProperties;
-      } & InnerContextValue
-  >;
+  export interface Props extends PropsWithChildren<
+    Omit<VariantProps<typeof textField>, 'size'> & AccentProps & InnerContextValue
+  > {
+    size?: ComponentSize;
+    className?: string;
+    style?: CSSProperties;
+  }
 }

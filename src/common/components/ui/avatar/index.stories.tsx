@@ -1,4 +1,5 @@
-import { Flex } from '@/common/components/primitive';
+import { Flex, Text } from '@/common/components/primitive';
+import { SizeContext } from '@/common/hooks';
 
 import { Avatar } from '.';
 
@@ -11,7 +12,7 @@ const meta: Meta<typeof Avatar> = {
   argTypes: {
     size: {
       control: 'radio',
-      options: ['sm', 'md', 'lg', 'xl'],
+      options: ['sm', 'md', 'lg'],
     },
     tone: {
       control: 'radio',
@@ -48,7 +49,7 @@ export const Fallback: Story = {
 
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
-const SIZES = ['sm', 'md', 'lg', 'xl'] as const;
+const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Overview: Story = {
   render: () => (
@@ -60,11 +61,43 @@ export const Overview: Story = {
           ))}
         </Flex.Row>
       ))}
-      <Flex.Row gap={3} className="items-center">
-        {SIZES.map((size) => (
-          <Avatar key={size} name="Hong Gildong" size={size} tone="default" />
-        ))}
-      </Flex.Row>
+    </Flex.Column>
+  ),
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <Flex.Row gap={3} className="items-center">
+      {SIZES.map((size) => (
+        <Flex.Column key={size} gap={1.5} className="items-center">
+          <Avatar name="Hong Gildong" size={size} tone="default" />
+          <Text size="xs" color="neutral-text-weak">{size}</Text>
+        </Flex.Column>
+      ))}
+    </Flex.Row>
+  ),
+};
+
+export const ContextPropagation: Story = {
+  render: () => (
+    <Flex.Column gap={4}>
+      {SIZES.map((size) => (
+        <Flex.Column key={size} gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            SizeContext: {size}
+          </Text>
+          <SizeContext.Provider value={size}>
+            <Flex.Row gap={2} className="items-center">
+              <Avatar name="Hong Gildong" tone="default" />
+              <Avatar
+                name="Hong Gildong"
+                size={size === 'lg' ? 'sm' : 'lg'}
+                tone="default"
+              />
+            </Flex.Row>
+          </SizeContext.Provider>
+        </Flex.Column>
+      ))}
     </Flex.Column>
   ),
 };

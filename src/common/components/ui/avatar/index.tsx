@@ -1,7 +1,6 @@
 import { type ComponentProps } from 'react';
 
-import { type VariantProps } from 'tailwind-variants';
-
+import { useComponentSize, type ComponentSize } from '@/common/hooks';
 import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
 
 const avatar = tv({
@@ -11,7 +10,6 @@ const avatar = tv({
       sm: 'size-6 text-xs',
       md: 'size-8 text-sm',
       lg: 'size-10 text-base',
-      xl: 'size-12 text-lg',
     },
     tone: {
       default: 'bg-accent text-on-accent',
@@ -29,13 +27,14 @@ export function Avatar({
   src,
   name,
   alt,
-  size = 'md',
+  size: localSize,
   tone = 'default',
   color,
   className,
   style,
   ...props
 }: Avatar.Props) {
+  const size = useComponentSize(localSize);
   const cls = avatar({ size, tone, className });
   const styles = mergeObjects(color ? colorVars(color) : undefined, style);
   const initials = name
@@ -57,9 +56,9 @@ export function Avatar({
 }
 
 export namespace Avatar {
-  export type Props = ComponentProps<'img'> &
-    VariantProps<typeof avatar> &
-    AccentProps & {
-      name?: string;
-    };
+  export interface Props extends Omit<ComponentProps<'img'>, 'color'>, AccentProps {
+    size?: ComponentSize;
+    tone?: 'default' | 'weak' | 'contrast';
+    name?: string;
+  }
 }

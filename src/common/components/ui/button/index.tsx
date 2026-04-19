@@ -3,22 +3,27 @@ import { type ComponentProps } from 'react';
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
+import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
 import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
 
 import { useButton } from './use-button';
 
 const button = tv({
   base: [
-    'relative inline-flex items-center justify-center gap-2', // layout
+    'relative inline-flex items-center justify-center', // layout
     'rounded-lg', // shape
-    'text-sm font-semibold', // typography
+    'font-semibold', // typography
     'cursor-pointer transition-transform duration-fast ease-press data-active:scale-[0.98]',
     'data-disabled:cursor-not-allowed data-disabled:text-neutral-text-disabled',
   ],
   variants: {
     size: {
-      default: 'px-5 py-2.5',
-      icon: 'size-9',
+      sm: 'h-8 gap-1 px-2.5 text-xs',
+      md: 'h-9 gap-1.5 px-3 text-sm',
+      lg: 'h-10 gap-1.5 px-3 text-base',
+    },
+    icon: {
+      true: '',
     },
     variant: {
       solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
@@ -35,7 +40,11 @@ const button = tv({
     },
   },
   compoundVariants: [
-    // soft tone
+    // icon sizes
+    { icon: true, size: 'sm', class: 'size-8 px-0' },
+    { icon: true, size: 'md', class: 'size-9 px-0' },
+    { icon: true, size: 'lg', class: 'size-10 px-0' },
+    // weak tone
     { tone: 'weak', variant: 'solid', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'solid-elevated', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'outline', class: 'inset-ring-accent-weak text-accent-weak' },
@@ -57,7 +66,7 @@ const button = tv({
   defaultVariants: {
     variant: 'solid',
     tone: 'default',
-    size: 'default',
+    size: 'md',
   },
 });
 
@@ -65,7 +74,8 @@ export function Button({
   asChild,
   variant = 'solid',
   tone = 'default',
-  size = 'default',
+  size: localSize,
+  icon,
   color,
   className,
   style,
@@ -83,6 +93,7 @@ export function Button({
   onKeyUp,
   ...props
 }: Button.Props) {
+  const size = useComponentSize(localSize);
   const { handlers, dataProps } = useButton({
     disabled,
     onClick,
@@ -100,23 +111,30 @@ export function Button({
   const Comp = asChild ? Slot : 'button';
 
   return (
-    <Comp
-      disabled={disabled}
-      className={button({ variant, tone, size, className })}
-      style={mergeObjects(color ? colorVars(color) : undefined, style)}
-      {...props}
-      {...dataProps}
-      {...handlers}
-    >
-      {children}
-      <StateMask />
-    </Comp>
+    <SizeContext.Provider value={size}>
+      <Comp
+        disabled={disabled}
+        className={button({ variant, tone, size, icon, className })}
+        style={mergeObjects(color ? colorVars(color) : undefined, style)}
+        {...props}
+        {...dataProps}
+        {...handlers}
+      >
+        {children}
+        <StateMask />
+      </Comp>
+    </SizeContext.Provider>
   );
 }
 
 export namespace Button {
-  export type Props = ComponentProps<'button'> &
-    VariantProps<typeof button> &
-    SlotProps &
-    AccentProps;
+  export interface Props
+    extends
+      Omit<ComponentProps<'button'>, 'color'>,
+      Omit<VariantProps<typeof button>, 'size'>,
+      SlotProps,
+      AccentProps {
+    size?: ComponentSize;
+    icon?: boolean;
+  }
 }
