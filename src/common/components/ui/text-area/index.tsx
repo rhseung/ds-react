@@ -6,24 +6,26 @@ import {
   createContext,
   isValidElement,
   useContext,
+  useRef,
 } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
 import { type AccentProps, cn, colorVars, mergeObjects, tv } from '@/common/utils';
 
-type InnerContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 'style'>;
+type InnerContextValue = Omit<ComponentProps<'textarea'>, 'className' | 'style'> & {
+  autoResize?: boolean;
+};
 
 const InnerContext = createContext<InnerContextValue>({});
 
-const textField = tv({
-  base: 'flex h-10 w-full items-center gap-1.5 text-sm text-neutral-text transition-colors',
+const textArea = tv({
+  base: 'flex w-full flex-col overflow-hidden text-sm text-neutral-text transition-colors',
   variants: {
     variant: {
-      outline: 'rounded-lg border border-neutral-border bg-neutral-bg px-2.5',
-      filled:
-        'rounded-lg border border-transparent bg-neutral-bg-disabled px-2.5 focus-within:bg-neutral-bg',
-      underline: 'rounded-none border-b border-neutral-border px-0',
+      outline: 'rounded-lg border border-neutral-border bg-neutral-bg',
+      filled: 'rounded-lg border border-transparent bg-neutral-bg-disabled',
+      underline: 'rounded-none border-b border-neutral-border',
     },
     tone: {
       default: '',
@@ -74,26 +76,32 @@ const textField = tv({
   },
 });
 
-export function TextField({
+export function TextArea({
   variant = 'outline',
   tone = 'default',
   color,
   className,
   style,
-  children = <TextField.Inner />,
+  resize = 'vertical',
+  autoResize = false,
+  children = <TextArea.Inner />,
   ...inputProps
-}: TextField.Props) {
+}: TextArea.Props) {
   const hasInner = Children.toArray(children).some(
-    (child) => isValidElement(child) && child.type === TextField.Inner,
+    (child) => isValidElement(child) && child.type === TextArea.Inner,
   );
 
-  if (!hasInner) throw new Error('TextField: children must include <TextField.Inner />');
+  if (!hasInner) throw new Error('TextArea: children must include <TextArea.Inner />');
 
   return (
-    <InnerContext.Provider value={inputProps}>
+    <InnerContext.Provider value={{ ...inputProps, autoResize }}>
       <div
-        className={textField({ variant, tone, className })}
-        style={mergeObjects(color ? colorVars(color) : undefined, style)}
+        className={textArea({ variant, tone, className })}
+        style={mergeObjects(
+          color ? colorVars(color) : undefined,
+          { resize: autoResize ? 'none' : resize },
+          style,
+        )}
       >
         {children}
       </div>
@@ -101,14 +109,26 @@ export function TextField({
   );
 }
 
-export namespace TextField {
+export namespace TextArea {
   export function Inner({ className }: Inner.Props) {
-    const ctx = useContext(InnerContext);
+    const { autoResize, rows = 3, onInput, ...ctx } = useContext(InnerContext);
+    const ref = useRef<HTMLTextAreaElement>(null);
+
+    const handleInput = (e: React.InputEvent<HTMLTextAreaElement>) => {
+      if (autoResize && ref.current) {
+        ref.current.style.height = 'auto';
+        ref.current.style.height = `${ref.current.scrollHeight}px`;
+      }
+      onInput?.(e);
+    };
 
     return (
-      <input
+      <textarea
+        ref={ref}
+        rows={rows}
+        onInput={handleInput}
         className={cn(
-          'placeholder:text-neutral-text-weak selection:bg-accent/30 min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          'placeholder:text-neutral-text-weak selection:bg-accent/30 h-full w-full flex-1 resize-none bg-transparent px-2.5 py-2 outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className,
         )}
         {...ctx}
@@ -121,10 +141,11 @@ export namespace TextField {
   }
 
   export type Props = PropsWithChildren<
-    VariantProps<typeof textField> &
+    VariantProps<typeof textArea> &
       AccentProps & {
         className?: string;
         style?: CSSProperties;
+        resize?: CSSProperties['resize'];
       } & InnerContextValue
   >;
 }

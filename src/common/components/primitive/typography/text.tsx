@@ -2,7 +2,7 @@ import { type ComponentProps } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
-import { Slot } from '@/common/components/utils';
+import { Slot, type SlotProps } from '@/common/components/utils';
 import { tv } from '@/common/utils';
 
 export const textVariants = tv({
@@ -57,6 +57,5 @@ export function Text({ asChild, size, weight, color, className, children, ...pro
 }
 
 export namespace Text {
-  export type Props = ComponentProps<'span'> &
-    VariantProps<typeof textVariants> & { asChild?: boolean };
+  export type Props = ComponentProps<'span'> & VariantProps<typeof textVariants> & SlotProps;
 }

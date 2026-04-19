@@ -7,7 +7,7 @@ export type Tone = 'default' | 'weak' | 'contrast';
 
 export interface AccentProps {
   color?: Color;
-  tone: Tone;
+  tone?: Tone;
 }
 
 type CSSShade = '' | `-${Exclude<Tone, 'default'>}`;
