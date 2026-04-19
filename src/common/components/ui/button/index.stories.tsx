@@ -1,6 +1,6 @@
 import { IconCheck, IconDownload, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 
-import { Box, Flex, Text } from '@/common/components/primitive';
+import { Box, HStack, VStack, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
 import { Spinner } from '@/common/components/ui/spinner';
 import { TextField } from '@/common/components/ui/text-field';
@@ -45,9 +45,9 @@ export const Default: Story = {};
 
 export const IconOnly: Story = {
   render: () => (
-    <Flex.Column gap={6}>
+    <VStack gap={6}>
       {VARIANTS.map((variant) => (
-        <Flex.Column key={variant} gap={2}>
+        <VStack key={variant} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
@@ -71,22 +71,22 @@ export const IconOnly: Story = {
               </>
             ))}
           </Box>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const Loading: Story = {
   render: () => (
-    <Flex.Row gap={3}>
+    <HStack gap={3}>
       {(['solid', 'outline', 'ghost'] as const).map((variant) => (
         <Button key={variant} variant={variant} tone="default" disabled>
           <Spinner size="sm" />
           로딩 중
         </Button>
       ))}
-    </Flex.Row>
+    </HStack>
   ),
 };
 
@@ -98,9 +98,9 @@ const ICON_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={6}>
+    <VStack gap={6}>
       {VARIANTS.map((variant) => (
-        <Flex.Column key={variant} gap={2}>
+        <VStack key={variant} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
@@ -125,17 +125,17 @@ export const Overview: Story = {
               </>
             ))}
           </Box>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const Sizes: Story = {
   render: () => (
-    <Flex.Column gap={3}>
+    <VStack gap={3}>
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={2} className="items-center">
+        <HStack key={size} gap={2} className="items-center">
           <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
             {size}
           </Text>
@@ -154,22 +154,22 @@ export const Sizes: Story = {
           <Button size={size} icon tone="default">
             <IconSearch size={ICON_SIZE[size]} />
           </Button>
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const ContextPropagation: Story = {
   render: () => (
-    <Flex.Column gap={4}>
+    <VStack gap={4}>
       {SIZES.map((size) => (
-        <Flex.Column key={size} gap={1}>
+        <VStack key={size} gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             SizeContext: {size}
           </Text>
           <SizeContext.Provider value={size}>
-            <Flex.Row gap={2} className="items-center">
+            <HStack gap={2} className="items-center">
               <Button tone="default">
                 <IconPlus size={ICON_SIZE[size]} />
                 추가
@@ -180,10 +180,10 @@ export const ContextPropagation: Story = {
               <TextField placeholder="텍스트 필드" tone="default" className="w-48" />
               <Badge tone="default">뱃지</Badge>
               <Spinner />
-            </Flex.Row>
+            </HStack>
           </SizeContext.Provider>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };

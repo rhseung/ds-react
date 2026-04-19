@@ -41,7 +41,7 @@
 
 ---
 
-#### `Flex.Row` ✅
+#### `HStack` ✅
 
 수평 방향 flex 컨테이너. `display: flex; flex-direction: row`.
 
@@ -51,15 +51,15 @@
 - 반응형 지원: `gap={{ xs: 2, md: 4 }}`
 
 ```tsx
-<Flex.Row gap={2} className="items-center">
+<HStack gap={2} className="items-center">
   <Avatar />
   <Text>홍길동</Text>
-</Flex.Row>
+</HStack>
 ```
 
 ---
 
-#### `Flex.Column` ✅
+#### `VStack` ✅
 
 수직 방향 flex 컨테이너. `display: flex; flex-direction: column`.
 
@@ -67,27 +67,27 @@
 - `gap` prop만 지원 — 그 외는 `className`으로 Tailwind 사용
 
 ```tsx
-<Flex.Column gap={1}>
+<VStack gap={1}>
   <Text>이름</Text>
   <Text>직책</Text>
-</Flex.Column>
+</VStack>
 ```
 
 ---
 
-#### `Flex.Spacer` ✅
+#### `Spacer` ✅
 
 flex 컨테이너 내부에서 남은 공간을 채우는 확장 요소.
 
 - `flex: 1`로 동작
-- `Flex.Row` / `Flex.Column` 내부 전용
+- `HStack` / `VStack` 내부 전용
 
 ```tsx
-<Flex.Row>
+<HStack>
   <Text>왼쪽</Text>
-  <Flex.Spacer />
+  <Spacer />
   <Button>오른쪽</Button>
-</Flex.Row>
+</HStack>
 ```
 
 ---
@@ -392,11 +392,11 @@ Avatar를 겹쳐서 그룹 표시. 초과 시 `+N` 표시.
 <TextArea placeholder="Write a comment..." maxLength={280}>
   <TextArea.Inner />
   <Divider />
-  <Flex.Row gap={2} className="items-center px-2.5 py-2">
+  <HStack gap={2} className="items-center px-2.5 py-2">
     <Text size="xs">{count}/280</Text>
-    <Flex.Spacer />
+    <Spacer />
     <Button>Post</Button>
-  </Flex.Row>
+  </HStack>
 </TextArea>
 ```
 
@@ -414,10 +414,10 @@ Avatar를 겹쳐서 그룹 표시. 초과 시 `+N` 표시.
 - `size`: `sm` | `md` | `lg`
 
 ```tsx
-<Flex.Row gap={2} className="items-center">
+<HStack gap={2} className="items-center">
   <Checkbox id="agree" defaultChecked />
   <Label htmlFor="agree">동의합니다</Label>
-</Flex.Row>
+</HStack>
 ```
 
 ---
@@ -438,32 +438,32 @@ const checkbox = useCheckboxGroup<Fruit>();
 
 // 기본 사용
 <checkbox.Group defaultValue={['banana']} onChange={setValues}>
-  <Flex.Row gap={2} className="items-center">
+  <HStack gap={2} className="items-center">
     <checkbox.Item value="apple" id="apple" />
     <Label htmlFor="apple">사과</Label>
-  </Flex.Row>
-  <Flex.Row gap={2} className="items-center">
+  </HStack>
+  <HStack gap={2} className="items-center">
     <checkbox.Item value="mango" id="mango" />  {/* ❌ 'mango' is not assignable to Fruit */}
     <Label htmlFor="mango">망고</Label>
-  </Flex.Row>
+  </HStack>
 </checkbox.Group>
 
 // 전체 선택 포함
 <checkbox.Group defaultValue={[]} onChange={setValues}>
-  <Flex.Row gap={2} className="items-center">
+  <HStack gap={2} className="items-center">
     <checkbox.All id="all" />
     <Label htmlFor="all">전체 선택</Label>
-  </Flex.Row>
-  <Flex.Column gap={2} className="pl-6">
-    <Flex.Row gap={2} className="items-center">
+  </HStack>
+  <VStack gap={2} className="pl-6">
+    <HStack gap={2} className="items-center">
       <checkbox.Item value="apple" id="apple" />
       <Label htmlFor="apple">사과</Label>
-    </Flex.Row>
-    <Flex.Row gap={2} className="items-center">
+    </HStack>
+    <HStack gap={2} className="items-center">
       <checkbox.Item value="banana" id="banana" />
       <Label htmlFor="banana">바나나</Label>
-    </Flex.Row>
-  </Flex.Column>
+    </HStack>
+  </VStack>
 </checkbox.Group>
 ```
 

@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@/common/components/primitive';
+import { Box, HStack, VStack, Text } from '@/common/components/primitive';
 import { SizeContext } from '@/common/hooks';
 
 import { Badge } from '.';
@@ -43,9 +43,9 @@ const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={6}>
+    <VStack gap={6}>
       {VARIANTS.map((variant) => (
-        <Flex.Column key={variant} gap={2}>
+        <VStack key={variant} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
@@ -69,17 +69,17 @@ export const Overview: Story = {
               </>
             ))}
           </Box>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const Sizes: Story = {
   render: () => (
-    <Flex.Column gap={3}>
+    <VStack gap={3}>
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={2} className="items-center">
+        <HStack key={size} gap={2} className="items-center">
           <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
             {size}
           </Text>
@@ -92,32 +92,32 @@ export const Sizes: Story = {
           <Badge size={size} variant="ghost" tone="default">
             Badge
           </Badge>
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const ContextPropagation: Story = {
   render: () => (
-    <Flex.Column gap={4}>
+    <VStack gap={4}>
       {SIZES.map((size) => (
-        <Flex.Column key={size} gap={1}>
+        <VStack key={size} gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             SizeContext: {size}
           </Text>
           <SizeContext.Provider value={size}>
-            <Flex.Row gap={2} className="items-center">
+            <HStack gap={2} className="items-center">
               {/* 컨텍스트 상속 */}
               <Badge tone="default">상속</Badge>
               {/* 명시값이 컨텍스트보다 우선 */}
               <Badge size={size === 'lg' ? 'sm' : 'lg'} tone="default">
                 override → {size === 'lg' ? 'sm' : 'lg'}
               </Badge>
-            </Flex.Row>
+            </HStack>
           </SizeContext.Provider>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };

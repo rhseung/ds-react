@@ -15,7 +15,7 @@ import {
 } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 
-import { Box, Flex, Label, Text } from '@/common/components/primitive';
+import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { SizeContext } from '@/common/hooks';
 
@@ -59,9 +59,9 @@ const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={6}>
+    <VStack gap={6}>
       {VARIANTS.map((variant) => (
-        <Flex.Column key={variant} gap={2}>
+        <VStack key={variant} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
@@ -89,9 +89,9 @@ export const Overview: Story = {
               </>
             ))}
           </Box>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
@@ -101,16 +101,16 @@ export const Disabled: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <Flex.Column gap={3} className="w-72">
+    <VStack gap={3} className="w-72">
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={2} className="items-center">
+        <HStack key={size} gap={2} className="items-center">
           <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
             {size}
           </Text>
           <TextField size={size} placeholder="입력하세요" tone="default" />
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
@@ -122,7 +122,7 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
     'text-neutral-text-weak shrink-0 rounded-lg p-1 transition-colors bg-neutral-text/5 hover:bg-neutral-text/10 hover:text-neutral-text';
 
   return (
-    <Flex.Column gap={2} className="w-80">
+    <VStack gap={2} className="w-80">
       <TextField
         variant={variant}
         tone="default"
@@ -194,22 +194,22 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
         <TextField.Inner />
         <IconCalendar size={16} className={iconClass} />
       </TextField>
-    </Flex.Column>
+    </VStack>
   );
 }
 
 export const WithIcons: Story = {
   render: () => (
-    <Flex.Row gap={8} className="items-start">
+    <HStack gap={8} className="items-start">
       {VARIANTS.map((variant) => (
-        <Flex.Column key={variant} gap={2}>
+        <VStack key={variant} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             {variant}
           </Text>
           <IconExamples variant={variant} />
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Row>
+    </HStack>
   ),
 };
 
@@ -218,15 +218,15 @@ export const FormBinding: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <Flex.Column gap={6} className="w-72">
-        <Flex.Column gap={1}>
+      <VStack gap={6} className="w-72">
+        <VStack gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             비제어
           </Text>
           <TextField name="username" placeholder="이름" defaultValue="홍길동" tone="default" />
-        </Flex.Column>
+        </VStack>
 
-        <Flex.Column gap={1}>
+        <VStack gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             제어
           </Text>
@@ -239,8 +239,8 @@ export const FormBinding: Story = {
             <TextField.Inner />
             <span className="text-neutral-text-weak shrink-0 text-xs">{value.length}</span>
           </TextField>
-        </Flex.Column>
-      </Flex.Column>
+        </VStack>
+      </VStack>
     );
   },
 };
@@ -305,9 +305,9 @@ export const WithReactHookForm: Story = {
 
 export const ContextPropagation: Story = {
   render: () => (
-    <Flex.Column gap={4} className="w-72">
+    <VStack gap={4} className="w-72">
       {SIZES.map((size) => (
-        <Flex.Column key={size} gap={1}>
+        <VStack key={size} gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             SizeContext: {size}
           </Text>
@@ -324,8 +324,8 @@ export const ContextPropagation: Story = {
               tone="default"
             />
           </SizeContext.Provider>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };

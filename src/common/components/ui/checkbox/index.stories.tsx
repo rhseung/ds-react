@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 
-import { Flex, Label, Text } from '@/common/components/primitive';
+import { HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { SizeContext } from '@/common/hooks';
 
@@ -49,81 +49,81 @@ const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 
 export const States: Story = {
   render: () => (
-    <Flex.Column gap={3}>
-      <Flex.Row gap={2} className="items-center">
+    <VStack gap={3}>
+      <HStack gap={2} className="items-center">
         <Checkbox id="unchecked" />
         <Label htmlFor="unchecked">미체크</Label>
-      </Flex.Row>
-      <Flex.Row gap={2} className="items-center">
+      </HStack>
+      <HStack gap={2} className="items-center">
         <Checkbox id="checked" defaultChecked />
         <Label htmlFor="checked">체크됨</Label>
-      </Flex.Row>
-      <Flex.Row gap={2} className="items-center">
+      </HStack>
+      <HStack gap={2} className="items-center">
         <Checkbox id="indeterminate" indeterminate />
         <Label htmlFor="indeterminate">불확정</Label>
-      </Flex.Row>
-      <Flex.Row gap={2} className="items-center">
+      </HStack>
+      <HStack gap={2} className="items-center">
         <Checkbox id="disabled" disabled />
         <Label htmlFor="disabled">비활성</Label>
-      </Flex.Row>
-      <Flex.Row gap={2} className="items-center">
+      </HStack>
+      <HStack gap={2} className="items-center">
         <Checkbox id="disabled-checked" disabled defaultChecked />
         <Label htmlFor="disabled-checked">비활성 (체크됨)</Label>
-      </Flex.Row>
-    </Flex.Column>
+      </HStack>
+    </VStack>
   ),
 };
 
 export const Colors: Story = {
   render: () => (
-    <Flex.Column gap={3}>
+    <VStack gap={3}>
       {COLORS.map((color) => (
-        <Flex.Row key={color} gap={4} className="items-center">
+        <HStack key={color} gap={4} className="items-center">
           <Text size="xs" color="neutral-text-weak" className="w-16 font-semibold">
             {color}
           </Text>
           <Checkbox color={color} defaultChecked />
           <Checkbox color={color} indeterminate />
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const Sizes: Story = {
   render: () => (
-    <Flex.Column gap={3}>
+    <VStack gap={3}>
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={4} className="items-center">
+        <HStack key={size} gap={4} className="items-center">
           <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
             {size}
           </Text>
           <Checkbox size={size} />
           <Checkbox size={size} defaultChecked />
           <Checkbox size={size} indeterminate />
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const ContextPropagation: Story = {
   render: () => (
-    <Flex.Column gap={4}>
+    <VStack gap={4}>
       {SIZES.map((size) => (
-        <Flex.Column key={size} gap={1}>
+        <VStack key={size} gap={1}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             SizeContext: {size}
           </Text>
           <SizeContext.Provider value={size}>
-            <Flex.Row gap={4} className="items-center">
+            <HStack gap={4} className="items-center">
               <Checkbox />
               <Checkbox defaultChecked />
-            </Flex.Row>
+            </HStack>
           </SizeContext.Provider>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
@@ -131,15 +131,15 @@ export const Controlled: Story = {
   render: () => {
     const [checked, setChecked] = useState(false);
     return (
-      <Flex.Column gap={3} className="w-48">
-        <Flex.Row gap={2} className="items-center">
+      <VStack gap={3} className="w-48">
+        <HStack gap={2} className="items-center">
           <Checkbox id="ctrl" checked={checked} onChange={setChecked} />
           <Label htmlFor="ctrl">{checked ? '체크됨' : '미체크'}</Label>
-        </Flex.Row>
+        </HStack>
         <Text size="xs" color="neutral-text-weak">
           상태: {String(checked)}
         </Text>
-      </Flex.Column>
+      </VStack>
     );
   },
 };
@@ -154,8 +154,8 @@ export const Indeterminate: Story = {
     const toggle = (i: number) => setItems(items.map((v, idx) => (idx === i ? !v : v)));
 
     return (
-      <Flex.Column gap={2}>
-        <Flex.Row gap={2} className="items-center">
+      <VStack gap={2}>
+        <HStack gap={2} className="items-center">
           <Checkbox
             id="all"
             checked={allChecked}
@@ -165,16 +165,16 @@ export const Indeterminate: Story = {
           <Label htmlFor="all" className="font-semibold">
             전체 선택
           </Label>
-        </Flex.Row>
-        <Flex.Column gap={2} className="pl-6">
+        </HStack>
+        <VStack gap={2} className="pl-6">
           {['항목 A', '항목 B', '항목 C'].map((label, i) => (
-            <Flex.Row key={label} gap={2} className="items-center">
+            <HStack key={label} gap={2} className="items-center">
               <Checkbox id={label} checked={items[i]} onChange={() => toggle(i)} />
               <Label htmlFor={label}>{label}</Label>
-            </Flex.Row>
+            </HStack>
           ))}
-        </Flex.Column>
-      </Flex.Column>
+        </VStack>
+      </VStack>
     );
   },
 };
@@ -202,7 +202,7 @@ export const WithReactHookForm: Story = {
             { name: 'security', label: '보안 알림 수신' },
           ] as const
         ).map(({ name, label }) => (
-          <Flex.Row key={name} gap={2} className="items-center">
+          <HStack key={name} gap={2} className="items-center">
             <Controller
               name={name}
               control={control}
@@ -211,7 +211,7 @@ export const WithReactHookForm: Story = {
               )}
             />
             <Label htmlFor={name}>{label}</Label>
-          </Flex.Row>
+          </HStack>
         ))}
         <Button type="submit" tone="default">
           저장

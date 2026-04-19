@@ -25,7 +25,7 @@ import {
   IconWorld,
 } from '@tabler/icons-react';
 
-import { Flex, Text } from '@/common/components/primitive';
+import { HStack, VStack, Spacer, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
 import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
@@ -93,35 +93,35 @@ export const WithSlots: Story = {
     const [aiValue2, setAiValue2] = useState('');
 
     return (
-      <Flex.Column gap={8} className="w-110">
+      <VStack gap={8} className="w-110">
         {/* Header + footer */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             헤더 + 푸터
           </Text>
           <TextArea placeholder="내용을 입력하세요...">
-            <Flex.Row gap={2} className="items-center px-2.5 py-1.5">
+            <HStack gap={2} className="items-center px-2.5 py-1.5">
               <span className="text-neutral-text-weak text-xs">script.js</span>
-              <Flex.Spacer />
+              <Spacer />
               <Badge size="sm" variant="outline" tone="weak">
                 JS
               </Badge>
-            </Flex.Row>
+            </HStack>
             <Divider />
             <TextArea.Inner />
             <Divider />
-            <Flex.Row gap={2} className="items-center px-2.5 py-1.5">
+            <HStack gap={2} className="items-center px-2.5 py-1.5">
               <span className="text-neutral-text-weak text-xs">Line 1, Column 1</span>
-              <Flex.Spacer />
+              <Spacer />
               <Button size="sm" variant="solid" tone="default">
                 Run
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* Chat bar */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             채팅바
           </Text>
@@ -133,7 +133,7 @@ export const WithSlots: Story = {
             rows={1}
           >
             <TextArea.Inner />
-            <Flex.Row gap={1} className="items-center px-2 py-1.5">
+            <HStack gap={1} className="items-center px-2 py-1.5">
               <Toggle
                 size="sm"
                 icon
@@ -152,7 +152,7 @@ export const WithSlots: Story = {
               <Button size="sm" icon variant="ghost" tone="default" aria-label="이미지 첨부">
                 <IconPhoto size={14} />
               </Button>
-              <Flex.Spacer />
+              <Spacer />
               <Button
                 size="sm"
                 icon
@@ -163,12 +163,12 @@ export const WithSlots: Story = {
               >
                 <IconSend2 size={14} />
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* Markdown editor */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             마크다운 에디터
           </Text>
@@ -178,7 +178,7 @@ export const WithSlots: Story = {
             placeholder="마크다운을 입력하세요..."
             rows={5}
           >
-            <Flex.Row gap={0.5} className="items-center overflow-x-auto px-2 py-1.5">
+            <HStack gap={0.5} className="items-center overflow-x-auto px-2 py-1.5">
               <Toggle
                 size="sm"
                 icon
@@ -270,14 +270,14 @@ export const WithSlots: Story = {
               <Button size="sm" icon variant="ghost" tone="default" aria-label="표">
                 <IconTable size={14} />
               </Button>
-            </Flex.Row>
+            </HStack>
             <Divider />
             <TextArea.Inner />
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* Code editor */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             코드 에디터
           </Text>
@@ -287,7 +287,7 @@ export const WithSlots: Story = {
             placeholder={`// ${language} 코드를 입력하세요`}
             rows={5}
           >
-            <Flex.Row gap={2} className="items-center px-2.5 py-1.5">
+            <HStack gap={2} className="items-center px-2.5 py-1.5">
               {(['TypeScript', 'Python', 'Go'] as const).map((lang) => (
                 <button
                   key={lang}
@@ -298,31 +298,31 @@ export const WithSlots: Story = {
                   {lang}
                 </button>
               ))}
-              <Flex.Spacer />
+              <Spacer />
               <Badge size="sm" variant="outline" tone="weak">
                 {language}
               </Badge>
-            </Flex.Row>
+            </HStack>
             <Divider />
             <TextArea.Inner />
             <Divider />
-            <Flex.Row gap={1} className="items-center px-2 py-1.5">
+            <HStack gap={1} className="items-center px-2 py-1.5">
               <span className="text-neutral-text-weak text-xs">
                 {codeValue.split('\n').length} lines
               </span>
-              <Flex.Spacer />
+              <Spacer />
               <Button size="sm" icon variant="ghost" tone="default" aria-label="복사">
                 <IconCopy size={14} />
               </Button>
               <Button size="sm" icon variant="solid" tone="default" aria-label="실행">
                 <IconPlayerPlay size={14} />
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* Note with tags */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             노트
           </Text>
@@ -332,21 +332,21 @@ export const WithSlots: Story = {
             placeholder="노트를 입력하세요..."
             rows={4}
           >
-            <Flex.Row gap={1.5} className="flex-wrap items-center px-2.5 py-1.5">
+            <HStack gap={1.5} className="flex-wrap items-center px-2.5 py-1.5">
               <IconTag size={12} className="text-neutral-text-weak shrink-0" />
               {tags.map((tag) => (
                 <Badge key={tag} size="sm" variant="outline" tone="weak">
                   {tag}
                 </Badge>
               ))}
-            </Flex.Row>
+            </HStack>
             <Divider />
             <TextArea.Inner />
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* Comment with char count */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             댓글
           </Text>
@@ -359,11 +359,11 @@ export const WithSlots: Story = {
           >
             <TextArea.Inner />
             <Divider />
-            <Flex.Row gap={2} className="items-center px-2.5 py-1.5">
+            <HStack gap={2} className="items-center px-2.5 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="이미지 첨부">
                 <IconPhoto size={14} />
               </Button>
-              <Flex.Spacer />
+              <Spacer />
               <span className="text-xs">
                 <span
                   className={
@@ -379,12 +379,12 @@ export const WithSlots: Story = {
               <Button size="sm" variant="solid" tone="default" disabled={!commentValue.trim()}>
                 등록
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* AI prompt bar 1 — context chip header */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             AI 프롬프트 바 (컨텍스트 칩)
           </Text>
@@ -395,24 +395,24 @@ export const WithSlots: Story = {
             autoResize
             rows={2}
           >
-            <Flex.Row className="px-2.5 pt-2.5 pb-1">
+            <HStack className="px-2.5 pt-2.5 pb-1">
               <button className="text-neutral-text border-neutral-border bg-neutral-bg-subtle hover:bg-neutral-bg inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors">
                 <IconAt size={13} />
                 Add context
               </button>
-            </Flex.Row>
+            </HStack>
             <TextArea.Inner />
             <Divider />
-            <Flex.Row gap={2} className="items-center px-2 py-1.5">
+            <HStack gap={2} className="items-center px-2 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="첨부">
                 <IconPaperclip size={14} />
               </Button>
               <span className="text-neutral-text-weak text-xs">Auto</span>
-              <Flex.Row gap={1} className="items-center">
+              <HStack gap={1} className="items-center">
                 <IconWorld size={13} className="text-neutral-text-weak" />
                 <span className="text-neutral-text-weak text-xs">All Sources</span>
-              </Flex.Row>
-              <Flex.Spacer />
+              </HStack>
+              <Spacer />
               <Button
                 size="sm"
                 icon
@@ -424,12 +424,12 @@ export const WithSlots: Story = {
               >
                 <IconArrowUp size={14} />
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
+        </VStack>
 
         {/* AI prompt bar 2 — usage indicator */}
-        <Flex.Column gap={1.5}>
+        <VStack gap={1.5}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             AI 프롬프트 바 (사용량 표시)
           </Text>
@@ -441,7 +441,7 @@ export const WithSlots: Story = {
             rows={2}
           >
             <TextArea.Inner />
-            <Flex.Row gap={2} className="items-center px-2 py-1.5">
+            <HStack gap={2} className="items-center px-2 py-1.5">
               <Button
                 size="sm"
                 icon
@@ -453,7 +453,7 @@ export const WithSlots: Story = {
                 <IconPlus size={14} />
               </Button>
               <span className="text-neutral-text-weak text-xs">Auto</span>
-              <Flex.Spacer />
+              <Spacer />
               <span className="text-neutral-text-weak text-xs">52% used</span>
               <Divider orientation="vertical" className="h-4" />
               <Button
@@ -467,21 +467,21 @@ export const WithSlots: Story = {
               >
                 <IconArrowUp size={14} />
               </Button>
-            </Flex.Row>
+            </HStack>
           </TextArea>
-        </Flex.Column>
-      </Flex.Column>
+        </VStack>
+      </VStack>
     );
   },
 };
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={4} className="w-80">
+    <VStack gap={4} className="w-80">
       <TextArea variant="outline" placeholder="outline" />
       <TextArea variant="filled" placeholder="filled" />
       <TextArea variant="underline" placeholder="underline" />
-    </Flex.Column>
+    </VStack>
   ),
 };
 
@@ -489,24 +489,24 @@ const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const Sizes: Story = {
   render: () => (
-    <Flex.Column gap={3} className="w-72">
+    <VStack gap={3} className="w-72">
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={2} className="items-start">
+        <HStack key={size} gap={2} className="items-start">
           <Text size="xs" color="neutral-text-weak" className="w-6 pt-2 font-semibold">
             {size}
           </Text>
           <TextArea size={size} placeholder="내용을 입력하세요" className="flex-1" />
-        </Flex.Row>
+        </HStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };
 
 export const ContextPropagation: Story = {
   render: () => (
-    <Flex.Column gap={4} className="w-72">
+    <VStack gap={4} className="w-72">
       {SIZES.map((size) => (
-        <Flex.Column key={size} gap={2}>
+        <VStack key={size} gap={2}>
           <Text size="xs" color="neutral-text-weak" className="font-semibold">
             SizeContext: {size}
           </Text>
@@ -519,8 +519,8 @@ export const ContextPropagation: Story = {
               placeholder={`override → ${size === 'lg' ? 'sm' : 'lg'}`}
             />
           </SizeContext.Provider>
-        </Flex.Column>
+        </VStack>
       ))}
-    </Flex.Column>
+    </VStack>
   ),
 };

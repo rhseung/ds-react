@@ -1,4 +1,4 @@
-import { Flex } from '@/common/components/primitive';
+import { VStack } from '@/common/components/primitive';
 
 import { Divider } from '.';
 
@@ -43,7 +43,7 @@ export const Default: Story = {
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Column gap={4}>
+    <VStack gap={4}>
       <div className="border-neutral-border w-64 rounded-lg border p-3">
         <p className="text-neutral-text-weak text-sm">위 영역</p>
         <Divider className="my-3" />
@@ -54,6 +54,6 @@ export const Overview: Story = {
         <Divider orientation="vertical" />
         <span className="text-neutral-text-weak text-sm">오른쪽</span>
       </div>
-    </Flex.Column>
+    </VStack>
   ),
 };
