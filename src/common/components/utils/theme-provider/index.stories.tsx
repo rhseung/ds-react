@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Avatar, Badge, Button, Spinner } from '@/common/components/ui';
 import { ThemeProvider } from '@/common/components/utils';
-import { colorVars } from '@/common/utils';
 import type { Theme } from '@/common/stores';
+import { colorVars } from '@/common/utils';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -14,7 +14,15 @@ export default meta;
 
 // ─── Token Swatch ────────────────────────────────────────────────────────────
 
-function TokenSwatch({ cssVar, label, textVar }: { cssVar: string; label: string; textVar: string }) {
+function TokenSwatch({
+  cssVar,
+  label,
+  textVar,
+}: {
+  cssVar: string;
+  label: string;
+  textVar: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [color, setColor] = useState('');
 
@@ -66,7 +74,14 @@ export const Nested: StoryObj<{
     innermostAccent: { control: 'color' },
     innermostTheme: { control: 'radio', options: ['light', 'dark'] },
   },
-  render: ({ outerAccent, outerTheme, innerAccent, innerTheme, innermostAccent, innermostTheme }) => (
+  render: ({
+    outerAccent,
+    outerTheme,
+    innerAccent,
+    innerTheme,
+    innermostAccent,
+    innermostTheme,
+  }) => (
     <div className="flex flex-col gap-6 p-6">
       <ThemeProvider
         accent={outerAccent}
@@ -75,7 +90,9 @@ export const Nested: StoryObj<{
       >
         <p className="text-neutral-text-weak text-xs font-semibold">outer</p>
         <div className="flex gap-3">
-          <Button variant="solid" tone="default">Outer</Button>
+          <Button variant="solid" tone="default">
+            Outer
+          </Button>
           <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
         </div>
         <ThemeProvider
@@ -85,7 +102,9 @@ export const Nested: StoryObj<{
         >
           <p className="text-neutral-text-weak text-xs font-semibold">inner</p>
           <div className="flex gap-3">
-            <Button variant="solid" tone="default">Inner</Button>
+            <Button variant="solid" tone="default">
+              Inner
+            </Button>
             <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
           </div>
           <ThemeProvider
@@ -95,7 +114,9 @@ export const Nested: StoryObj<{
           >
             <p className="text-neutral-text-weak text-xs font-semibold">innermost</p>
             <div className="flex gap-3">
-              <Button variant="solid" tone="default">Innermost</Button>
+              <Button variant="solid" tone="default">
+                Innermost
+              </Button>
               <TokenSwatch cssVar="--ids-primary" label="primary" textVar="--ids-on-primary" />
             </div>
           </ThemeProvider>
@@ -108,7 +129,6 @@ export const Nested: StoryObj<{
 export const Palette: StoryObj = {
   render: () => (
     <div className="flex flex-col gap-10 p-8">
-
       {/* Color swatches — all 9 at once */}
       <div className="flex gap-2">
         {COLORS.map((color) =>
@@ -119,14 +139,16 @@ export const Palette: StoryObj = {
               textVar={tone === 'default' ? `--ids-on-${color}` : `--ids-on-${color}-${tone}`}
               label={tone === 'default' ? color : `${color} ${tone}`}
             />
-          ))
+          )),
         )}
       </div>
 
       {/* Components — one row per color, all tones/variants mixed */}
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col gap-3">
-          <p className="text-neutral-text-weak text-xs font-semibold uppercase tracking-widest">{color}</p>
+          <p className="text-neutral-text-weak text-xs font-semibold tracking-widest uppercase">
+            {color}
+          </p>
 
           {/* Buttons — all variants × all tones */}
           <div className="flex flex-wrap items-center gap-2">
@@ -135,7 +157,7 @@ export const Palette: StoryObj = {
                 <Button key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
                   {variant}
                 </Button>
-              ))
+              )),
             )}
           </div>
 
@@ -146,12 +168,18 @@ export const Palette: StoryObj = {
                 <Badge key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
                   {tone}
                 </Badge>
-              ))
+              )),
             )}
             {(['sm', 'md', 'lg', 'xl'] as const).map((size) =>
               TONES.map((tone) => (
-                <Avatar key={`${size}-${tone}`} name="Hong Gildong" size={size} color={color} tone={tone} />
-              ))
+                <Avatar
+                  key={`${size}-${tone}`}
+                  name="Hong Gildong"
+                  size={size}
+                  color={color}
+                  tone={tone}
+                />
+              )),
             )}
             {(['sm', 'md', 'lg'] as const).map((size) =>
               TONES.map((tone) => (
@@ -167,7 +195,7 @@ export const Palette: StoryObj = {
                   }
                   style={colorVars(color)}
                 />
-              ))
+              )),
             )}
           </div>
         </div>

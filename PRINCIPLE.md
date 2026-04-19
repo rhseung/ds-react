@@ -188,11 +188,19 @@ IDS 컴포넌트는 특정 색상값을 알지 못합니다. 오직 **시맨틱 
 ```
 
 ```css
-[data-hovered] { --ids-state-mask: rgba(0, 0, 0, 0.06); }
-[data-pressed] { --ids-state-mask: rgba(0, 0, 0, 0.12); }
+[data-hovered] {
+  --ids-state-mask: rgba(0, 0, 0, 0.06);
+}
+[data-pressed] {
+  --ids-state-mask: rgba(0, 0, 0, 0.12);
+}
 
-[data-mode="dark"] [data-hovered] { --ids-state-mask: rgba(255, 255, 255, 0.08); }
-[data-mode="dark"] [data-pressed] { --ids-state-mask: rgba(255, 255, 255, 0.14); }
+[data-mode='dark'] [data-hovered] {
+  --ids-state-mask: rgba(255, 255, 255, 0.08);
+}
+[data-mode='dark'] [data-pressed] {
+  --ids-state-mask: rgba(255, 255, 255, 0.14);
+}
 ```
 
 `primary`든 `danger`든 임의의 브랜드 색이든, hover 토큰을 따로 정의하지 않아도 됩니다.
@@ -395,6 +403,8 @@ IDS는 각 컴포넌트의 의미(semantic)를 알고 있습니다. 필요한 AR
 <Tooltip motion="popup">내용</Tooltip>
 ```
 
+enter/exit animation을 위해 모든 컴포넌트에 `<Presence />`를 제대로 장착하는 것이 좋다.
+
 ---
 
 ## 14. 반응형의 선언적 표현 (Responsive Props)
@@ -424,13 +434,15 @@ const isMobile = useBreakpoint('sm')
 반응형 prop의 타입은 `T | Responsive<T>`로 정의되어, 단일 값과 breakpoint 맵을 모두 허용합니다.
 
 ```typescript
-type Responsive<T> = T | {
-  base?: T
-  sm?:   T
-  md?:   T
-  lg?:   T
-  xl?:   T
-}
+type Responsive<T> =
+  | T
+  | {
+      base?: T;
+      sm?: T;
+      md?: T;
+      lg?: T;
+      xl?: T;
+    };
 ```
 
 ---

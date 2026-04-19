@@ -28,7 +28,8 @@ export function Spinner({ size: sizeProp, className, ...props }: Spinner.Props) 
 }
 
 export namespace Spinner {
-  export interface Props extends ComponentProps<'span'>, Omit<VariantProps<typeof spinner>, 'size'> {
+  export interface Props
+    extends ComponentProps<'span'>, Omit<VariantProps<typeof spinner>, 'size'> {
     size?: ComponentSize;
   }
 }

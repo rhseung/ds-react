@@ -71,7 +71,9 @@ export const Sizes: Story = {
       {SIZES.map((size) => (
         <Flex.Column key={size} gap={1.5} className="items-center">
           <Avatar name="Hong Gildong" size={size} tone="default" />
-          <Text size="xs" color="neutral-text-weak">{size}</Text>
+          <Text size="xs" color="neutral-text-weak">
+            {size}
+          </Text>
         </Flex.Column>
       ))}
     </Flex.Row>
@@ -89,11 +91,7 @@ export const ContextPropagation: Story = {
           <SizeContext.Provider value={size}>
             <Flex.Row gap={2} className="items-center">
               <Avatar name="Hong Gildong" tone="default" />
-              <Avatar
-                name="Hong Gildong"
-                size={size === 'lg' ? 'sm' : 'lg'}
-                tone="default"
-              />
+              <Avatar name="Hong Gildong" size={size === 'lg' ? 'sm' : 'lg'} tone="default" />
             </Flex.Row>
           </SizeContext.Provider>
         </Flex.Column>

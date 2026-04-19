@@ -69,7 +69,8 @@ export function Badge({
 
 export namespace Badge {
   export interface Props
-    extends Omit<ComponentProps<'span'>, 'color'>,
+    extends
+      Omit<ComponentProps<'span'>, 'color'>,
       Omit<VariantProps<typeof badge>, 'size'>,
       AccentProps {
     size?: ComponentSize;

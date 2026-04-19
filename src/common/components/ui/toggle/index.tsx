@@ -136,7 +136,8 @@ export function Toggle({
 
 export namespace Toggle {
   export interface Props
-    extends Omit<ComponentProps<'button'>, 'color'>,
+    extends
+      Omit<ComponentProps<'button'>, 'color'>,
       Omit<VariantProps<typeof toggle>, 'size'>,
       SlotProps,
       AccentProps {

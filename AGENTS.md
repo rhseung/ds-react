@@ -106,7 +106,8 @@ Do **not** put components that use `@/features/*`, `useTranslation`, or feature 
 // ✅
 export namespace Button {
   export interface Props
-    extends Omit<ComponentProps<'button'>, 'color'>,
+    extends
+      Omit<ComponentProps<'button'>, 'color'>,
       Omit<VariantProps<typeof button>, 'size'>,
       SlotProps,
       AccentProps {
@@ -256,11 +257,11 @@ Primitives (palette.css)  →  Semantic tokens (semantic.css, base.css)  →  Ta
 
 #### Token layers
 
-| Layer | File | Example | Purpose |
-| --- | --- | --- | --- |
-| Primitive | `palette.css` | `--ids-gray-200` | Raw values — do not use in components |
-| Semantic | `semantic.css`, `base.css`, `motion.css` | `--ids-neutral-border`, `--ids-duration-fast` | Role-based tokens for components |
-| Tailwind | `tailwind.css` | `border-neutral-border`, `duration-fast` | Mapped to Tailwind via `@theme inline` |
+| Layer     | File                                     | Example                                       | Purpose                                |
+| --------- | ---------------------------------------- | --------------------------------------------- | -------------------------------------- |
+| Primitive | `palette.css`                            | `--ids-gray-200`                              | Raw values — do not use in components  |
+| Semantic  | `semantic.css`, `base.css`, `motion.css` | `--ids-neutral-border`, `--ids-duration-fast` | Role-based tokens for components       |
+| Tailwind  | `tailwind.css`                           | `border-neutral-border`, `duration-fast`      | Mapped to Tailwind via `@theme inline` |
 
 #### Motion tokens
 
@@ -309,13 +310,13 @@ New design tokens belong in `src/styles/` CSS files, not inline in components. A
 
 Follow this ordering for each component's stories:
 
-| Story | Purpose |
-| --- | --- |
-| `Default` | Single interactive component — all props controllable via the Controls panel |
-| `Overview` | Grid of variant × color × tone combinations |
-| `Sizes` | Side-by-side comparison of sm / md / lg |
-| `ContextPropagation` | Verifies `SizeContext` inheritance and explicit prop override |
-| Feature stories | Real-world usage examples (`WithSlots`, `Controlled`, `Loading`, etc.) |
+| Story                | Purpose                                                                      |
+| -------------------- | ---------------------------------------------------------------------------- |
+| `Default`            | Single interactive component — all props controllable via the Controls panel |
+| `Overview`           | Grid of variant × color × tone combinations                                  |
+| `Sizes`              | Side-by-side comparison of sm / md / lg                                      |
+| `ContextPropagation` | Verifies `SizeContext` inheritance and explicit prop override                |
+| Feature stories      | Real-world usage examples (`WithSlots`, `Controlled`, `Loading`, etc.)       |
 
 - Do not create a separate story for every combination. Anything controllable via Controls belongs in `Default`.
 - Any component with a `size` prop must include `Sizes` and `ContextPropagation` stories.

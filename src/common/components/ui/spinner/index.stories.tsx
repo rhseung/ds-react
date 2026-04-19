@@ -26,7 +26,7 @@ export const Default: Story = {
 
 export const Overview: Story = {
   render: () => (
-    <Flex.Row gap={4} className="items-center text-accent">
+    <Flex.Row gap={4} className="text-accent items-center">
       <Spinner size="sm" />
       <Spinner size="md" />
       <Spinner size="lg" />
@@ -40,7 +40,7 @@ export const ContextPropagation: Story = {
   render: () => (
     <Flex.Column gap={3}>
       {SIZES.map((size) => (
-        <Flex.Row key={size} gap={2} className="items-center text-accent">
+        <Flex.Row key={size} gap={2} className="text-accent items-center">
           <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
             {size}
           </Text>

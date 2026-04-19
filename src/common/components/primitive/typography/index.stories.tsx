@@ -1,3 +1,5 @@
+import { Checkbox } from '@/common/components/ui/checkbox';
+
 import { Code } from './code';
 import { Kbd } from './kbd';
 import { Label } from './label';
@@ -77,6 +79,25 @@ export const LabelDefault: Story = {
     <div className="flex flex-col gap-2">
       <Label>일반 레이블</Label>
       <Label required>필수 레이블</Label>
+    </div>
+  ),
+};
+
+export const LabelWithCheckbox: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3">
+      <Label className="flex items-center gap-2">
+        <Checkbox defaultChecked />
+        htmlFor 없이 children으로 연결
+      </Label>
+      <Label className="flex items-center gap-2">
+        <Checkbox />
+        미체크
+      </Label>
+      <Label className="flex items-center gap-2">
+        <Checkbox disabled />
+        비활성
+      </Label>
     </div>
   ),
 };
