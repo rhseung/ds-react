@@ -1,5 +1,6 @@
 import { HStack, VStack, Text } from '@/common/components/primitive';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { Avatar } from '.';
 
@@ -77,6 +78,56 @@ export const Sizes: Story = {
         </VStack>
       ))}
     </HStack>
+  ),
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — 호버 시 ring 추가
+        </Text>
+        <HStack gap={2} className="items-center">
+          <Avatar
+            name="홍길동"
+            tone="default"
+            className={(state) => cn('cursor-pointer transition-shadow', state.hovered && 'ring-2 ring-accent ring-offset-2')}
+          />
+          <Avatar
+            name="Kim AI"
+            color="secondary"
+            tone="default"
+            className={(state) => cn('cursor-pointer transition-shadow', state.hovered && 'ring-2 ring-accent ring-offset-2')}
+          />
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          style 함수 — 호버 시 scale 확대
+        </Text>
+        <HStack gap={2} className="items-center">
+          <Avatar
+            name="홍길동"
+            tone="weak"
+            style={(state) => ({ transform: state.hovered ? 'scale(1.15)' : undefined, transition: 'transform 100ms' })}
+          />
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 링크·버튼 엘리먼트에 Avatar 스타일 적용
+        </Text>
+        <HStack gap={2} className="items-center">
+          <Avatar asChild tone="default">
+            <a href="#">HG</a>
+          </Avatar>
+          <Avatar asChild size="lg" tone="weak">
+            <button type="button">AB</button>
+          </Avatar>
+        </HStack>
+      </VStack>
+    </VStack>
   ),
 };
 

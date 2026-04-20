@@ -18,7 +18,7 @@ const meta: Meta<typeof Toggle> = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['solid', 'solid-elevated', 'outline', 'ghost'],
+      options: ['solid', 'elevated', 'outline', 'ghost'],
     },
     tone: {
       control: 'radio',
@@ -44,7 +44,7 @@ type Story = StoryObj<typeof Toggle>;
 
 export const Default: Story = {};
 
-const VARIANTS = ['solid', 'solid-elevated', 'outline', 'ghost'] as const;
+const VARIANTS = ['solid', 'elevated', 'outline', 'ghost'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
 const SIZES = ['sm', 'md', 'lg'] as const;
@@ -97,6 +97,28 @@ export const Controlled: Story = {
       </VStack>
     );
   },
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          children 함수 — 외부 state 없이 toggled 상태로 콘텐츠 분기
+        </Text>
+        <HStack gap={2}>
+          <Toggle tone="default" variant="outline">
+            {(state) => (state.toggled ? '켜짐 ✓' : '꺼짐')}
+          </Toggle>
+          <Toggle tone="default" variant="ghost">
+            {(state) =>
+              state.hovered && !state.toggled ? '클릭하여 켜기' : state.toggled ? 'ON' : 'OFF'
+            }
+          </Toggle>
+        </HStack>
+      </VStack>
+    </VStack>
+  ),
 };
 
 type NotificationSettings = {

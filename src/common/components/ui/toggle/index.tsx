@@ -1,10 +1,17 @@
-import { type ComponentProps } from 'react';
+import { type CSSProperties, type ComponentProps } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import {
+  type AccentProps,
+  type RenderProp,
+  colorVars,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
 import { useToggle } from './use-toggle';
 
@@ -27,7 +34,7 @@ const toggle = tv({
     },
     variant: {
       solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
-      'solid-elevated':
+      'elevated':
         'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled shadow-bevel data-active:translate-y-px data-active:shadow-bevel-active data-active:scale-100 data-toggled:translate-y-px data-toggled:shadow-bevel-active',
       outline:
         'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:inset-ring-neutral-border data-disabled:bg-transparent',
@@ -46,14 +53,14 @@ const toggle = tv({
     { icon: true, size: 'lg', class: 'size-10 px-0' },
     // weak tone
     { tone: 'weak', variant: 'solid', class: 'bg-accent-weak text-on-accent-weak' },
-    { tone: 'weak', variant: 'solid-elevated', class: 'bg-accent-weak text-on-accent-weak' },
+    { tone: 'weak', variant: 'elevated', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'outline', class: 'inset-ring-accent-weak text-accent-weak' },
     { tone: 'weak', variant: 'ghost', class: 'text-accent-weak' },
     // contrast tone
     { tone: 'contrast', variant: 'solid', class: 'bg-accent-contrast text-on-accent-contrast' },
     {
       tone: 'contrast',
-      variant: 'solid-elevated',
+      variant: 'elevated',
       class: 'bg-accent-contrast text-on-accent-contrast',
     },
     {
@@ -115,19 +122,26 @@ export function Toggle({
   });
 
   const Comp = asChild ? Slot : 'button';
+
   return (
     <SizeContext.Provider value={size}>
       <Comp
         type="button"
         aria-pressed={state.toggled}
         disabled={disabled}
-        className={toggle({ variant, tone, size, icon, className })}
-        style={mergeObjects(color ? colorVars(color) : undefined, style)}
+        className={toggle({
+          variant,
+          tone,
+          size,
+          icon,
+          className: resolveRenderProp(className, state),
+        })}
+        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
         {...props}
         {...dataProps}
         {...handlers}
       >
-        {children}
+        {resolveRenderProp(children, state)}
         <StateMask />
       </Comp>
     </SizeContext.Provider>
@@ -135,16 +149,20 @@ export function Toggle({
 }
 
 export namespace Toggle {
+  export type State = ReturnType<typeof useToggle>['state'];
+
   export interface Props
     extends
-      Omit<ComponentProps<'button'>, 'color'>,
+      Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
       Omit<VariantProps<typeof toggle>, 'size'>,
-      SlotProps,
+      SlotProps<State>,
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
     pressed?: boolean;
     defaultPressed?: boolean;
     onPressedChange?: (pressed: boolean) => void;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
   }
 }

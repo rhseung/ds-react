@@ -1,4 +1,5 @@
-import { VStack } from '@/common/components/primitive';
+import { VStack, Text } from '@/common/components/primitive';
+import { cn } from '@/common/utils';
 
 import { Divider } from '.';
 
@@ -39,6 +40,44 @@ export const Default: Story = {
         </div>
       ),
   ],
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — 호버 시 색상 강조
+        </Text>
+        <div className="w-64">
+          <Divider
+            className={(state) =>
+              cn('my-2 transition-colors', state.hovered ? 'bg-accent' : 'bg-neutral-border')
+            }
+          />
+        </div>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          style 함수 — 호버 시 두께 증가
+        </Text>
+        <div className="w-64">
+          <Divider
+            className="my-2 transition-all"
+            style={(state) => ({ height: state.hovered ? '2px' : undefined })}
+          />
+        </div>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 커스텀 엘리먼트에 Divider 스타일 적용
+        </Text>
+        <Divider asChild className="my-2">
+          <hr />
+        </Divider>
+      </VStack>
+    </VStack>
+  ),
 };
 
 export const Overview: Story = {

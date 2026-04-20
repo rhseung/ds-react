@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { Checkbox } from '.';
 
@@ -103,6 +104,36 @@ export const Sizes: Story = {
           <Checkbox size={size} indeterminate />
         </HStack>
       ))}
+    </VStack>
+  ),
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — 체크 시 ring 추가
+        </Text>
+        <Checkbox
+          defaultChecked
+          className={(state) => cn(state.checked && 'ring-accent ring-2 ring-offset-2')}
+        />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          style 함수 — 호버 시 scale 증가
+        </Text>
+        <Checkbox style={(state) => ({ transform: state.hovered ? 'scale(1.2)' : undefined })} />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 커스텀 래퍼 엘리먼트
+        </Text>
+        <Checkbox asChild defaultChecked>
+          <div className="border-neutral-border rounded-md border p-1" />
+        </Checkbox>
+      </VStack>
     </VStack>
   ),
 };

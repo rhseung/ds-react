@@ -1,10 +1,17 @@
-import { type ComponentProps, useEffect, useRef } from 'react';
+import { type CSSProperties, type ComponentProps, useEffect, useRef } from 'react';
 
 import { IconCheck, IconMinus } from '@tabler/icons-react';
 
-import { StateMask } from '@/common/components/utils';
-import { useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
+import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  type AccentProps,
+  type RenderProp,
+  colorVars,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
 import { useCheckbox } from './use-checkbox';
 
@@ -45,6 +52,8 @@ export function Checkbox({
   defaultChecked,
   onChange,
   indeterminate,
+  asChild = false,
+  children,
   ...inputProps
 }: Checkbox.Props) {
   const size = useComponentSize(localSize);
@@ -61,40 +70,54 @@ export function Checkbox({
     if (inputRef.current) inputRef.current.indeterminate = indeterminate ?? false;
   }, [indeterminate]);
 
+  const icon = state.indeterminate ? (
+    <IconMinus size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
+  ) : state.checked ? (
+    <IconCheck size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
+  ) : null;
+
+  const Comp = asChild ? Slot : 'span';
+
   return (
-    <span
-      className={checkboxBox({ size, className })}
-      style={mergeObjects(color ? colorVars(color) : undefined, style)}
-      {...dataProps}
-      {...handlers}
-    >
-      <input
-        ref={inputRef}
-        type="checkbox"
-        className="absolute inset-0 m-0 cursor-[inherit] opacity-0"
-        disabled={disabled}
-        checked={checked}
-        defaultChecked={defaultChecked}
-        onChange={handleChange}
-        {...inputProps}
-      />
-      {state.indeterminate ? (
-        <IconMinus size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
-      ) : state.checked ? (
-        <IconCheck size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
-      ) : null}
-      <StateMask />
-    </span>
+    <SizeContext.Provider value={size}>
+      <Comp
+        className={checkboxBox({ size, className: resolveRenderProp(className, state) })}
+        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
+        {...dataProps}
+        {...handlers}
+      >
+        {asChild ? children : null}
+        <input
+          ref={inputRef}
+          type="checkbox"
+          className="absolute inset-0 m-0 cursor-[inherit] opacity-0"
+          disabled={disabled}
+          checked={checked}
+          defaultChecked={defaultChecked}
+          onChange={handleChange}
+          {...inputProps}
+        />
+        {icon}
+        <StateMask />
+      </Comp>
+    </SizeContext.Provider>
   );
 }
 
 export namespace Checkbox {
+  export type State = ReturnType<typeof useCheckbox>['state'];
+
   export interface Props
-    extends Omit<ComponentProps<'input'>, 'color' | 'type' | 'size' | 'onChange'>, AccentProps {
+    extends
+      Omit<ComponentProps<'input'>, 'color' | 'type' | 'size' | 'onChange' | 'className' | 'style'>,
+      SlotProps,
+      AccentProps {
     size?: ComponentSize;
     checked?: boolean;
     defaultChecked?: boolean;
     onChange?: (checked: boolean) => void;
     indeterminate?: boolean;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
   }
 }

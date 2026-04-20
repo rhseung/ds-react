@@ -1,5 +1,6 @@
 import { Box, HStack, VStack, Text } from '@/common/components/primitive';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { Badge } from '.';
 
@@ -94,6 +95,52 @@ export const Sizes: Story = {
           </Badge>
         </HStack>
       ))}
+    </VStack>
+  ),
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — 호버 시 opacity 감소
+        </Text>
+        <HStack gap={2}>
+          <Badge tone="default" className={(state) => cn(state.hovered && 'opacity-60')}>
+            호버해보세요
+          </Badge>
+          <Badge variant="outline" tone="default" className={(state) => cn(state.hovered && 'opacity-60')}>
+            호버해보세요
+          </Badge>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          children 함수 — 호버 시 콘텐츠 분기
+        </Text>
+        <HStack gap={2}>
+          <Badge tone="default">
+            {(state) => (state.hovered ? '👀 보는 중' : 'Badge')}
+          </Badge>
+          <Badge variant="outline" color="secondary" tone="default">
+            {(state) => (state.hovered ? '클릭 가능' : '태그')}
+          </Badge>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 링크·버튼 엘리먼트에 Badge 스타일 적용
+        </Text>
+        <HStack gap={2}>
+          <Badge asChild tone="default">
+            <a href="#">링크 Badge</a>
+          </Badge>
+          <Badge asChild variant="outline" tone="default">
+            <button type="button">버튼 Badge</button>
+          </Badge>
+        </HStack>
+      </VStack>
     </VStack>
   ),
 };

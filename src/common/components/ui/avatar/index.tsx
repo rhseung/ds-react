@@ -1,7 +1,10 @@
-import { type ComponentProps } from 'react';
+import { type CSSProperties, type ComponentProps } from 'react';
 
-import { useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import { Slot, type SlotProps } from '@/common/components/utils';
+import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import { type AccentProps, type RenderProp, colorVars, mergeObjects, resolveRenderProp, tv } from '@/common/utils';
+
+import { useAvatar } from './use-avatar';
 
 const avatar = tv({
   base: 'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold',
@@ -32,11 +35,46 @@ export function Avatar({
   color,
   className,
   style,
+  asChild = false,
+  children,
+  disabled,
+  onPointerEnter,
+  onPointerLeave,
+  onPointerDown,
+  onPointerUp,
+  onPointerCancel,
+  onFocus,
+  onBlur,
+  onKeyDown,
+  onKeyUp,
   ...props
 }: Avatar.Props) {
   const size = useComponentSize(localSize);
-  const cls = avatar({ size, tone, className });
-  const styles = mergeObjects(color ? colorVars(color) : undefined, style);
+  const { state, handlers, dataProps } = useAvatar({
+    disabled,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+    onPointerUp,
+    onPointerCancel,
+    onFocus,
+    onBlur,
+    onKeyDown,
+    onKeyUp,
+  });
+  const cls = avatar({ size, tone, className: resolveRenderProp(className, state) });
+  const styles = mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state));
+
+  if (asChild) {
+    return (
+      <SizeContext.Provider value={size}>
+        <Slot className={cls} style={styles} {...props} {...dataProps} {...handlers}>
+          {resolveRenderProp(children, state)}
+        </Slot>
+      </SizeContext.Provider>
+    );
+  }
+
   const initials = name
     ? name
         .split(' ')
@@ -46,19 +84,31 @@ export function Avatar({
         .toUpperCase()
     : '?';
 
-  return src ? (
-    <img src={src} alt={alt ?? name ?? ''} className={cls} style={styles} {...props} />
-  ) : (
-    <span className={cls} style={styles} {...props}>
-      {initials}
-    </span>
+  return (
+    <SizeContext.Provider value={size}>
+      {src ? (
+        <img src={src} alt={alt ?? name ?? ''} className={cls} style={styles} {...props} {...dataProps} {...handlers} />
+      ) : (
+        <span className={cls} style={styles} {...props} {...dataProps} {...handlers}>
+          {initials}
+        </span>
+      )}
+    </SizeContext.Provider>
   );
 }
 
 export namespace Avatar {
-  export interface Props extends Omit<ComponentProps<'img'>, 'color'>, AccentProps {
+  export type State = ReturnType<typeof useAvatar>['state'];
+
+  export interface Props
+    extends Omit<ComponentProps<'img'>, 'color' | 'className' | 'style' | 'children'>,
+      SlotProps<State>,
+      AccentProps {
     size?: ComponentSize;
     tone?: 'default' | 'weak' | 'contrast';
     name?: string;
+    disabled?: boolean;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
   }
 }

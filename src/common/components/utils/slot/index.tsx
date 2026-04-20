@@ -5,26 +5,31 @@ import {
   isValidElement,
   type HTMLAttributes,
   type PropsWithChildren,
+  type ReactNode,
 } from 'react';
 
-import { mergeProps, mergeRefs } from '@/common/utils';
+import { type RenderProp, mergeChildren, mergeProps, mergeRefs } from '@/common/utils';
 
-export interface SlotProps {
-  asChild?: boolean;
-}
+export type SlotProps<S = void> = [S] extends [void]
+  ? { asChild?: boolean; children?: ReactNode }
+  : { asChild?: boolean; children?: RenderProp<S, ReactNode> };
 
 export const Slot = forwardRef<HTMLElement, PropsWithChildren<HTMLAttributes<HTMLElement>>>(
   ({ children, ...props }, ref) => {
-    const child = Children.only(children);
-    if (!isValidElement(child)) {
-      throw new Error(`Slot child must be a valid React element, but got: ${child}`);
+    const childArray = Children.toArray(children);
+    const [rootElement, ...siblings] = childArray;
+
+    if (!isValidElement<{ children?: ReactNode }>(rootElement)) {
+      throw new Error(`Slot's first child must be a valid React element, but got: ${rootElement}`);
     }
 
-    const merged = mergeProps(child.props, props);
+    const merged = mergeProps(rootElement.props, props);
     const mergedRef = mergeRefs(merged.ref, ref);
-    return cloneElement(child, {
+
+    return cloneElement(rootElement, {
       ...merged,
       ref: mergedRef,
+      children: mergeChildren(rootElement.props.children, ...siblings),
     });
   },
 );

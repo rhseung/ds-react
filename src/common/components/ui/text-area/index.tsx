@@ -1,10 +1,8 @@
 import {
-  Children,
   type CSSProperties,
   type ComponentProps,
-  type PropsWithChildren,
+  type ReactNode,
   createContext,
-  isValidElement,
   useContext,
   useRef,
 } from 'react';
@@ -12,15 +10,25 @@ import {
 import { type VariantProps } from 'tailwind-variants';
 
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import {
+  type AccentProps,
+  type RenderProp,
+  colorVars,
+  containsType,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
-type InnerContextValue = Omit<ComponentProps<'textarea'>, 'className' | 'style'> & {
+import { useTextArea } from './use-text-area';
+
+type InputContextValue = Omit<ComponentProps<'textarea'>, 'className' | 'style' | 'children'> & {
   autoResize?: boolean;
 };
 
-const InnerContext = createContext<InnerContextValue>({});
+const InputContext = createContext<InputContextValue>({});
 
-const textAreaInner = tv({
+const textAreaInput = tv({
   base: 'placeholder:text-neutral-text-weak selection:bg-accent/30 h-full w-full flex-1 resize-none bg-transparent outline-none disabled:cursor-not-allowed disabled:opacity-50',
   variants: {
     size: {
@@ -106,42 +114,64 @@ export function TextArea({
   style,
   resize = 'vertical',
   autoResize = false,
-  children = <TextArea.Inner />,
+  children = <TextArea.Input />,
+  disabled,
+  value,
+  defaultValue,
+  onChange,
   ...inputProps
 }: TextArea.Props) {
   const size = useComponentSize(sizeProp);
+  const { state, handlers, inputHandlers, dataProps } = useTextArea({
+    disabled,
+    value,
+    defaultValue,
+    onChange,
+  });
 
-  const hasInner = Children.toArray(children).some(
-    (child) => isValidElement(child) && child.type === TextArea.Inner,
-  );
+  const resolvedChildren = resolveRenderProp(children, state);
 
-  if (!hasInner) throw new Error('TextArea: children must include <TextArea.Inner />');
+  if (!containsType(resolvedChildren, TextArea.Input))
+    throw new Error('TextArea: children must include <TextArea.Input />');
 
   return (
     <SizeContext.Provider value={size}>
-      <InnerContext.Provider value={{ ...inputProps, autoResize }}>
+      <InputContext.Provider
+        value={{ ...inputProps, disabled, value, autoResize, ...inputHandlers }}
+      >
         <div
-          className={textArea({ variant, tone, size, className })}
+          className={textArea({
+            variant,
+            tone,
+            size,
+            className: resolveRenderProp(className, state),
+          })}
           style={mergeObjects(
             color ? colorVars(color) : undefined,
             { resize: autoResize ? 'none' : resize },
-            style,
+            resolveRenderProp(style, state),
           )}
+          {...dataProps}
+          {...handlers}
         >
-          {children}
+          {resolvedChildren}
         </div>
-      </InnerContext.Provider>
+      </InputContext.Provider>
     </SizeContext.Provider>
   );
 }
 
 export namespace TextArea {
-  export function Inner({ className }: Inner.Props) {
-    const { autoResize, rows = 3, onInput, ...ctx } = useContext(InnerContext);
+  export type State = ReturnType<typeof useTextArea>['state'];
+
+  export function Input({ className }: Input.Props) {
+    const { autoResize, rows = 3, onInput, ...ctx } = useContext(InputContext);
     const size = useContext(SizeContext);
     const ref = useRef<HTMLTextAreaElement>(null);
 
-    const handleInput = (e: React.InputEvent<HTMLTextAreaElement>) => {
+    const handleInput: NonNullable<React.TextareaHTMLAttributes<HTMLTextAreaElement>['onInput']> = (
+      e,
+    ) => {
       if (autoResize && ref.current) {
         ref.current.style.height = 'auto';
         ref.current.style.height = `${ref.current.scrollHeight}px`;
@@ -154,22 +184,29 @@ export namespace TextArea {
         ref={ref}
         rows={rows}
         onInput={handleInput}
-        className={textAreaInner({ size, className })}
+        className={textAreaInput({ size, className })}
         {...ctx}
       />
     );
   }
 
-  export namespace Inner {
+  export namespace Input {
     export type Props = { className?: string };
   }
 
-  export interface Props extends PropsWithChildren<
-    Omit<VariantProps<typeof textArea>, 'size'> & AccentProps & InnerContextValue
-  > {
+  export interface Props
+    extends
+      Omit<InputContextValue, 'autoResize' | 'color' | 'value' | 'defaultValue' | 'onChange'>,
+      Omit<VariantProps<typeof textArea>, 'size'>,
+      AccentProps {
     size?: ComponentSize;
-    className?: string;
-    style?: CSSProperties;
+    autoResize?: boolean;
     resize?: CSSProperties['resize'];
+    value?: string;
+    defaultValue?: string;
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
+    children?: RenderProp<State, ReactNode>;
   }
 }

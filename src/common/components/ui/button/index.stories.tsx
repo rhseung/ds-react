@@ -5,6 +5,7 @@ import { Badge } from '@/common/components/ui/badge';
 import { Spinner } from '@/common/components/ui/spinner';
 import { TextField } from '@/common/components/ui/text-field';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { Button } from '.';
 
@@ -17,7 +18,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['solid', 'solid-elevated', 'outline', 'ghost'],
+      options: ['solid', 'elevated', 'outline', 'ghost'],
     },
     tone: {
       control: 'radio',
@@ -90,7 +91,7 @@ export const Loading: Story = {
   ),
 };
 
-const VARIANTS = ['solid', 'solid-elevated', 'outline', 'ghost'] as const;
+const VARIANTS = ['solid', 'elevated', 'outline', 'ghost'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
 const SIZES = ['sm', 'md', 'lg'] as const;
@@ -184,6 +185,72 @@ export const ContextPropagation: Story = {
           </SizeContext.Provider>
         </VStack>
       ))}
+    </VStack>
+  ),
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — 호버 시 ring 추가
+        </Text>
+        <HStack gap={2}>
+          <Button
+            variant="outline"
+            tone="default"
+            className={(state) => cn(state.hovered && 'ring-2 ring-offset-2')}
+          >
+            호버해보세요
+          </Button>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          style 함수 — 포커스 시 letter-spacing 증가
+        </Text>
+        <HStack gap={2}>
+          <Button
+            variant="ghost"
+            tone="default"
+            style={(state) => ({ letterSpacing: state.focused ? '0.1em' : undefined })}
+          >
+            포커스해보세요 (Tab)
+          </Button>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          children 함수 — 상태에 따라 콘텐츠 분기
+        </Text>
+        <HStack gap={2}>
+          <Button variant="outline" tone="default">
+            {(state) => (state.active ? '누르는 중...' : state.hovered ? '클릭하세요' : '버튼')}
+          </Button>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild + render children — 링크에 IDS 스타일 + 상태 접근
+        </Text>
+        <HStack gap={2}>
+          <Button asChild variant="ghost" tone="default">
+            {(state) => (
+              <a href="#" style={{ textDecoration: state.hovered ? 'underline' : 'none' }}>
+                상태 기반 링크
+              </a>
+            )}
+          </Button>
+          <Button asChild variant="outline" tone="default">
+            {(state) => (
+              <a href="#" className={cn(state.focused && 'ring-2 ring-offset-2')}>
+                포커스 링 링크
+              </a>
+            )}
+          </Button>
+        </HStack>
+      </VStack>
     </VStack>
   ),
 };

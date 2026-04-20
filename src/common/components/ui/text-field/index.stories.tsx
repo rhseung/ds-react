@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { TextField } from '.';
 
@@ -131,7 +132,7 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
         placeholder="검색하세요"
       >
         <IconSearch size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
         {query && (
           <button type="button" onClick={() => setQuery('')} className={iconBtnClass}>
             <IconX size={16} />
@@ -141,7 +142,7 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
 
       <TextField variant={variant} tone="default" placeholder="필터 검색">
         <IconSearch size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
         <button type="button" className={iconBtnClass}>
           <IconFilter size={16} />
         </button>
@@ -152,12 +153,12 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
 
       <TextField variant={variant} tone="default" placeholder="example@email.com">
         <IconAt size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="도메인 입력">
         <span className="text-neutral-text-weak shrink-0 text-sm">https://</span>
-        <TextField.Inner />
+        <TextField.Input />
         <IconLink size={16} className={iconClass} />
       </TextField>
 
@@ -168,7 +169,7 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
         placeholder="비밀번호"
       >
         <IconLock size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
         <button type="button" onClick={() => setVisible((v) => !v)} className={iconBtnClass}>
           {visible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
         </button>
@@ -176,22 +177,22 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
 
       <TextField variant={variant} tone="default" placeholder="0" type="number">
         <IconCurrencyWon size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
         <span className="text-neutral-text-weak shrink-0 text-sm">원</span>
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="0" type="number">
-        <TextField.Inner />
+        <TextField.Input />
         <span className="text-neutral-text-weak shrink-0 text-sm">kg</span>
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="태그명">
         <IconHash size={16} className={iconClass} />
-        <TextField.Inner />
+        <TextField.Input />
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="YYYY-MM-DD">
-        <TextField.Inner />
+        <TextField.Input />
         <IconCalendar size={16} className={iconClass} />
       </TextField>
     </VStack>
@@ -236,7 +237,7 @@ export const FormBinding: Story = {
             placeholder="입력하세요"
             tone="default"
           >
-            <TextField.Inner />
+            <TextField.Input />
             <span className="text-neutral-text-weak shrink-0 text-xs">{value.length}</span>
           </TextField>
         </VStack>
@@ -303,6 +304,74 @@ export const WithReactHookForm: Story = {
   },
 };
 
+export const StateDriven: Story = {
+  render: () => {
+    const [query, setQuery] = useState('');
+
+    return (
+      <VStack gap={4} className="w-80">
+        <VStack gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            className 함수 — focused 시 shadow 추가
+          </Text>
+          <TextField
+            placeholder="포커스해보세요"
+            tone="default"
+            className={(state) => cn(state.focused && 'shadow-md')}
+          />
+        </VStack>
+        <VStack gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            children 함수 — filled 시 clear 버튼 노출
+          </Text>
+          <TextField
+            placeholder="입력하면 X 버튼이 나타납니다"
+            tone="default"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          >
+            {(state) => (
+              <>
+                <IconSearch size={14} className="text-neutral-text-weak shrink-0" />
+                <TextField.Input />
+                {state.filled && (
+                  <button
+                    type="button"
+                    className="text-neutral-text-weak hover:text-neutral-text shrink-0 transition-colors"
+                    onClick={() => setQuery('')}
+                  >
+                    <IconX size={14} />
+                  </button>
+                )}
+              </>
+            )}
+          </TextField>
+        </VStack>
+        <VStack gap={1}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            children 함수 — filled 여부에 따라 suffix 색상 변경
+          </Text>
+          <TextField placeholder="금액 입력" tone="default" type="number">
+            {(state) => (
+              <>
+                <TextField.Input />
+                <span
+                  className={cn(
+                    'shrink-0 text-sm transition-colors',
+                    state.filled ? 'text-accent font-semibold' : 'text-neutral-text-weak',
+                  )}
+                >
+                  원
+                </span>
+              </>
+            )}
+          </TextField>
+        </VStack>
+      </VStack>
+    );
+  },
+};
+
 export const ContextPropagation: Story = {
   render: () => (
     <VStack gap={4} className="w-72">
@@ -315,7 +384,7 @@ export const ContextPropagation: Story = {
             {/* 컨텍스트 상속 */}
             <TextField placeholder="상속" tone="default">
               <IconSearch size={16} className="text-neutral-text-weak shrink-0" />
-              <TextField.Inner />
+              <TextField.Input />
             </TextField>
             {/* 명시값이 컨텍스트보다 우선, 자식에게도 명시값을 전파 */}
             <TextField

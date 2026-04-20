@@ -1,10 +1,17 @@
-import { type ComponentProps } from 'react';
+import { type CSSProperties, type ComponentProps } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, colorVars, mergeObjects, tv } from '@/common/utils';
+import {
+  type AccentProps,
+  type RenderProp,
+  colorVars,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
 import { useButton } from './use-button';
 
@@ -27,7 +34,7 @@ const button = tv({
     },
     variant: {
       solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
-      'solid-elevated':
+      'elevated':
         'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled shadow-bevel data-active:translate-y-px data-active:shadow-bevel-active data-active:scale-100',
       outline:
         'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:inset-ring-neutral-border data-disabled:bg-transparent',
@@ -46,14 +53,14 @@ const button = tv({
     { icon: true, size: 'lg', class: 'size-10 px-0' },
     // weak tone
     { tone: 'weak', variant: 'solid', class: 'bg-accent-weak text-on-accent-weak' },
-    { tone: 'weak', variant: 'solid-elevated', class: 'bg-accent-weak text-on-accent-weak' },
+    { tone: 'weak', variant: 'elevated', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'outline', class: 'inset-ring-accent-weak text-accent-weak' },
     { tone: 'weak', variant: 'ghost', class: 'text-accent-weak' },
     // contrast tone
     { tone: 'contrast', variant: 'solid', class: 'bg-accent-contrast text-on-accent-contrast' },
     {
       tone: 'contrast',
-      variant: 'solid-elevated',
+      variant: 'elevated',
       class: 'bg-accent-contrast text-on-accent-contrast',
     },
     {
@@ -81,7 +88,6 @@ export function Button({
   style,
   children,
   disabled,
-  onClick,
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
@@ -94,9 +100,8 @@ export function Button({
   ...props
 }: Button.Props) {
   const size = useComponentSize(localSize);
-  const { handlers, dataProps } = useButton({
+  const { state, handlers, dataProps } = useButton({
     disabled,
-    onClick,
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -114,13 +119,19 @@ export function Button({
     <SizeContext.Provider value={size}>
       <Comp
         disabled={disabled}
-        className={button({ variant, tone, size, icon, className })}
-        style={mergeObjects(color ? colorVars(color) : undefined, style)}
+        className={button({
+          variant,
+          tone,
+          size,
+          icon,
+          className: resolveRenderProp(className, state),
+        })}
+        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
         {...props}
         {...dataProps}
         {...handlers}
       >
-        {children}
+        {resolveRenderProp(children, state)}
         <StateMask />
       </Comp>
     </SizeContext.Provider>
@@ -128,13 +139,17 @@ export function Button({
 }
 
 export namespace Button {
+  export type State = ReturnType<typeof useButton>['state'];
+
   export interface Props
     extends
-      Omit<ComponentProps<'button'>, 'color'>,
+      Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
       Omit<VariantProps<typeof button>, 'size'>,
-      SlotProps,
+      SlotProps<State>,
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
   }
 }

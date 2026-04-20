@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import {
   IconArrowUp,
+  IconCheck,
   IconAt,
   IconBlockquote,
   IconBold,
@@ -29,6 +30,7 @@ import { HStack, VStack, Spacer, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
 import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
+import { cn } from '@/common/utils';
 
 import { Button } from '../button';
 import { Divider } from '../divider';
@@ -108,7 +110,7 @@ export const WithSlots: Story = {
               </Badge>
             </HStack>
             <Divider />
-            <TextArea.Inner />
+            <TextArea.Input />
             <Divider />
             <HStack gap={2} className="items-center px-2.5 py-1.5">
               <span className="text-neutral-text-weak text-xs">Line 1, Column 1</span>
@@ -132,7 +134,7 @@ export const WithSlots: Story = {
             autoResize
             rows={1}
           >
-            <TextArea.Inner />
+            <TextArea.Input />
             <HStack gap={1} className="items-center px-2 py-1.5">
               <Toggle
                 size="sm"
@@ -272,7 +274,7 @@ export const WithSlots: Story = {
               </Button>
             </HStack>
             <Divider />
-            <TextArea.Inner />
+            <TextArea.Input />
           </TextArea>
         </VStack>
 
@@ -304,7 +306,7 @@ export const WithSlots: Story = {
               </Badge>
             </HStack>
             <Divider />
-            <TextArea.Inner />
+            <TextArea.Input />
             <Divider />
             <HStack gap={1} className="items-center px-2 py-1.5">
               <span className="text-neutral-text-weak text-xs">
@@ -341,7 +343,7 @@ export const WithSlots: Story = {
               ))}
             </HStack>
             <Divider />
-            <TextArea.Inner />
+            <TextArea.Input />
           </TextArea>
         </VStack>
 
@@ -357,7 +359,7 @@ export const WithSlots: Story = {
             maxLength={max}
             rows={3}
           >
-            <TextArea.Inner />
+            <TextArea.Input />
             <Divider />
             <HStack gap={2} className="items-center px-2.5 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="이미지 첨부">
@@ -401,7 +403,7 @@ export const WithSlots: Story = {
                 Add context
               </button>
             </HStack>
-            <TextArea.Inner />
+            <TextArea.Input />
             <Divider />
             <HStack gap={2} className="items-center px-2 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="첨부">
@@ -440,7 +442,7 @@ export const WithSlots: Story = {
             autoResize
             rows={2}
           >
-            <TextArea.Inner />
+            <TextArea.Input />
             <HStack gap={2} className="items-center px-2 py-1.5">
               <Button
                 size="sm"
@@ -473,6 +475,67 @@ export const WithSlots: Story = {
       </VStack>
     );
   },
+};
+
+export const StateDriven: Story = {
+  render: () => (
+    <VStack gap={4} className="w-96">
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          className 함수 — focused 시 shadow 추가
+        </Text>
+        <TextArea
+          placeholder="포커스해보세요"
+          rows={3}
+          className={(state) => cn(state.focused && 'shadow-md')}
+        />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          children 함수 — filled 시 전송 버튼 활성화
+        </Text>
+        <TextArea placeholder="내용을 입력하면 전송 버튼이 활성화됩니다" autoResize rows={2}>
+          {(state) => (
+            <>
+              <TextArea.Input />
+              <Divider />
+              <HStack gap={2} className="items-center px-2.5 py-1.5">
+                <Spacer />
+                <Button
+                  size="sm"
+                  variant="solid"
+                  tone="default"
+                  disabled={!state.filled}
+                  aria-label="전송"
+                >
+                  <IconArrowUp size={14} />
+                  전송
+                </Button>
+              </HStack>
+            </>
+          )}
+        </TextArea>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          children 함수 — filled 시 완료 아이콘 표시
+        </Text>
+        <TextArea placeholder="입력 완료 시 체크 아이콘이 나타납니다" rows={3}>
+          {(state) => (
+            <>
+              <TextArea.Input />
+              {state.filled && (
+                <HStack gap={1} className="text-accent items-center px-2.5 py-1 text-xs">
+                  <IconCheck size={12} />
+                  <span>입력 완료</span>
+                </HStack>
+              )}
+            </>
+          )}
+        </TextArea>
+      </VStack>
+    </VStack>
+  ),
 };
 
 export const Overview: Story = {

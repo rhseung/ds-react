@@ -1,21 +1,30 @@
 import {
-  Children,
   type CSSProperties,
   type ComponentProps,
-  type PropsWithChildren,
+  type ReactNode,
   createContext,
-  isValidElement,
   useContext,
 } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, cn, colorVars, mergeObjects, tv } from '@/common/utils';
+import {
+  type AccentProps,
+  type RenderProp,
+  cn,
+  colorVars,
+  containsType,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
-type InnerContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 'style'>;
+import { useTextField } from './use-text-field';
 
-const InnerContext = createContext<InnerContextValue>({});
+type InputContextValue = Omit<ComponentProps<'input'>, 'size' | 'className' | 'style' | 'children'>;
+
+const InputContext = createContext<InputContextValue>({});
 
 const textField = tv({
   base: 'flex w-full items-center text-neutral-text transition-colors',
@@ -88,34 +97,55 @@ export function TextField({
   color,
   className,
   style,
-  children = <TextField.Inner />,
+  children = <TextField.Input />,
+  disabled,
+  value,
+  defaultValue,
+  onChange,
   ...inputProps
 }: TextField.Props) {
   const size = useComponentSize(localSize);
+  const { state, handlers, inputHandlers, dataProps } = useTextField({
+    disabled,
+    value,
+    defaultValue,
+    onChange,
+  });
 
-  const hasInner = Children.toArray(children).some(
-    (child) => isValidElement(child) && child.type === TextField.Inner,
-  );
+  const resolvedChildren = resolveRenderProp(children, state);
 
-  if (!hasInner) throw new Error('TextField: children must include <TextField.Inner />');
+  if (!containsType(resolvedChildren, TextField.Input))
+    throw new Error('TextField: children must include <TextField.Input />');
 
   return (
     <SizeContext.Provider value={size}>
-      <InnerContext.Provider value={inputProps}>
+      <InputContext.Provider value={{ ...inputProps, disabled, value, ...inputHandlers }}>
         <div
-          className={textField({ variant, tone, size, className })}
-          style={mergeObjects(color ? colorVars(color) : undefined, style)}
+          className={textField({
+            variant,
+            tone,
+            size,
+            className: resolveRenderProp(className, state),
+          })}
+          style={mergeObjects(
+            color ? colorVars(color) : undefined,
+            resolveRenderProp(style, state),
+          )}
+          {...dataProps}
+          {...handlers}
         >
-          {children}
+          {resolvedChildren}
         </div>
-      </InnerContext.Provider>
+      </InputContext.Provider>
     </SizeContext.Provider>
   );
 }
 
 export namespace TextField {
-  export function Inner({ className }: Inner.Props) {
-    const ctx = useContext(InnerContext);
+  export type State = ReturnType<typeof useTextField>['state'];
+
+  export function Input({ className }: Input.Props) {
+    const ctx = useContext(InputContext);
 
     return (
       <input
@@ -128,15 +158,20 @@ export namespace TextField {
     );
   }
 
-  export namespace Inner {
+  export namespace Input {
     export type Props = { className?: string };
   }
 
-  export interface Props extends PropsWithChildren<
-    Omit<VariantProps<typeof textField>, 'size'> & AccentProps & InnerContextValue
-  > {
+  export interface Props
+    extends Omit<InputContextValue, 'color' | 'value' | 'defaultValue' | 'onChange'>,
+      Omit<VariantProps<typeof textField>, 'size'>,
+      AccentProps {
     size?: ComponentSize;
-    className?: string;
-    style?: CSSProperties;
+    value?: string;
+    defaultValue?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
+    children?: RenderProp<State, ReactNode>;
   }
 }

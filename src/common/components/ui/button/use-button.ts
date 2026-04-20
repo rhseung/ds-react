@@ -1,17 +1,13 @@
-import type { MouseEvent } from 'react';
-
 import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
 
-type UseButtonOptions = UseInteractionOptions<HTMLButtonElement> & {
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-};
+type UseButtonOptions = UseInteractionOptions<HTMLButtonElement>;
 
-export function useButton({ disabled, onClick, ...eventHandlers }: UseButtonOptions = {}) {
+export function useButton({ disabled, ...eventHandlers }: UseButtonOptions = {}) {
   const { state, handlers } = useInteraction({ disabled, ...eventHandlers });
 
   return {
     state,
-    handlers: { ...handlers, onClick },
+    handlers,
     dataProps: interactionDataProps(state),
   };
 }

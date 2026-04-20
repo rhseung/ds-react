@@ -152,7 +152,7 @@ export const Palette: StoryObj = {
 
           {/* Buttons — all variants × all tones */}
           <div className="flex flex-wrap items-center gap-2">
-            {(['solid', 'solid-elevated', 'outline', 'ghost'] as const).map((variant) =>
+            {(['solid', 'elevated', 'outline', 'ghost'] as const).map((variant) =>
               TONES.map((tone) => (
                 <Button key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
                   {variant}
@@ -170,7 +170,7 @@ export const Palette: StoryObj = {
                 </Badge>
               )),
             )}
-            {(['sm', 'md', 'lg', 'xl'] as const).map((size) =>
+            {(['sm', 'md', 'lg'] as const).map((size) =>
               TONES.map((tone) => (
                 <Avatar
                   key={`${size}-${tone}`}
