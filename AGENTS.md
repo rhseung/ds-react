@@ -102,6 +102,25 @@ Do **not** put components that use `@/features/*`, `useTranslation`, or feature 
 - Use `PropsWithChildren` instead of declaring `children?: ReactNode` directly.
 - When extending `ComponentProps<'button'>` (or any HTML element) alongside `AccentProps`, the `color` field conflicts — resolve with `Omit<ComponentProps<'button'>, 'color'>`.
 
+#### `{Component}.State` type
+
+Every interactive component must export a `State` type under its namespace. Derive it from the hook's return type — do **not** redeclare the same fields manually.
+
+```ts
+// use-button.ts — single source of truth
+export function useButton(...) {
+  return { state, handlers, dataProps };
+}
+
+// button/index.tsx
+export namespace Button {
+  export interface Props { ... }
+  export type State = ReturnType<typeof useButton>['state']; // ✅ derived, never duplicated
+}
+```
+
+This avoids the `Button.State` type diverging from the actual runtime state shape.
+
 ```tsx
 // ✅
 export namespace Button {
@@ -121,6 +140,28 @@ export namespace Button {
   export type Props = ComponentProps<'button'> & AccentProps & { size?: ComponentSize };
 }
 ```
+
+### Hook-based Compound Components with Metadata
+
+For components where items carry metadata (label, disabled, etc.), pass item definitions as an array to the hook instead of using a generic type parameter alone. The hook infers the value union from the array and makes metadata available via context.
+
+```tsx
+// ✅ values + metadata 함께 전달 — value 유니온 자동 추론
+const tabs = useTabs([
+  { value: 'info',    label: '정보' },
+  { value: 'review',  label: '리뷰', disabled: true },
+] as const);
+
+<tabs.Root>
+  <tabs.List />          {/* label을 context에서 자동으로 렌더 */}
+  <tabs.Panel value="info">...</tabs.Panel>
+  <tabs.Panel value="review">...</tabs.Panel>  {/* ❌ 'xyz' → 컴파일 오류 */}
+</tabs.Root>
+```
+
+The `as const` ensures the value union (`'info' | 'review'`) is inferred at the call site, making incorrect `value` props a compile error. Metadata (label, disabled) is passed to internal components via context — sub-components do not receive it as direct props.
+
+---
 
 ### Compound Components
 
@@ -169,8 +210,7 @@ return <Comp {...props}>{children}</Comp>;
 
 - All UI components support a `size?: ComponentSize` prop (`'sm' | 'md' | 'lg'`).
 - Call `useComponentSize(localSize)` to resolve the effective size: explicit prop wins over inherited context.
-- Any component that has both a `size` prop and renders `children` **must** wrap its output with `<SizeContext.Provider value={size}>`.
-- Components that only consume size (no children) — e.g. Spinner, Avatar — only call `useComponentSize`, no Provider needed.
+- **All** UI components with a `size` prop **must** wrap their output with `<SizeContext.Provider value={size}>`, even leaf components like Spinner or Avatar. This is required because `asChild` may cause any component to render children.
 - Button height scale (reference for all components): `sm` = h-8, `md` = h-9, `lg` = h-10.
 
 ```tsx
@@ -294,6 +334,28 @@ New design tokens belong in `src/styles/` CSS files, not inline in components. A
 - `tone`: `'default' | 'weak' | 'contrast'` — emphasis level.
 - When `color` is provided, inject CSS variables with `colorVars(color)`.
 - In Tailwind classes, always use semantic accent tokens (`bg-accent`, `text-on-accent`, `inset-ring-accent`, etc.), never hard-coded color values like `bg-blue-500`.
+
+### Icon System
+
+- All icon components must be created with `createIcon`. Always wrap library icons (e.g. lucide-react) — never use them directly.
+- Never define `ICON_SIZE` objects inside components. Icon size is resolved automatically via `SizeContext`.
+- Icon files live in `src/common/components/ui/icon/icons/<name>.tsx`.
+- Variant names follow the visual descriptor convention: `outline` (default), `filled`, `duo`. Using an undefined variant is a compile error.
+
+```tsx
+// ✅
+export const SearchIcon = createIcon({
+  outline: (props) => <Search {...props} />,
+  filled:  (props) => <SearchFilled {...props} />,
+});
+
+<SearchIcon />
+<SearchIcon variant="filled" />
+
+// ❌
+const ICON_SIZE = { sm: 16, md: 20, lg: 24 };
+<SearchIcon size={ICON_SIZE[size]} />
+```
 
 ### Component Folder & Storybook
 

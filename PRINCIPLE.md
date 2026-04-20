@@ -32,7 +32,7 @@ IDS는 단순한 컴포넌트 모음이 아닌, **선언적인 UI 문법(Declara
 
 ## 2. 구조적 Children (Structural Children over Prop-Dumping)
 
-`leading`, `trailing` 같은 명시적 key 없이, **children의 선언 순서와 sentinel 컴포넌트의 위치**만으로 구조를 선언합니다. IDS가 children을 순회하여 sentinel을 pivot으로 삼아 영역을 자동 분류합니다.
+`leading`, `trailing` 같은 명시적 key 없이, **children의 선언 순서**만으로 구조를 선언합니다. `TextField.Inner`가 pivot 역할을 하며, 그 앞뒤에 자유롭게 슬롯을 배치합니다. 내부는 flex 레이아웃으로 시각적 순서를 그대로 반영합니다.
 
 ### 기존 방식의 문제
 
@@ -60,20 +60,13 @@ IDS는 단순한 컴포넌트 모음이 아닌, **선언적인 UI 문법(Declara
 ```typescript
 // ✅ 권장: 선언 순서 = 시각적 순서
 <TextField placeholder="검색어를 입력하세요">
-  <SearchIcon />                {/* → leading 자동 분류  */}
-  <TextField.Inner />           {/* ← pivot: input 위치  */}
-  <ClearIcon onClick={clear} /> {/* → trailing 자동 분류 */}
+  <SearchIcon />                {/* pivot 앞 → leading 영역  */}
+  <TextField.Inner />           {/* ← pivot: input 위치     */}
+  <ClearIcon onClick={clear} /> {/* pivot 뒤 → trailing 영역 */}
 </TextField>
-
-/**
- * TextField 내부에서 React.Children 순회:
- * - TextField.Inner 이전 → leading 영역
- * - TextField.Inner 자체 → 실제 input 렌더링 (pivot)
- * - TextField.Inner 이후 → trailing 영역
- */
 ```
 
-개발자는 `leading`/`trailing` 같은 API를 전혀 몰라도 됩니다. 시각적 순서대로 나열하면 IDS가 의미를 추론합니다.
+개발자는 `leading`/`trailing` 같은 API를 전혀 몰라도 됩니다. 시각적 순서대로 나열하면 됩니다.
 
 ---
 
@@ -96,6 +89,27 @@ IDS는 단순한 컴포넌트 모음이 아닌, **선언적인 UI 문법(Declara
 ```
 
 전파는 **단방향**입니다. 자식이 부모의 값을 변경하지 않으며, 명시적 override만 허용됩니다.
+
+### 아이콘과 크기 전파
+
+아이콘은 크기를 스스로 알지 못합니다. `createIcon`으로 만들어진 아이콘 컴포넌트는 `SizeContext`를 자동으로 소비하며, 개발자는 크기를 직접 계산하거나 전달하지 않습니다.
+
+```typescript
+// ✅ 아이콘은 부모의 size를 Context로 자동 감지
+<Button size="lg">
+  <SearchIcon />            {/* 24px 자동 적용 */}
+  <SearchIcon variant="filled" />  {/* variant로 시각적 강조를 표현 */}
+  검색
+</Button>
+
+// ❌ 크기를 직접 계산 — 시스템의 책임을 침범
+<Button size="lg">
+  <SearchIcon size={24} />
+  검색
+</Button>
+```
+
+아이콘 variant(`outline`, `filled`, `duo` 등)는 **시각적 강조 수준**을 표현합니다. 어떤 variant가 존재하는지는 `createIcon` 정의 시 결정되며, 정의되지 않은 variant를 사용하면 컴파일 에러가 납니다.
 
 ---
 
@@ -144,19 +158,19 @@ const { open } = useOverlay()
 </div>
 
 // ✅ 권장: 레이아웃 의도가 구조에 드러남
-<Flex.Column gap={4}>
-  <Flex.Row gap={2}>
+<VStack gap={4}>
+  <HStack gap={2}>
     <Avatar />
-    <Flex.Column gap={1}>
+    <VStack gap={1}>
       <Text>홍길동</Text>
       <Text>개발자</Text>
-    </Flex.Column>
-  </Flex.Row>
+    </VStack>
+  </HStack>
   <Button>프로필 보기</Button>
-</Flex.Column>
+</VStack>
 ```
 
-제공되는 레이아웃 프리미티브: `Box`, `Flex.Row`, `Flex.Column`, `Flex.Spacer`, `Grid`, `Group`.
+제공되는 레이아웃 프리미티브: `Box`, `HStack`, `VStack`, `Spacer`, `Grid`, `Group`.
 
 ---
 
@@ -513,7 +527,7 @@ type Responsive<T> =
 
 모든 상태성 컴포넌트는 대응하는 `use[Component]` 훅을 공개합니다. 훅은 세 레이어로 구성되며, 필요한 레이어까지만 소비합니다.
 
-```
+```text
 use[Component]()
 ├── 인터랙션 레이어   pressed / focused / hovered / handlers
 ├── 시스템 레이어     size / intent / disabled (전파된 값 포함)
