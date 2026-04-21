@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Label, Text, VStack } from '@/common/components/primitive';
 import { Checkbox } from '@/common/components/ui/checkbox';
 
-import { useCheckboxGroup } from '.';
+import { CheckboxGroup } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -21,19 +21,20 @@ const FRUITS = Object.keys(FRUIT_LABELS) as Fruit[];
 
 export const Default: Story = {
   render: () => {
-    const checkbox = useCheckboxGroup<Fruit>();
     const [values, setValues] = useState<Fruit[]>(['banana']);
 
     return (
       <VStack gap={2}>
-        <checkbox.Group value={values} onChange={setValues}>
-          {FRUITS.map((fruit) => (
-            <Label key={fruit} className="flex items-center gap-2">
-              <checkbox.Item value={fruit} />
-              {FRUIT_LABELS[fruit]}
-            </Label>
-          ))}
-        </checkbox.Group>
+        <CheckboxGroup<Fruit> value={values} onChange={setValues}>
+          {({ Item }) =>
+            FRUITS.map((fruit) => (
+              <Label key={fruit} className="flex items-center gap-2">
+                <Item value={fruit} />
+                {FRUIT_LABELS[fruit]}
+              </Label>
+            ))
+          }
+        </CheckboxGroup>
         <Text size="xs" color="neutral-text-weak">
           선택됨: {values.join(', ') || '없음'}
         </Text>
@@ -44,25 +45,28 @@ export const Default: Story = {
 
 export const WithAll: Story = {
   render: () => {
-    const checkbox = useCheckboxGroup<Fruit>();
     const [values, setValues] = useState<Fruit[]>([]);
 
     return (
       <VStack gap={2}>
-        <checkbox.Group value={values} onChange={setValues}>
-          <Label className="flex items-center gap-2 font-semibold">
-            <checkbox.All />
-            전체 선택
-          </Label>
-          <VStack gap={2} className="pl-6">
-            {FRUITS.map((fruit) => (
-              <Label key={fruit} className="flex items-center gap-2">
-                <checkbox.Item value={fruit} />
-                {FRUIT_LABELS[fruit]}
+        <CheckboxGroup<Fruit> value={values} onChange={setValues}>
+          {({ Item, All }) => (
+            <>
+              <Label className="flex items-center gap-2 font-semibold">
+                <All />
+                전체 선택
               </Label>
-            ))}
-          </VStack>
-        </checkbox.Group>
+              <VStack gap={2} className="pl-6">
+                {FRUITS.map((fruit) => (
+                  <Label key={fruit} className="flex items-center gap-2">
+                    <Item value={fruit} />
+                    {FRUIT_LABELS[fruit]}
+                  </Label>
+                ))}
+              </VStack>
+            </>
+          )}
+        </CheckboxGroup>
         <Text size="xs" color="neutral-text-weak">
           선택됨: {values.join(', ') || '없음'}
         </Text>
@@ -72,51 +76,52 @@ export const WithAll: Story = {
 };
 
 export const Uncontrolled: Story = {
-  render: () => {
-    const checkbox = useCheckboxGroup<Fruit>();
-
-    return (
-      <checkbox.Group defaultValue={['apple']}>
-        {FRUITS.map((fruit) => (
+  render: () => (
+    <CheckboxGroup<Fruit> defaultValue={['apple']}>
+      {({ Item }) =>
+        FRUITS.map((fruit) => (
           <Label key={fruit} className="flex items-center gap-2">
-            <checkbox.Item value={fruit} />
+            <Item value={fruit} />
             {FRUIT_LABELS[fruit]}
           </Label>
-        ))}
-      </checkbox.Group>
-    );
-  },
+        ))
+      }
+    </CheckboxGroup>
+  ),
 };
 
 export const WithCustomIndicator: Story = {
   render: () => {
-    const checkbox = useCheckboxGroup<Fruit>();
     const [values, setValues] = useState<Fruit[]>(['banana']);
 
     return (
       <VStack gap={2}>
-        <checkbox.Group value={values} onChange={setValues}>
-          <Label className="flex items-center gap-2 font-semibold">
-            <checkbox.All>
-              <Checkbox.Indicator asChild>
-                <span style={{ fontSize: 10 }}>★</span>
-              </Checkbox.Indicator>
-            </checkbox.All>
-            전체 선택
-          </Label>
-          <VStack gap={2} className="pl-6">
-            {FRUITS.map((fruit) => (
-              <Label key={fruit} className="flex items-center gap-2">
-                <checkbox.Item value={fruit}>
+        <CheckboxGroup<Fruit> value={values} onChange={setValues}>
+          {({ Item, All }) => (
+            <>
+              <Label className="flex items-center gap-2 font-semibold">
+                <All>
                   <Checkbox.Indicator asChild>
                     <span style={{ fontSize: 10 }}>★</span>
                   </Checkbox.Indicator>
-                </checkbox.Item>
-                {FRUIT_LABELS[fruit]}
+                </All>
+                전체 선택
               </Label>
-            ))}
-          </VStack>
-        </checkbox.Group>
+              <VStack gap={2} className="pl-6">
+                {FRUITS.map((fruit) => (
+                  <Label key={fruit} className="flex items-center gap-2">
+                    <Item value={fruit}>
+                      <Checkbox.Indicator asChild>
+                        <span style={{ fontSize: 10 }}>★</span>
+                      </Checkbox.Indicator>
+                    </Item>
+                    {FRUIT_LABELS[fruit]}
+                  </Label>
+                ))}
+              </VStack>
+            </>
+          )}
+        </CheckboxGroup>
         <Text size="xs" color="neutral-text-weak">
           선택됨: {values.join(', ') || '없음'}
         </Text>
@@ -126,22 +131,19 @@ export const WithCustomIndicator: Story = {
 };
 
 export const TypeSafety: Story = {
-  render: () => {
-    const checkbox = useCheckboxGroup<Fruit>();
-
-    return (
-      <VStack gap={2}>
-        <Text size="xs" color="neutral-text-weak">
-          value=&quot;mango&quot;는 Fruit가 아니므로 컴파일 에러 발생 (타입 안전성 확인용)
-        </Text>
-        <checkbox.Group>
+  render: () => (
+    <VStack gap={2}>
+      <Text size="xs" color="neutral-text-weak">
+        value=&quot;mango&quot;는 Fruit가 아니므로 컴파일 에러 발생 (타입 안전성 확인용)
+      </Text>
+      <CheckboxGroup<Fruit>>
+        {({ Item }) => (
           <Label className="flex items-center gap-2">
-            <checkbox.Item value="apple" />
+            <Item value="apple" />
             사과
           </Label>
-          {/* <checkbox.Item value="mango" /> */}
-        </checkbox.Group>
-      </VStack>
-    );
-  },
+        )}
+      </CheckboxGroup>
+    </VStack>
+  ),
 };
