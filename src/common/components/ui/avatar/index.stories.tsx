@@ -48,6 +48,50 @@ export const Fallback: Story = {
   },
 };
 
+export const ImageAndFallback: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          이미지 로드 성공 — Fallback 숨김
+        </Text>
+        <Avatar src="https://i.pravatar.cc/150?img=3" name="Hong Gildong" />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          이미지 로드 실패 — Fallback(이니셜) 표시
+        </Text>
+        <Avatar src="https://invalid.example.com/photo.jpg" name="Hong Gildong" />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          src 없음 — Fallback(이니셜) 표시
+        </Text>
+        <Avatar name="Hong Gildong" />
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          Avatar.Fallback asChild — 커스텀 fallback 엘리먼트
+        </Text>
+        <HStack gap={2} className="items-center">
+          <Avatar src="https://invalid.example.com/photo.jpg" name="Hong Gildong">
+            <Avatar.Image />
+            <Avatar.Fallback asChild>
+              <span style={{ fontSize: 16 }}>👤</span>
+            </Avatar.Fallback>
+          </Avatar>
+          <Avatar name="Kim AI">
+            <Avatar.Image />
+            <Avatar.Fallback>
+              <span style={{ fontSize: 16 }}>🤖</span>
+            </Avatar.Fallback>
+          </Avatar>
+        </HStack>
+      </VStack>
+    </VStack>
+  ),
+};
+
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
 const SIZES = ['sm', 'md', 'lg'] as const;
@@ -116,16 +160,20 @@ export const StateDriven: Story = {
       </VStack>
       <VStack gap={1}>
         <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          asChild — 링크·버튼 엘리먼트에 Avatar 스타일 적용
+          children 함수 — 호버 시 이니셜 강조
         </Text>
-        <HStack gap={2} className="items-center">
-          <Avatar asChild tone="default">
-            <a href="#">HG</a>
-          </Avatar>
-          <Avatar asChild size="lg" tone="weak">
-            <button type="button">AB</button>
-          </Avatar>
-        </HStack>
+        <Avatar name="홍길동" tone="default" className="cursor-pointer">
+          {(state) =>
+            state.hovered ? (
+              <span style={{ fontSize: 12, fontWeight: 700 }}>HG</span>
+            ) : (
+              <>
+                <Avatar.Image />
+                <Avatar.Fallback />
+              </>
+            )
+          }
+        </Avatar>
       </VStack>
     </VStack>
   ),

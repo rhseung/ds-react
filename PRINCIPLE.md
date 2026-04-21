@@ -243,23 +243,41 @@ import { Button } from 'some-other-lib'
 export function Button(props: Button.Props) { ... }
 
 export namespace Button {
-  export type Props = {
-    size?:     'sm' | 'md' | 'lg'
-    intent?:   'primary' | 'danger' | 'ghost'
+  export type State = { hovered: boolean; focused: boolean; pressed: boolean }
+  export interface Props {
+    size?:    'sm' | 'md' | 'lg'
     disabled?: boolean
     asChild?:  boolean
-  }
-  export type State = {
-    pressed: boolean
-    focused: boolean
-    hovered: boolean
   }
 }
 ```
 
+서브컴포넌트가 있는 경우, 서브컴포넌트 함수와 그 `Props` 타입을 **모두 namespace 안에서 직접 선언**합니다. 별도 함수를 최상단에 정의한 뒤 `Namespace.Sub = Fn`으로 할당하는 방식은 사용하지 않습니다.
+
+```typescript
+export namespace Checkbox {
+  export type State = ReturnType<typeof useCheckbox>['state']
+
+  // 서브컴포넌트 구현을 namespace 안에서 직접 선언
+  export function Indicator({ asChild, children }: Indicator.Props) { ... }
+
+  // 중첩 namespace로 Checkbox.Indicator.Props 접근 가능
+  export namespace Indicator {
+    export interface Props {
+      asChild?: boolean
+      children?: ReactNode
+    }
+  }
+
+  export interface Props { ... }
+}
+```
+
+이 패턴은 루트 컴포넌트가 `Checkbox.Props`를 노출하는 것과 동일한 방식으로 서브컴포넌트의 타입을 `Checkbox.Indicator.Props`로 노출합니다. 트리 쉐이킹도 가능하며, IDE 자동완성에서 컴포넌트·서브컴포넌트·타입이 한 네임스페이스 아래 일관되게 탐색됩니다.
+
 ---
 
-## 8. 다형성 표준 (Polymorphism: asChild)
+## 8. 다형성 표준 (Polymorphism: asChild + Render Children)
 
 타입 안전성을 저해하고 prop 충돌을 일으키는 `as` 속성 대신, **`asChild`** 패턴을 사용합니다. 자식 엘리먼트가 렌더링 대상이 되고, IDS 컴포넌트의 스타일과 동작이 그 위에 합성됩니다.
 
@@ -277,6 +295,54 @@ export namespace Button {
   <Link href="/docs">문서 읽기</Link>
 </Button>
 ```
+
+### Render Children — 상태 기반 합성
+
+`asChild`가 엘리먼트 교체를 위한 패턴이라면, **render children**은 컴포넌트의 런타임 상태를 소비하기 위한 패턴입니다. `className`, `style`, `children`은 정적 값 대신 상태를 인자로 받는 함수를 허용합니다.
+
+```typescript
+// className — 상태에 따라 동적으로 클래스 지정
+<Button className={(state) => cn('base', state.hovered && 'ring-2')}>
+  확인
+</Button>
+
+// children — 상태에 따라 콘텐츠 분기
+<Toggle>
+  {(state) => state.toggled ? '켜짐' : '꺼짐'}
+</Toggle>
+
+// asChild + render children 동시 사용 가능
+// children 함수가 먼저 실행되어 ReactNode를 반환하고, Slot이 그 결과에 props를 합성함
+<Button asChild>
+  {(state) => <a className={state.focused ? 'ring' : ''}>링크</a>}
+</Button>
+```
+
+이 패턴은 외부 상태를 추가하거나 조건부 렌더링 로직을 컴포넌트 밖으로 꺼내지 않아도 됩니다. 컴포넌트가 이미 알고 있는 상태를 소비하는 것이기 때문에 시스템의 책임 범위 안에 있습니다.
+
+### asChild 적용 단위 — 영역별 서브컴포넌트 분리
+
+단일 엘리먼트를 렌더링하는 컴포넌트(Button, Badge 등)는 루트에 `asChild`를 적용해도 교체 대상이 명확합니다.
+
+반면, **시각적·의미적으로 구분되는 복수의 영역**을 렌더링하는 컴포넌트에서 루트에만 `asChild`를 두면 "무엇을 교체하는가"가 모호해집니다. 예를 들어 Checkbox는 wrapper(상호작용 영역), hidden `<input>`(폼 제출), indicator(체크 아이콘)로 구성됩니다. 이 상태에서 루트 `asChild`를 적용하면 내부 구조 전체가 통째로 사용자 엘리먼트의 children이 되어 교체 범위가 불명확합니다.
+
+이 경우 각 영역을 **서브컴포넌트**로 분리하고, 서브컴포넌트 각각에 `asChild`를 적용합니다. 이는 [Base UI의 Checkbox](https://base-ui.com/react/components/checkbox)가 `Checkbox.Root` + `Checkbox.Indicator`로 나누는 이유와 같습니다.
+
+```tsx
+// ❌ 모호: wrapper를 교체하면 input과 indicator가 div의 children이 됨
+<Checkbox asChild defaultChecked>
+  <div />
+</Checkbox>
+
+// ✅ 명확: indicator만 교체
+<Checkbox defaultChecked>
+  <Checkbox.Indicator asChild>
+    <MyStarIcon />
+  </Checkbox.Indicator>
+</Checkbox>
+```
+
+이 원칙은 Switch(`Switch.Thumb`), Slider(`Slider.Track`, `Slider.Thumb`) 등 앞으로 추가될 복합 인터랙티브 컴포넌트에도 동일하게 적용됩니다.
 
 ---
 

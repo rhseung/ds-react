@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Label, Text, VStack } from '@/common/components/primitive';
+import { Checkbox } from '@/common/components/ui/checkbox';
 
 import { useCheckboxGroup } from '.';
 
@@ -83,6 +84,43 @@ export const Uncontrolled: Story = {
           </Label>
         ))}
       </checkbox.Group>
+    );
+  },
+};
+
+export const WithCustomIndicator: Story = {
+  render: () => {
+    const checkbox = useCheckboxGroup<Fruit>();
+    const [values, setValues] = useState<Fruit[]>(['banana']);
+
+    return (
+      <VStack gap={2}>
+        <checkbox.Group value={values} onChange={setValues}>
+          <Label className="flex items-center gap-2 font-semibold">
+            <checkbox.All>
+              <Checkbox.Indicator asChild>
+                <span style={{ fontSize: 10 }}>★</span>
+              </Checkbox.Indicator>
+            </checkbox.All>
+            전체 선택
+          </Label>
+          <VStack gap={2} className="pl-6">
+            {FRUITS.map((fruit) => (
+              <Label key={fruit} className="flex items-center gap-2">
+                <checkbox.Item value={fruit}>
+                  <Checkbox.Indicator asChild>
+                    <span style={{ fontSize: 10 }}>★</span>
+                  </Checkbox.Indicator>
+                </checkbox.Item>
+                {FRUIT_LABELS[fruit]}
+              </Label>
+            ))}
+          </VStack>
+        </checkbox.Group>
+        <Text size="xs" color="neutral-text-weak">
+          선택됨: {values.join(', ') || '없음'}
+        </Text>
+      </VStack>
     );
   },
 };

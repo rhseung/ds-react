@@ -1,9 +1,9 @@
 import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
 
-type UseAvatarOptions = UseInteractionOptions<HTMLImageElement>;
+type UseAvatarOptions = UseInteractionOptions<HTMLElement>;
 
 export function useAvatar({ disabled, ...eventHandlers }: UseAvatarOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLImageElement>({ disabled, ...eventHandlers });
+  const { state, handlers } = useInteraction<HTMLElement>({ disabled, ...eventHandlers });
 
   return {
     state,

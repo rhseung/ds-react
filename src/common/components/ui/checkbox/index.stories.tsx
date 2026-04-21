@@ -108,6 +108,69 @@ export const Sizes: Story = {
   ),
 };
 
+export const IndicatorAsChild: Story = {
+  render: () => (
+    <VStack gap={4}>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          기본 — 상태에 따라 아이콘 자동 전환
+        </Text>
+        <HStack gap={3} className="items-center">
+          <Checkbox />
+          <Checkbox defaultChecked />
+          <Checkbox indeterminate />
+          <Checkbox disabled />
+          <Checkbox disabled defaultChecked />
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 커스텀 엘리먼트로 아이콘 교체
+        </Text>
+        <HStack gap={3} className="items-center">
+          <Checkbox defaultChecked>
+            <Checkbox.Indicator asChild>
+              <span style={{ fontSize: 10 }}>★</span>
+            </Checkbox.Indicator>
+          </Checkbox>
+          <Checkbox indeterminate>
+            <Checkbox.Indicator asChild>
+              <span style={{ fontSize: 10 }}>–</span>
+            </Checkbox.Indicator>
+          </Checkbox>
+          <Checkbox>
+            <Checkbox.Indicator asChild>
+              <span style={{ fontSize: 10 }}>✓</span>
+            </Checkbox.Indicator>
+          </Checkbox>
+        </HStack>
+      </VStack>
+      <VStack gap={1}>
+        <Text size="xs" color="neutral-text-weak" className="font-semibold">
+          asChild — 크기별
+        </Text>
+        {SIZES.map((size) => (
+          <HStack key={size} gap={3} className="items-center">
+            <Text size="xs" color="neutral-text-weak" className="w-6 font-semibold">
+              {size}
+            </Text>
+            <Checkbox size={size} defaultChecked>
+              <Checkbox.Indicator asChild>
+                <span style={{ fontSize: size === 'sm' ? 8 : size === 'md' ? 10 : 12 }}>★</span>
+              </Checkbox.Indicator>
+            </Checkbox>
+            <Checkbox size={size} indeterminate>
+              <Checkbox.Indicator asChild>
+                <span style={{ fontSize: size === 'sm' ? 8 : size === 'md' ? 10 : 12 }}>–</span>
+              </Checkbox.Indicator>
+            </Checkbox>
+          </HStack>
+        ))}
+      </VStack>
+    </VStack>
+  ),
+};
+
 export const StateDriven: Story = {
   render: () => (
     <VStack gap={4}>
@@ -128,11 +191,20 @@ export const StateDriven: Story = {
       </VStack>
       <VStack gap={1}>
         <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          asChild — 커스텀 래퍼 엘리먼트
+          Indicator asChild — 커스텀 아이콘 교체
         </Text>
-        <Checkbox asChild defaultChecked>
-          <div className="border-neutral-border rounded-md border p-1" />
-        </Checkbox>
+        <HStack gap={2} className="items-center">
+          <Checkbox defaultChecked>
+            <Checkbox.Indicator asChild>
+              <span style={{ fontSize: 10 }}>★</span>
+            </Checkbox.Indicator>
+          </Checkbox>
+          <Checkbox indeterminate>
+            <Checkbox.Indicator asChild>
+              <span style={{ fontSize: 10 }}>–</span>
+            </Checkbox.Indicator>
+          </Checkbox>
+        </HStack>
       </VStack>
     </VStack>
   ),

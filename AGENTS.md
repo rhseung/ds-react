@@ -99,12 +99,14 @@ Do **not** put components that use `@/features/*`, `useTranslation`, or feature 
 
 - Use namespace merging for component-related types such as props and state.
 - Props must be declared as `interface`, not `type` intersection.
-- Use `PropsWithChildren` instead of declaring `children?: ReactNode` directly.
 - When extending `ComponentProps<'button'>` (or any HTML element) alongside `AccentProps`, the `color` field conflicts — resolve with `Omit<ComponentProps<'button'>, 'color'>`.
+- Do **not** use `PropsWithChildren`. Declare `children` explicitly as `RenderProp<State, ReactNode>` so consumers can use render children.
 
 #### `{Component}.State` type
 
 Every interactive component must export a `State` type under its namespace. Derive it from the hook's return type — do **not** redeclare the same fields manually.
+
+**`State` must be declared before `Props` in the namespace**, because `Props` references `State` via `RenderProp`.
 
 ```ts
 // use-button.ts — single source of truth
@@ -114,8 +116,10 @@ export function useButton(...) {
 
 // button/index.tsx
 export namespace Button {
-  export interface Props { ... }
-  export type State = ReturnType<typeof useButton>['state']; // ✅ derived, never duplicated
+  export type State = ReturnType<typeof useButton>['state']; // ✅ declared first
+  export interface Props { // ✅ can now reference State
+    className?: RenderProp<State, string>;
+  }
 }
 ```
 
@@ -124,14 +128,18 @@ This avoids the `Button.State` type diverging from the actual runtime state shap
 ```tsx
 // ✅
 export namespace Button {
+  export type State = ReturnType<typeof useButton>['state'];
+
   export interface Props
     extends
-      Omit<ComponentProps<'button'>, 'color'>,
+      Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
       Omit<VariantProps<typeof button>, 'size'>,
-      SlotProps,
+      SlotProps<State>,    // children?: RenderProp<State, ReactNode> comes from here
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
+    className?: RenderProp<State, string>;
+    style?: RenderProp<State, CSSProperties>;
   }
 }
 
@@ -141,6 +149,39 @@ export namespace Button {
 }
 ```
 
+#### State-driven Props (`RenderProp`)
+
+`className`, `style`, `children` accept either a static value **or a function that receives the component's runtime state**. This allows consumers to customize appearance and content based on interaction state without needing external state management.
+
+```ts
+// src/common/utils/render.ts
+export type RenderProp<S, T> = T | ((state: S) => T);
+export function resolveRenderProp<S, T>(value: RenderProp<S, T>, state: S): T;
+```
+
+Usage rules:
+
+- Always `Omit<ComponentProps<'el'>, 'className' | 'style' | 'children'>` before redeclaring these with `RenderProp`.
+- Resolve all three with `resolveRenderProp(value, state)` inside the component before use.
+- Applies to all interactive components that have a `use[Component]` hook.
+
+```tsx
+// ✅ state-based className
+<Button className={(state) => cn('base', state.hovered && 'ring-2')}>
+  확인
+</Button>
+
+// ✅ state-based children (render children)
+<Toggle>
+  {(state) => state.toggled ? '켜짐' : '꺼짐'}
+</Toggle>
+
+// ✅ works with asChild — children function resolves first, then Slot merges props
+<Button asChild>
+  {(state) => <a className={state.focused ? 'focused' : ''}>링크</a>}
+</Button>
+```
+
 ### Hook-based Compound Components with Metadata
 
 For components where items carry metadata (label, disabled, etc.), pass item definitions as an array to the hook instead of using a generic type parameter alone. The hook infers the value union from the array and makes metadata available via context.
@@ -148,15 +189,15 @@ For components where items carry metadata (label, disabled, etc.), pass item def
 ```tsx
 // ✅ values + metadata 함께 전달 — value 유니온 자동 추론
 const tabs = useTabs([
-  { value: 'info',    label: '정보' },
-  { value: 'review',  label: '리뷰', disabled: true },
+  { value: 'info', label: '정보' },
+  { value: 'review', label: '리뷰', disabled: true },
 ] as const);
 
 <tabs.Root>
-  <tabs.List />          {/* label을 context에서 자동으로 렌더 */}
+  <tabs.List /> {/* label을 context에서 자동으로 렌더 */}
   <tabs.Panel value="info">...</tabs.Panel>
-  <tabs.Panel value="review">...</tabs.Panel>  {/* ❌ 'xyz' → 컴파일 오류 */}
-</tabs.Root>
+  <tabs.Panel value="review">...</tabs.Panel> {/* ❌ 'xyz' → 컴파일 오류 */}
+</tabs.Root>;
 ```
 
 The `as const` ensures the value union (`'info' | 'review'`) is inferred at the call site, making incorrect `value` props a compile error. Metadata (label, disabled) is passed to internal components via context — sub-components do not receive it as direct props.
@@ -171,31 +212,76 @@ The `as const` ensures the value union (`'info' | 'review'`) is inferred at the 
 ```tsx
 // ✅
 <TextField>
-  <TextField.Inner />
+  <TextField.Input />
 </TextField>
 
 // ❌
 <TextField.Root>
-  <TextField.Inner />
+  <TextField.Input />
 </TextField.Root>
 ```
 
 - Sub-components that need parent props receive them through an internal Context, not directly.
-- If a sub-component (e.g. `Inner`) must always be present, provide it as the default value of `children`.
+- **Always provide sub-components as the default value of `children`** so that basic usage requires no explicit sub-component declaration. Explicit children enable customization; the default keeps the simple case simple.
+
+#### Sub-component implementation pattern
+
+Sub-components are declared as functions **directly inside the namespace**, not as separate top-level functions assigned via `Namespace.Sub = Fn`. This enables tree-shaking and keeps the sub-component's `Props` type accessible as `Namespace.Sub.Props` via a nested namespace.
 
 ```tsx
-export function TextField({ children = <TextField.Inner />, ...inputProps }: Props) {
-  return (
-    <InnerContext.Provider value={inputProps}>
-      <div>{children}</div>
-    </InnerContext.Provider>
-  );
+// ✅ namespace 안에서 직접 선언 — Checkbox.Indicator.Props 접근 가능
+export namespace Checkbox {
+  export type State = ReturnType<typeof useCheckbox>['state'];
+
+  export function Indicator({ asChild = false, children }: Indicator.Props) {
+    const { state, size } = useCheckboxContext();
+    // ...
+  }
+
+  export namespace Indicator {
+    export interface Props {
+      asChild?: boolean;
+      children?: ReactNode;
+    }
+  }
+
+  export interface Props { ... }
 }
+
+// ❌ JS 프로퍼티 할당 — Props 타입을 Checkbox.Indicator.Props로 접근할 수 없음
+function CheckboxIndicator(props: CheckboxIndicatorProps) { ... }
+
+export namespace Checkbox {
+  export const Indicator = CheckboxIndicator; // ❌
+}
+```
+
+The nested `export namespace Indicator { export interface Props }` mirrors how the root namespace exposes `Checkbox.Props` — consistent IDE discoverability at every level.
+
+```tsx
+// Default children — basic usage requires no sub-component declaration
+export function Checkbox({ children = <Checkbox.Indicator />, ...props }: Props) { ... }
+export function Radio({ children = <Radio.Indicator />, ...props }: Props) { ... }
+export function Switch({ children = <Switch.Thumb />, ...props }: Props) { ... }
+export function TextField({ children = <TextField.Input />, ...inputProps }: Props) { ... }
+
+// Basic usage — sub-components rendered automatically
+<Checkbox defaultChecked />
+<Radio defaultChecked />
+<Switch defaultChecked />
+
+// Explicit usage — custom sub-component
+<Checkbox defaultChecked>
+  <Checkbox.Indicator asChild>
+    <MyStarIcon />
+  </Checkbox.Indicator>
+</Checkbox>
 ```
 
 ### `asChild` Pattern
 
-- To allow the rendered element to be swapped by the consumer, support an `asChild` prop using `Slot`.
+- **All UI components must support `asChild`** — this is a mandatory requirement. Exceptions: `TextField` and `TextArea` (compound components with `.Input` pivot structure incompatible with Slot).
+- Use `Slot` to swap the rendered element when `asChild=true`.
 
 ```tsx
 import { Slot, type SlotProps } from '@/common/components/utils';
@@ -204,7 +290,53 @@ const Comp = asChild ? Slot : 'button';
 return <Comp {...props}>{children}</Comp>;
 ```
 
-- Include `SlotProps` in the component's `Props` interface.
+- Always include `SlotProps<S>` in the component's `Props` interface — `S` is the state type for interactive components, omitted (`SlotProps`) for non-interactive ones.
+
+#### When to split into sub-components
+
+For components that render a single element (Button, Badge, Spinner), `asChild` on the root unambiguously replaces that element.
+
+When a component renders **multiple visually or semantically distinct areas**, putting `asChild` only on the root makes the replacement surface ambiguous. For example, Checkbox renders a `<span>` (wrapper) + `<input>` (hidden form element) + check icon (indicator). Replacing the root via `asChild` would merge the internal `<input>` and indicator into the user's element as children — the structure becomes unclear.
+
+In these cases, **expose each distinct area as a sub-component** with its own `asChild` surface.
+
+```tsx
+// ❌ Ambiguous: input and indicator become children of div
+<Checkbox asChild defaultChecked>
+  <div className="custom-box" />
+</Checkbox>
+
+// ✅ Clear: each area is independently replaceable
+<Checkbox defaultChecked>
+  <Checkbox.Indicator />           {/* default check icon */}
+</Checkbox>
+
+<Checkbox defaultChecked>
+  <Checkbox.Indicator asChild>
+    <MyStarIcon />                 {/* replace only the indicator */}
+  </Checkbox.Indicator>
+</Checkbox>
+```
+
+Components requiring this treatment and their planned sub-components:
+
+| Component                 | Root                         | Sub-components                                                                                                                                  |
+| ------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Checkbox`                | wrapper + hidden `<input>`   | `Checkbox.Indicator` (check / indeterminate icon)                                                                                               |
+| (planned) `Radio`         | wrapper + hidden `<input>`   | `Radio.Indicator` (selection dot)                                                                                                               |
+| (planned) `Switch`        | track wrapper                | `Switch.Thumb`                                                                                                                                  |
+| (planned) `Slider`        | track wrapper                | `Slider.Track`, `Slider.Thumb`                                                                                                                  |
+| (planned) `Progress`      | track wrapper                | `Progress.Indicator` (filled bar)                                                                                                               |
+| (planned) `NumberField`   | input + spinner buttons      | `NumberField.Increment`, `NumberField.Decrement`                                                                                                |
+| (planned) `TelField`      | input + country selector     | `TelField.CountrySelect` (flag + country code button)                                                                                           |
+| (planned) `Tag`           | label + remove button        | `Tag.CloseButton`                                                                                                                               |
+| (planned) `ScrollArea`    | scroll container + scrollbar | `ScrollArea.Scrollbar`                                                                                                                          |
+| (planned) `Calendar`      | header + day grid            | `Calendar.Header`, `Calendar.PrevButton`, `Calendar.NextButton`, `Calendar.Grid`, `Calendar.Day`                                                |
+| (planned) `DatePicker`    | trigger + floating panel     | `DatePicker.Trigger`, `DatePicker.Calendar`                                                                                                     |
+| (planned) `TimePicker`    | trigger + floating panel     | `TimePicker.Trigger`, `TimePicker.Column`                                                                                                       |
+| (planned) `ColorPicker`   | trigger + floating panel     | `ColorPicker.Trigger`, `ColorPicker.Saturation`, `ColorPicker.HueSlider`, `ColorPicker.AlphaSlider`, `ColorPicker.Input`, `ColorPicker.Swatch`  |
+
+> **Current status**: `Checkbox` is implemented with `Checkbox.Indicator` sub-component (namespace merging, `Checkbox.Indicator.Props` accessible). All entries marked "planned" have not yet been implemented.
 
 ### Size System
 

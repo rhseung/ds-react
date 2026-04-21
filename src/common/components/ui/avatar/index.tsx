@@ -1,8 +1,23 @@
-import { type CSSProperties, type ComponentProps } from 'react';
+import {
+  type CSSProperties,
+  type ComponentProps,
+  type ReactNode,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
 
 import { Slot, type SlotProps } from '@/common/components/utils';
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
-import { type AccentProps, type RenderProp, colorVars, mergeObjects, resolveRenderProp, tv } from '@/common/utils';
+import {
+  type AccentProps,
+  type RenderProp,
+  cn,
+  colorVars,
+  mergeObjects,
+  resolveRenderProp,
+  tv,
+} from '@/common/utils';
 
 import { useAvatar } from './use-avatar';
 
@@ -26,6 +41,27 @@ const avatar = tv({
   },
 });
 
+// ─── Context ─────────────────────────────────────────────────────────────────
+
+type ImageStatus = 'idle' | 'loaded' | 'error';
+
+interface AvatarContextValue {
+  src?: string;
+  alt?: string;
+  imageStatus: ImageStatus;
+  setImageStatus: (status: ImageStatus) => void;
+}
+
+const AvatarContext = createContext<AvatarContextValue | null>(null);
+
+function useAvatarContext() {
+  const ctx = useContext(AvatarContext);
+  if (!ctx) throw new Error('[IDS] Avatar.Image and Avatar.Fallback must be used inside <Avatar>');
+  return ctx;
+}
+
+// ─── Avatar ──────────────────────────────────────────────────────────────────
+
 export function Avatar({
   src,
   name,
@@ -35,7 +71,6 @@ export function Avatar({
   color,
   className,
   style,
-  asChild = false,
   children,
   disabled,
   onPointerEnter,
@@ -62,17 +97,12 @@ export function Avatar({
     onKeyDown,
     onKeyUp,
   });
-  const cls = avatar({ size, tone, className: resolveRenderProp(className, state) });
-  const styles = mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state));
 
-  if (asChild) {
-    return (
-      <SizeContext.Provider value={size}>
-        <Slot className={cls} style={styles} {...props} {...dataProps} {...handlers}>
-          {resolveRenderProp(children, state)}
-        </Slot>
-      </SizeContext.Provider>
-    );
+  const [prevSrc, setPrevSrc] = useState(src);
+  const [imageStatus, setImageStatus] = useState<ImageStatus>(src ? 'idle' : 'error');
+  if (prevSrc !== src) {
+    setPrevSrc(src);
+    setImageStatus(src ? 'idle' : 'error');
   }
 
   const initials = name
@@ -84,29 +114,86 @@ export function Avatar({
         .toUpperCase()
     : '?';
 
+  const defaultChildren = (
+    <>
+      <Avatar.Image />
+      <Avatar.Fallback>{initials}</Avatar.Fallback>
+    </>
+  );
+
+  const cls = avatar({ size, tone, className: resolveRenderProp(className, state) });
+  const styles = mergeObjects(
+    color ? colorVars(color) : undefined,
+    resolveRenderProp(style, state),
+  );
+
   return (
-    <SizeContext.Provider value={size}>
-      {src ? (
-        <img src={src} alt={alt ?? name ?? ''} className={cls} style={styles} {...props} {...dataProps} {...handlers} />
-      ) : (
+    <AvatarContext.Provider value={{ src, alt: alt ?? name ?? '', imageStatus, setImageStatus }}>
+      <SizeContext.Provider value={size}>
         <span className={cls} style={styles} {...props} {...dataProps} {...handlers}>
-          {initials}
+          {resolveRenderProp(children ?? defaultChildren, state)}
         </span>
-      )}
-    </SizeContext.Provider>
+      </SizeContext.Provider>
+    </AvatarContext.Provider>
   );
 }
+
+// ─── Namespace ────────────────────────────────────────────────────────────────
 
 export namespace Avatar {
   export type State = ReturnType<typeof useAvatar>['state'];
 
+  export function Image({ className }: Image.Props) {
+    const { src, alt, imageStatus, setImageStatus } = useAvatarContext();
+
+    if (!src || imageStatus === 'error') return null;
+
+    return (
+      <img
+        src={src}
+        alt={alt ?? ''}
+        className={cn('size-full object-cover', className)}
+        onLoad={() => setImageStatus('loaded')}
+        onError={() => setImageStatus('error')}
+      />
+    );
+  }
+
+  export namespace Image {
+    export interface Props {
+      className?: string;
+    }
+  }
+
+  export function Fallback({ asChild = false, children }: Fallback.Props) {
+    const { imageStatus } = useAvatarContext();
+    const size = useComponentSize();
+
+    if (imageStatus === 'loaded') return null;
+
+    if (asChild)
+      return (
+        <SizeContext.Provider value={size}>
+          <Slot>{children}</Slot>
+        </SizeContext.Provider>
+      );
+    return <SizeContext.Provider value={size}>{children}</SizeContext.Provider>;
+  }
+
+  export namespace Fallback {
+    export type Props = SlotProps;
+  }
+
   export interface Props
-    extends Omit<ComponentProps<'img'>, 'color' | 'className' | 'style' | 'children'>,
-      SlotProps<State>,
+    extends
+      Omit<ComponentProps<'span'>, 'color' | 'className' | 'style' | 'children'>,
       AccentProps {
+    children?: RenderProp<State, ReactNode>;
     size?: ComponentSize;
     tone?: 'default' | 'weak' | 'contrast';
+    src?: string;
     name?: string;
+    alt?: string;
     disabled?: boolean;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;

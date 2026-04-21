@@ -1,8 +1,16 @@
-import { type CSSProperties, type ComponentProps, useEffect, useRef } from 'react';
+import {
+  type CSSProperties,
+  type ComponentProps,
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 
 import { IconCheck, IconMinus } from '@tabler/icons-react';
 
-import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
+import { Slot, StateMask, type SlotProps } from '@/common/components/utils';
 import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
 import {
   type AccentProps,
@@ -42,6 +50,22 @@ const ICON_SIZE: Record<ComponentSize, number> = {
   lg: 13,
 };
 
+// ─── Context ─────────────────────────────────────────────────────────────────
+
+interface CheckboxContextValue {
+  state: Checkbox.State;
+}
+
+const CheckboxContext = createContext<CheckboxContextValue | null>(null);
+
+function useCheckboxContext() {
+  const ctx = useContext(CheckboxContext);
+  if (!ctx) throw new Error('[IDS] Checkbox.Indicator must be used inside <Checkbox>');
+  return ctx;
+}
+
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
+
 export function Checkbox({
   size: localSize,
   color,
@@ -52,8 +76,7 @@ export function Checkbox({
   defaultChecked,
   onChange,
   indeterminate,
-  asChild = false,
-  children,
+  children = <Checkbox.Indicator />,
   ...inputProps
 }: Checkbox.Props) {
   const size = useComponentSize(localSize);
@@ -70,53 +93,77 @@ export function Checkbox({
     if (inputRef.current) inputRef.current.indeterminate = indeterminate ?? false;
   }, [indeterminate]);
 
-  const icon = state.indeterminate ? (
-    <IconMinus size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
-  ) : state.checked ? (
-    <IconCheck size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
-  ) : null;
-
-  const Comp = asChild ? Slot : 'span';
-
   return (
-    <SizeContext.Provider value={size}>
-      <Comp
-        className={checkboxBox({ size, className: resolveRenderProp(className, state) })}
-        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
-        {...dataProps}
-        {...handlers}
-      >
-        {asChild ? children : null}
-        <input
-          ref={inputRef}
-          type="checkbox"
-          className="absolute inset-0 m-0 cursor-[inherit] opacity-0"
-          disabled={disabled}
-          checked={checked}
-          defaultChecked={defaultChecked}
-          onChange={handleChange}
-          {...inputProps}
-        />
-        {icon}
-        <StateMask />
-      </Comp>
-    </SizeContext.Provider>
+    <CheckboxContext.Provider value={{ state }}>
+      <SizeContext.Provider value={size}>
+        <span
+          className={checkboxBox({ size, className: resolveRenderProp(className, state) })}
+          style={mergeObjects(
+            color ? colorVars(color) : undefined,
+            resolveRenderProp(style, state),
+          )}
+          {...dataProps}
+          {...handlers}
+        >
+          <input
+            ref={inputRef}
+            type="checkbox"
+            className="absolute inset-0 m-0 cursor-[inherit] opacity-0"
+            disabled={disabled}
+            checked={checked}
+            defaultChecked={defaultChecked}
+            onChange={handleChange}
+            {...inputProps}
+          />
+          {children}
+          <StateMask />
+        </span>
+      </SizeContext.Provider>
+    </CheckboxContext.Provider>
   );
 }
+
+// ─── Namespace ────────────────────────────────────────────────────────────────
 
 export namespace Checkbox {
   export type State = ReturnType<typeof useCheckbox>['state'];
 
+  export function Indicator({ asChild = false, children }: Indicator.Props) {
+    const { state } = useCheckboxContext();
+    const size = useComponentSize();
+
+    const icon = state.indeterminate ? (
+      <IconMinus size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
+    ) : state.checked ? (
+      <IconCheck size={ICON_SIZE[size]} strokeWidth={3} aria-hidden />
+    ) : null;
+
+    if (asChild)
+      return (
+        <SizeContext.Provider value={size}>
+          <Slot>{children}</Slot>
+        </SizeContext.Provider>
+      );
+    return <SizeContext.Provider value={size}>{icon}</SizeContext.Provider>;
+  }
+
+  export namespace Indicator {
+    export type Props = SlotProps;
+  }
+
   export interface Props
     extends
-      Omit<ComponentProps<'input'>, 'color' | 'type' | 'size' | 'onChange' | 'className' | 'style'>,
-      SlotProps,
+      Omit<
+        ComponentProps<'input'>,
+        'color' | 'type' | 'size' | 'onChange' | 'className' | 'style' | 'children'
+      >,
       AccentProps {
     size?: ComponentSize;
     checked?: boolean;
     defaultChecked?: boolean;
     onChange?: (checked: boolean) => void;
     indeterminate?: boolean;
+    children?: ReactNode;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;
   }
