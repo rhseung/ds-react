@@ -45,9 +45,15 @@ export const StateDriven: Story = {
           className 함수 — 호버 시 색상 변경
         </Text>
         <HStack gap={4} className="items-center">
-          <Spinner className={(state) => cn(state.hovered ? 'text-primary' : 'text-neutral-text-weak')} />
-          <Spinner className={(state) => cn(state.hovered ? 'text-secondary' : 'text-neutral-text-weak')} />
-          <Spinner className={(state) => cn(state.hovered ? 'text-tertiary' : 'text-neutral-text-weak')} />
+          <Spinner
+            className={(state) => cn(state.hovered ? 'text-primary' : 'text-neutral-text-weak')}
+          />
+          <Spinner
+            className={(state) => cn(state.hovered ? 'text-secondary' : 'text-neutral-text-weak')}
+          />
+          <Spinner
+            className={(state) => cn(state.hovered ? 'text-tertiary' : 'text-neutral-text-weak')}
+          />
         </HStack>
       </VStack>
       <VStack gap={1}>

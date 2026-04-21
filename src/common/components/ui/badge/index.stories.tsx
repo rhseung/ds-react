@@ -110,7 +110,11 @@ export const StateDriven: Story = {
           <Badge tone="default" className={(state) => cn(state.hovered && 'opacity-60')}>
             호버해보세요
           </Badge>
-          <Badge variant="outline" tone="default" className={(state) => cn(state.hovered && 'opacity-60')}>
+          <Badge
+            variant="outline"
+            tone="default"
+            className={(state) => cn(state.hovered && 'opacity-60')}
+          >
             호버해보세요
           </Badge>
         </HStack>
@@ -120,9 +124,7 @@ export const StateDriven: Story = {
           children 함수 — 호버 시 콘텐츠 분기
         </Text>
         <HStack gap={2}>
-          <Badge tone="default">
-            {(state) => (state.hovered ? '👀 보는 중' : 'Badge')}
-          </Badge>
+          <Badge tone="default">{(state) => (state.hovered ? '👀 보는 중' : 'Badge')}</Badge>
           <Badge variant="outline" color="secondary" tone="default">
             {(state) => (state.hovered ? '클릭 가능' : '태그')}
           </Badge>

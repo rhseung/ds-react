@@ -134,7 +134,7 @@ export namespace Button {
     extends
       Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
       Omit<VariantProps<typeof button>, 'size'>,
-      SlotProps<State>,    // children?: RenderProp<State, ReactNode> comes from here
+      SlotProps<State>, // children?: RenderProp<State, ReactNode> comes from here
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
@@ -204,6 +204,32 @@ The `as const` ensures the value union (`'info' | 'review'`) is inferred at the 
 
 ---
 
+### Generic Compound Components (다중 선택 패턴)
+
+`CheckboxGroup`, `RadioGroup`, `Select` 등 **값(value)만 식별자로 가지는** 다중 선택 컴포넌트는 render-prop children을 사용한다. children을 함수로 선언하면 제네릭 `T`로 좁혀진 서브컴포넌트를 인자로 받을 수 있어, 잘못된 `value` 전달이 컴파일 오류가 된다.
+
+```tsx
+// ✅ render-prop children — value: T 외 전달 시 컴파일 오류
+<CheckboxGroup<Fruit> value={selected} onChange={setSelected}>
+  {({ Item, All }) => (
+    <>
+      <Item value="apple">사과</Item>    {/* value: Fruit ✅ */}
+      <Item value="xyz">X</Item>          {/* ❌ 'xyz' is not assignable to Fruit */}
+      <All>전체 선택</All>
+    </>
+  )}
+</CheckboxGroup>
+
+// ✅ 정적 children — 네임스페이스 서브컴포넌트 직접 사용 (타입 안전성 없음)
+<CheckboxGroup value={selected} onChange={setSelected}>
+  <CheckboxGroup.Item value="apple">사과</CheckboxGroup.Item>
+</CheckboxGroup>
+```
+
+children이 함수인 경우 `T`로 좁혀진 서브컴포넌트 객체(`{ Item, All }` 등)를 인자로 받는다. 정적 children은 `CheckboxGroup.Item` 등 네임스페이스 서브컴포넌트를 직접 사용하며 제네릭 제약이 없다.
+
+---
+
 ### Compound Components
 
 - Compound components expose sub-components via namespace, **not** via a `.Root` wrapper.
@@ -226,37 +252,40 @@ The `as const` ensures the value union (`'info' | 'review'`) is inferred at the 
 
 #### Sub-component implementation pattern
 
-Sub-components are declared as functions **directly inside the namespace**, not as separate top-level functions assigned via `Namespace.Sub = Fn`. This enables tree-shaking and keeps the sub-component's `Props` type accessible as `Namespace.Sub.Props` via a nested namespace.
+Sub-components are implemented in their own files (`{component}.{sub}.tsx`) and wired into the parent namespace via `const` assignment + a nested `namespace` block that re-exports the `Props` type. This keeps `Namespace.Sub.Props` accessible while splitting the implementation across files.
 
 ```tsx
-// ✅ namespace 안에서 직접 선언 — Checkbox.Indicator.Props 접근 가능
+// ✅ checkbox.indicator.tsx — 서브 컴포넌트 구현 파일
+export function CheckboxIndicator({ asChild = false, children }: CheckboxIndicator.Props) {
+  const { state } = useCheckboxContext();
+  // ...
+}
+
+export namespace CheckboxIndicator {
+  export type Props = SlotProps;
+}
+
+// ✅ checkbox.tsx — 메인 컴포넌트 파일에서 namespace로 연결
+import { CheckboxIndicator } from './checkbox.indicator';
+
 export namespace Checkbox {
   export type State = ReturnType<typeof useCheckbox>['state'];
 
-  export function Indicator({ asChild = false, children }: Indicator.Props) {
-    const { state, size } = useCheckboxContext();
-    // ...
-  }
-
+  export const Indicator = CheckboxIndicator;       // 컴포넌트 할당
   export namespace Indicator {
-    export interface Props {
-      asChild?: boolean;
-      children?: ReactNode;
-    }
+    export type Props = CheckboxIndicator.Props;    // Props re-export → Checkbox.Indicator.Props 유지
   }
 
   export interface Props { ... }
 }
 
-// ❌ JS 프로퍼티 할당 — Props 타입을 Checkbox.Indicator.Props로 접근할 수 없음
-function CheckboxIndicator(props: CheckboxIndicatorProps) { ... }
-
+// ❌ namespace re-export 없이 단순 할당 — Props 접근 불가
 export namespace Checkbox {
-  export const Indicator = CheckboxIndicator; // ❌
+  export const Indicator = CheckboxIndicator; // Checkbox.Indicator.Props 접근 불가
 }
 ```
 
-The nested `export namespace Indicator { export interface Props }` mirrors how the root namespace exposes `Checkbox.Props` — consistent IDE discoverability at every level.
+The nested `export namespace Indicator { export type Props = ... }` re-exports the type so `Checkbox.Indicator.Props` remains discoverable in the IDE — identical to the root `Checkbox.Props` pattern.
 
 ```tsx
 // Default children — basic usage requires no sub-component declaration
@@ -320,21 +349,21 @@ In these cases, **expose each distinct area as a sub-component** with its own `a
 
 Components requiring this treatment and their planned sub-components:
 
-| Component                 | Root                         | Sub-components                                                                                                                                  |
-| ------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Checkbox`                | wrapper + hidden `<input>`   | `Checkbox.Indicator` (check / indeterminate icon)                                                                                               |
-| (planned) `Radio`         | wrapper + hidden `<input>`   | `Radio.Indicator` (selection dot)                                                                                                               |
-| (planned) `Switch`        | track wrapper                | `Switch.Thumb`                                                                                                                                  |
-| (planned) `Slider`        | track wrapper                | `Slider.Track`, `Slider.Thumb`                                                                                                                  |
-| (planned) `Progress`      | track wrapper                | `Progress.Indicator` (filled bar)                                                                                                               |
-| (planned) `NumberField`   | input + spinner buttons      | `NumberField.Increment`, `NumberField.Decrement`                                                                                                |
-| (planned) `TelField`      | input + country selector     | `TelField.CountrySelect` (flag + country code button)                                                                                           |
-| (planned) `Tag`           | label + remove button        | `Tag.CloseButton`                                                                                                                               |
-| (planned) `ScrollArea`    | scroll container + scrollbar | `ScrollArea.Scrollbar`                                                                                                                          |
-| (planned) `Calendar`      | header + day grid            | `Calendar.Header`, `Calendar.PrevButton`, `Calendar.NextButton`, `Calendar.Grid`, `Calendar.Day`                                                |
-| (planned) `DatePicker`    | trigger + floating panel     | `DatePicker.Trigger`, `DatePicker.Calendar`                                                                                                     |
-| (planned) `TimePicker`    | trigger + floating panel     | `TimePicker.Trigger`, `TimePicker.Column`                                                                                                       |
-| (planned) `ColorPicker`   | trigger + floating panel     | `ColorPicker.Trigger`, `ColorPicker.Saturation`, `ColorPicker.HueSlider`, `ColorPicker.AlphaSlider`, `ColorPicker.Input`, `ColorPicker.Swatch`  |
+| Component               | Root                         | Sub-components                                                                                                                                 |
+| ----------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Checkbox`              | wrapper + hidden `<input>`   | `Checkbox.Indicator` (check / indeterminate icon)                                                                                              |
+| (planned) `Radio`       | wrapper + hidden `<input>`   | `Radio.Indicator` (selection dot)                                                                                                              |
+| (planned) `Switch`      | track wrapper                | `Switch.Thumb`                                                                                                                                 |
+| (planned) `Slider`      | track wrapper                | `Slider.Track`, `Slider.Thumb`                                                                                                                 |
+| (planned) `Progress`    | track wrapper                | `Progress.Indicator` (filled bar)                                                                                                              |
+| (planned) `NumberField` | input + spinner buttons      | `NumberField.Increment`, `NumberField.Decrement`                                                                                               |
+| (planned) `TelField`    | input + country selector     | `TelField.CountrySelect` (flag + country code button)                                                                                          |
+| (planned) `Tag`         | label + remove button        | `Tag.CloseButton`                                                                                                                              |
+| (planned) `ScrollArea`  | scroll container + scrollbar | `ScrollArea.Scrollbar`                                                                                                                         |
+| (planned) `Calendar`    | header + day grid            | `Calendar.Header`, `Calendar.PrevButton`, `Calendar.NextButton`, `Calendar.Grid`, `Calendar.Day`                                               |
+| (planned) `DatePicker`  | trigger + floating panel     | `DatePicker.Trigger`, `DatePicker.Calendar`                                                                                                    |
+| (planned) `TimePicker`  | trigger + floating panel     | `TimePicker.Trigger`, `TimePicker.Column`                                                                                                      |
+| (planned) `ColorPicker` | trigger + floating panel     | `ColorPicker.Trigger`, `ColorPicker.Saturation`, `ColorPicker.HueSlider`, `ColorPicker.AlphaSlider`, `ColorPicker.Input`, `ColorPicker.Swatch` |
 
 > **Current status**: `Checkbox` is implemented with `Checkbox.Indicator` sub-component (namespace merging, `Checkbox.Indicator.Props` accessible). All entries marked "planned" have not yet been implemented.
 
@@ -491,10 +520,36 @@ const ICON_SIZE = { sm: 16, md: 20, lg: 24 };
 
 ### Component Folder & Storybook
 
-- Each component lives in a **folder named after the component** (kebab-case).
-- **Implementation**: `index.tsx` inside that folder.
-- **Storybook**: `index.stories.tsx` in the same folder.
-- Component-specific hooks go in the same folder (`use-<component>.ts`).
+Each component lives in a **folder named after the component** (kebab-case). The folder is split into the following files:
+
+| File                    | Purpose                                                                        | Required                 |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------------ |
+| `index.tsx`             | Barrel — `export * from './{component}'` only                                  | Always                   |
+| `{component}.tsx`       | Main component function + `export namespace` (const assignments, State, Props) | Always                   |
+| `styles.ts`             | `tv()` variant definitions and any size/icon constant maps                     | Always                   |
+| `use-{component}.ts`    | Component hook returning `state`, `handlers`, `dataProps`                      | Always                   |
+| `context.ts`            | `createContext` + provider value type + `use{Component}Context` hook           | Compound components only |
+| `{component}.{sub}.tsx` | Sub-component implementation + its own `namespace {Sub} { Props }`             | Per sub-component        |
+| `index.stories.tsx`     | Storybook stories                                                              | Always                   |
+
+```text
+button/
+  index.tsx               # export * from './button'
+  button.tsx              # Button function + Button namespace
+  styles.ts               # button = tv({...})
+  use-button.ts           # useButton hook
+  index.stories.tsx
+
+checkbox/
+  index.tsx               # export * from './checkbox'
+  checkbox.tsx            # Checkbox function + Checkbox namespace (const Indicator = CheckboxIndicator)
+  styles.ts               # checkboxBox = tv({...}), CHECKBOX_ICON_SIZE
+  context.ts              # CheckboxContext, useCheckboxContext
+  checkbox.indicator.tsx  # CheckboxIndicator function + CheckboxIndicator.Props namespace
+  use-checkbox.ts         # useCheckbox hook
+  index.stories.tsx
+```
+
 - Story `title` uses a domain prefix for sidebar grouping:
   - `UI/` — `src/common/components/ui/` (e.g. `UI/Button`)
   - `<Feature>/` — `src/features/<feature>/views/components/` (e.g. `Notice/NoticeCard`)

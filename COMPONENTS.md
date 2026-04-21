@@ -601,58 +601,63 @@ Avatar를 겹쳐서 그룹 표시. 초과 시 `+N` 표시.
 
 ---
 
-### `useCheckboxGroup` ✅
+### `CheckboxGroup` ✅
 
-복수 선택 체크박스 그룹. `useRadioGroup`와 대칭되는 구조.
+복수 선택 체크박스 그룹. `RadioGroup`와 대칭되는 구조.
 
-- `useCheckboxGroup<T>()` — 타입 `T`로 스코프된 `{ Group, Item, All }` 반환
-- `Group`: `defaultValue?: T[]` / `value?: T[]` + `onChange?: (v: T[]) => void` (원칙 15)
-- `Item`: `value: T` — `T` 이외의 값은 컴파일 오류 (원칙 3). `Checkbox`와 동일한 구조 (`Item.Indicator` 포함)
-- `All` — 전체 선택 sentinel. 일부만 선택 시 `indeterminate` 자동 계산. (`All.Indicator` 포함)
+- `CheckboxGroup<T>` — 제네릭 compound component. children을 render-prop으로 선언하면 `T`로 좁혀진 서브컴포넌트를 받음
+- render-prop children: `{ Item, All }` — `Item.value`는 `T` 이외의 값을 허용하지 않음 (원칙 3)
+- `defaultValue?: T[]` / `value?: T[]` + `onChange?: (v: T[]) => void` (원칙 15)
+- `Item`: `Checkbox`와 동일한 구조 (`Item.Indicator` 포함)
+- `All` — 전체 선택 sentinel. 일부만 선택 시 `indeterminate` 자동 계산
 - `role="group"` 자동 (원칙 12)
 
 ```tsx
 type Fruit = 'apple' | 'banana' | 'cherry';
-const checkbox = useCheckboxGroup<Fruit>();
 
-// 기본 사용 — Indicator 자동 렌더
-<checkbox.Group defaultValue={['banana']} onChange={setValues}>
-  <HStack gap={2} className="items-center">
-    <checkbox.Item value="apple" id="apple" />
-    <Label htmlFor="apple">사과</Label>
-  </HStack>
-  <HStack gap={2} className="items-center">
-    <checkbox.Item value="mango" id="mango" />  {/* ❌ 'mango' is not assignable to Fruit */}
-    <Label htmlFor="mango">망고</Label>
-  </HStack>
-</checkbox.Group>
+// render-prop children — value: T 이외의 값은 컴파일 오류
+<CheckboxGroup<Fruit> defaultValue={['banana']} onChange={setValues}>
+  {({ Item, All }) => (
+    <>
+      <Label className="flex items-center gap-2">
+        <All />
+        전체 선택
+      </Label>
+      <VStack gap={2} className="pl-6">
+        <Label className="flex items-center gap-2">
+          <Item value="apple" />
+          사과
+        </Label>
+        <Label className="flex items-center gap-2">
+          <Item value="mango" />  {/* ❌ 'mango' is not assignable to Fruit */}
+          망고
+        </Label>
+      </VStack>
+    </>
+  )}
+</CheckboxGroup>
 
-// 전체 선택 포함
-<checkbox.Group defaultValue={[]} onChange={setValues}>
-  <HStack gap={2} className="items-center">
-    <checkbox.All id="all" />
-    <Label htmlFor="all">전체 선택</Label>
-  </HStack>
-  <VStack gap={2} className="pl-6">
-    <HStack gap={2} className="items-center">
-      <checkbox.Item value="apple" id="apple" />
-      <Label htmlFor="apple">사과</Label>
-    </HStack>
-    <HStack gap={2} className="items-center">
-      <checkbox.Item value="banana" id="banana" />
-      <Label htmlFor="banana">바나나</Label>
-    </HStack>
-  </VStack>
-</checkbox.Group>
+// 정적 children — 타입 안전성 없이 사용 가능
+<CheckboxGroup defaultValue={['banana']} onChange={setValues}>
+  <Label className="flex items-center gap-2">
+    <CheckboxGroup.Item value="apple" />
+    사과
+  </Label>
+</CheckboxGroup>
 
 // Indicator 교체
-<checkbox.Group defaultValue={[]} onChange={setValues}>
-  <checkbox.Item value="apple" id="apple">
-    <checkbox.Item.Indicator asChild>
-      <MyCheckIcon />
-    </checkbox.Item.Indicator>
-  </checkbox.Item>
-</checkbox.Group>
+<CheckboxGroup<Fruit> defaultValue={[]} onChange={setValues}>
+  {({ Item }) => (
+    <Label className="flex items-center gap-2">
+      <Item value="apple">
+        <Item.Indicator asChild>
+          <MyCheckIcon />
+        </Item.Indicator>
+      </Item>
+      사과
+    </Label>
+  )}
+</CheckboxGroup>
 ```
 
 ---
@@ -708,43 +713,52 @@ const checkbox = useCheckboxGroup<Fruit>();
 
 ---
 
-### `useRadioGroup` 🔲
+### `RadioGroup` 🔲
 
 라디오 버튼 그룹.
 
-- `useRadioGroup<T>()` — 타입 `T`로 스코프된 `{ Group, Item }` 반환
-- `Group`: `defaultValue?: T` / `value?: T` + `onChange?: (v: T) => void` (원칙 15)
-- `Item`: `value: T` — `T` 이외의 값은 컴파일 오류 (원칙 3). `Radio`와 동일한 구조 (`Item.Indicator` 포함)
+- `RadioGroup<T>` — 제네릭 compound component. children을 render-prop으로 선언하면 `T`로 좁혀진 서브컴포넌트를 받음
+- render-prop children: `{ Item }` — `Item.value`는 `T` 이외의 값을 허용하지 않음 (원칙 3)
+- `defaultValue?: T` / `value?: T` + `onChange?: (v: T) => void` (원칙 15)
+- `Item`: `Radio`와 동일한 구조 (`Item.Indicator` 포함)
 - `role="radiogroup"` 자동 (원칙 12)
 
 ```tsx
 type Lang = 'ko' | 'en' | 'ja';
-const radio = useRadioGroup<Lang>();
 
-// 기본 사용 — Indicator 자동 렌더
-<radio.Group defaultValue="ko" onChange={setLang}>
-  <HStack gap={2} className="items-center">
-    <radio.Item value="ko" id="ko" />
-    <Label htmlFor="ko">한국어</Label>
-  </HStack>
-  <HStack gap={2} className="items-center">
-    <radio.Item value="en" id="en" />
-    <Label htmlFor="en">English</Label>
-  </HStack>
-  <HStack gap={2} className="items-center">
-    <radio.Item value="zh" id="zh" />  {/* ❌ 'zh' is not assignable to Lang */}
-    <Label htmlFor="zh">中文</Label>
-  </HStack>
-</radio.Group>;
+// render-prop children — value: T 이외의 값은 컴파일 오류
+<RadioGroup<Lang> defaultValue="ko" onChange={setLang}>
+  {({ Item }) => (
+    <>
+      <Label className="flex items-center gap-2">
+        <Item value="ko" />
+        한국어
+      </Label>
+      <Label className="flex items-center gap-2">
+        <Item value="en" />
+        English
+      </Label>
+      <Label className="flex items-center gap-2">
+        <Item value="zh" />  {/* ❌ 'zh' is not assignable to Lang */}
+        中文
+      </Label>
+    </>
+  )}
+</RadioGroup>
 
 // Indicator 교체
-<radio.Group defaultValue="ko" onChange={setLang}>
-  <radio.Item value="ko" id="ko">
-    <radio.Item.Indicator asChild>
-      <MyDotIcon />
-    </radio.Item.Indicator>
-  </radio.Item>
-</radio.Group>;
+<RadioGroup<Lang> defaultValue="ko" onChange={setLang}>
+  {({ Item }) => (
+    <Label className="flex items-center gap-2">
+      <Item value="ko">
+        <Item.Indicator asChild>
+          <MyDotIcon />
+        </Item.Indicator>
+      </Item>
+      한국어
+    </Label>
+  )}
+</RadioGroup>
 ```
 
 ---
@@ -1071,24 +1085,27 @@ toast.error('오류가 발생했습니다.');
 
 ---
 
-### `useSelect` 🔲
+### `Select` 🔲
 
 드롭다운 선택. 앵커 기반 오버레이 — Dialog/Drawer와 동일한 오버레이 인프라 위에 동작.
 
-- `useSelect<T>()` — 타입 `T`로 스코프된 `{ Group, Option, OptionGroup }` 반환
-- `Group`: `defaultValue?: T` / `value?: T` + `onChange?: (v: T) => void` (원칙 15)
-- `Option`: `value: T` — `T` 이외의 값은 컴파일 오류
+- `Select<T>` — 제네릭 compound component. children을 render-prop으로 선언하면 `T`로 좁혀진 서브컴포넌트를 받음
+- render-prop children: `{ Option, OptionGroup }` — `Option.value`는 `T` 이외의 값을 허용하지 않음
+- `defaultValue?: T` / `value?: T` + `onChange?: (v: T) => void` (원칙 15)
 - 트리거 엘리먼트에 앵커링된 부동 패널로 렌더 (Portal 사용)
 
 ```tsx
 type Currency = 'KRW' | 'USD' | 'EUR';
-const select = useSelect<Currency>();
 
-<select.Group defaultValue="KRW" onChange={setCurrency}>
-  <select.Option value="KRW">원화 (₩)</select.Option>
-  <select.Option value="USD">달러 ($)</select.Option>
-  <select.Option value="JPY">엔화 (¥)</select.Option> {/* ❌ 'JPY' is not assignable to Currency */}
-</select.Group>;
+<Select<Currency> defaultValue="KRW" onChange={setCurrency}>
+  {({ Option }) => (
+    <>
+      <Option value="KRW">원화 (₩)</Option>
+      <Option value="USD">달러 ($)</Option>
+      <Option value="JPY">엔화 (¥)</Option>  {/* ❌ 'JPY' is not assignable to Currency */}
+    </>
+  )}
+</Select>
 ```
 
 ---

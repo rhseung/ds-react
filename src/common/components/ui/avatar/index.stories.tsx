@@ -136,13 +136,23 @@ export const StateDriven: Story = {
           <Avatar
             name="홍길동"
             tone="default"
-            className={(state) => cn('cursor-pointer transition-shadow', state.hovered && 'ring-2 ring-accent ring-offset-2')}
+            className={(state) =>
+              cn(
+                'cursor-pointer transition-shadow',
+                state.hovered && 'ring-accent ring-2 ring-offset-2',
+              )
+            }
           />
           <Avatar
             name="Kim AI"
             color="secondary"
             tone="default"
-            className={(state) => cn('cursor-pointer transition-shadow', state.hovered && 'ring-2 ring-accent ring-offset-2')}
+            className={(state) =>
+              cn(
+                'cursor-pointer transition-shadow',
+                state.hovered && 'ring-accent ring-2 ring-offset-2',
+              )
+            }
           />
         </HStack>
       </VStack>
@@ -154,7 +164,10 @@ export const StateDriven: Story = {
           <Avatar
             name="홍길동"
             tone="weak"
-            style={(state) => ({ transform: state.hovered ? 'scale(1.15)' : undefined, transition: 'transform 100ms' })}
+            style={(state) => ({
+              transform: state.hovered ? 'scale(1.15)' : undefined,
+              transition: 'transform 100ms',
+            })}
           />
         </HStack>
       </VStack>

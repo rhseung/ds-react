@@ -1,7 +1,6 @@
 import { type ChangeEvent } from 'react';
 
-import { useControllable } from '@/common/hooks';
-import { interactionDataProps, useInteraction } from '@/common/hooks';
+import { useControllable, interactionDataProps, useInteraction } from '@/common/hooks';
 
 type UseTextAreaOptions = {
   disabled?: boolean;
@@ -10,12 +9,7 @@ type UseTextAreaOptions = {
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
-export function useTextArea({
-  disabled,
-  value,
-  defaultValue,
-  onChange,
-}: UseTextAreaOptions = {}) {
+export function useTextArea({ disabled, value, defaultValue, onChange }: UseTextAreaOptions = {}) {
   const { state, handlers } = useInteraction<HTMLDivElement>({ disabled });
   const [currentValue, setCurrentValue] = useControllable(value, defaultValue ?? '');
 
