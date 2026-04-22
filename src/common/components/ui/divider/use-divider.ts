@@ -1,13 +1,31 @@
-import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
+import { useState } from 'react';
 
-type UseDividerOptions = UseInteractionOptions<HTMLDivElement>;
+import { isFunction } from 'es-toolkit';
 
-export function useDivider({ disabled, ...eventHandlers }: UseDividerOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLDivElement>({ disabled, ...eventHandlers });
+import { type Store, useInteraction } from '@/common/hooks';
+
+export type UseDividerOptions = {
+  disabled?: boolean;
+};
+
+export function useDivider({ disabled = false }: UseDividerOptions = {}): Store<
+  Record<never, never>
+> {
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
+
+  const state = { ...interaction, disabled: disabledState };
 
   return {
-    state,
     handlers,
-    dataProps: interactionDataProps(state),
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+    },
   };
 }
+
+export type DividerStore = ReturnType<typeof useDivider>;

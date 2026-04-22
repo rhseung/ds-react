@@ -1,13 +1,33 @@
-import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
+import { useState } from 'react';
 
-type UseButtonOptions = UseInteractionOptions<HTMLButtonElement>;
+import { isFunction } from 'es-toolkit';
 
-export function useButton({ disabled, ...eventHandlers }: UseButtonOptions = {}) {
-  const { state, handlers } = useInteraction({ disabled, ...eventHandlers });
+import { type Store, useInteraction } from '@/common/hooks';
+
+export type UseButtonOptions = {
+  disabled?: boolean;
+};
+
+export function useButton({ disabled = false }: UseButtonOptions = {}): Store<
+  Record<never, never>
+> {
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({
+    disabled: disabledState,
+  });
+
+  const state = { ...interaction, disabled: disabledState };
 
   return {
-    state,
     handlers,
-    dataProps: interactionDataProps(state),
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+    },
   };
 }
+
+export type ButtonStore = ReturnType<typeof useButton>;

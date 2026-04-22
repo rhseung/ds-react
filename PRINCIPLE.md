@@ -555,6 +555,7 @@ type Responsive<T> =
 - `defaultValue` → uncontrolled (내부 상태 관리)
 - `value` + `onChange` → controlled (외부 상태 관리)
 - `state` → 외부 강제 상태. **항상 동일한 prop 이름**
+- `store` → 외부 구독이 필요할 때의 opt-in. `use[Component]()` 훅의 반환값
 
 ```typescript
 // Uncontrolled
@@ -566,7 +567,44 @@ type Responsive<T> =
 // 외부 강제 상태 — state prop은 항상 동일한 이름
 <Select   state="disabled" />
 <Checkbox state="indeterminate" />
+
+// Store — 외부에서 rich state를 구독·조작해야 할 때
+const checkboxStore = useCheckbox({ defaultChecked: false })
+<Checkbox store={checkboxStore} />
+checkboxStore.get(s => s.indeterminate)        // 어디서든 reactive read
+checkboxStore.set({ indeterminate: true })     // 어디서든 write (type-safe)
 ```
+
+### 언제 `value/onChange` vs `store`를 선택할까
+
+`value/onChange`는 HTML interop, 폼 라이브러리, 리스트 렌더링 등 **대부분의 케이스**에서 사용합니다. React의 Hook 규칙상 `use[Component]()`는 루프나 콜백 내부에서 호출할 수 없기 때문입니다.
+
+```typescript
+// ✅ value/onChange — 리스트, 폼 라이브러리, HTML label 연동
+{items.map((item, i) => (
+  <Checkbox key={i} checked={item.checked} onChange={() => toggle(i)} />
+))}
+
+<Controller
+  render={({ field }) => (
+    <Checkbox checked={field.value} onChange={field.onChange} />
+  )}
+/>
+
+// ✅ store — 컴포넌트 외부에서 rich state 구독이 필요한 경우
+const allStore = useCheckbox({ defaultChecked: false })
+<Checkbox store={allStore} />
+<SummaryBar indeterminate={allStore.get(s => s.indeterminate)} />
+allStore.set({ indeterminate: true })                        // ✅
+allStore.set({ checked: true, indeterminate: false })        // ✅ batch
+allStore.set({ hovered: true })                              // ❌ 쓰기 불가 — interaction 전용
+
+// selector로 파생 값 계산
+allStore.get(s => s.checked === true && !s.disabled)  // 유효한 체크 여부
+allStore.get(s => s.hovered || s.focused)             // 사용자 주목 상태
+```
+
+`store`와 `value/onChange`는 **상호 배타적**입니다. `store`가 전달되면 `checked`, `onChange`, `defaultChecked`는 무시됩니다.
 
 `state` prop의 허용값은 컴포넌트마다 다르지만, prop 이름은 항상 `state`로 통일됩니다.
 
@@ -665,6 +703,8 @@ function CustomIcon() {
 
 ### 내부 상태 외부 구독
 
+`use[Component]()`의 반환값을 `store` prop으로 전달하면, 컴포넌트의 전체 상태를 외부에서 reactive하게 구독하고 조작할 수 있습니다. **store는 opt-in**입니다. 외부 구독이 필요 없는 대부분의 경우는 `value/onChange` 또는 uncontrolled로 충분하며, 루프나 폼 라이브러리 render callback 안에서는 hook 규칙상 store를 사용할 수 없습니다(원칙 15 참조).
+
 ```typescript
 // ref 없이 컴포넌트 상태를 외부에서 구독
 const tabsStore = useTabs()
@@ -676,7 +716,7 @@ const tabsStore = useTabs()
 
 {/* 완전히 다른 위치에 있는 UI도 탭 상태에 반응 */}
 <Breadcrumb>
-  <Breadcrumb.Item>{tabsStore.activeTab}</Breadcrumb.Item>
+  <Breadcrumb.Item>{tabsStore.get(s => s.activeTab)}</Breadcrumb.Item>
 </Breadcrumb>
 ```
 

@@ -1,7 +1,13 @@
 import { type CSSProperties, type ComponentProps, type ReactNode, useEffect, useRef } from 'react';
 
 import { StateMask } from '@/common/components/utils';
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import {
   type AccentProps,
   type RenderProp,
@@ -13,7 +19,7 @@ import {
 import { CheckboxIndicator } from './checkbox.indicator';
 import { CheckboxContext } from './context';
 import { checkboxBox } from './styles';
-import { useCheckbox } from './use-checkbox';
+import { useCheckbox, type CheckboxStore } from './use-checkbox';
 
 export function Checkbox({
   size: localSize,
@@ -21,6 +27,7 @@ export function Checkbox({
   className,
   style,
   disabled,
+  store,
   checked,
   defaultChecked,
   onChange,
@@ -29,28 +36,26 @@ export function Checkbox({
   ...inputProps
 }: Checkbox.Props) {
   const size = useComponentSize(localSize);
-  const { state, handlers, handleChange, dataProps } = useCheckbox({
-    disabled,
-    checked,
-    defaultChecked,
-    onChange,
-    indeterminate,
-  });
+  const internalStore = useCheckbox({ checked, defaultChecked, onChange, indeterminate, disabled });
+  const {
+    state,
+    store: activeStore,
+    handlers,
+    dataProps,
+  } = useComponentBehavior(internalStore, store);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const isIndeterminate = state.indeterminate ?? false;
   useEffect(() => {
-    if (inputRef.current) inputRef.current.indeterminate = indeterminate ?? false;
-  }, [indeterminate]);
+    if (inputRef.current) inputRef.current.indeterminate = isIndeterminate;
+  }, [isIndeterminate]);
 
   return (
     <CheckboxContext.Provider value={{ state }}>
       <SizeContext.Provider value={size}>
         <span
           className={checkboxBox({ size, className: resolveRenderProp(className, state) })}
-          style={mergeObjects(
-            color ? colorVars(color) : undefined,
-            resolveRenderProp(style, state),
-          )}
+          style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
           {...dataProps}
           {...handlers}
         >
@@ -58,10 +63,9 @@ export function Checkbox({
             ref={inputRef}
             type="checkbox"
             className="absolute inset-0 m-0 cursor-[inherit] opacity-0"
-            disabled={disabled}
-            checked={checked}
-            defaultChecked={defaultChecked}
-            onChange={handleChange}
+            disabled={state.disabled}
+            checked={state.checked}
+            onChange={(e) => activeStore.set({ checked: e.target.checked })}
             {...inputProps}
           />
           {children}
@@ -73,7 +77,8 @@ export function Checkbox({
 }
 
 export namespace Checkbox {
-  export type State = ReturnType<typeof useCheckbox>['state'];
+  export type State = StoreState<CheckboxStore>;
+  export type Store = CheckboxStore;
 
   export const Indicator = CheckboxIndicator;
   export namespace Indicator {
@@ -88,6 +93,7 @@ export namespace Checkbox {
       >,
       AccentProps {
     size?: ComponentSize;
+    store?: Store;
     checked?: boolean;
     defaultChecked?: boolean;
     onChange?: (checked: boolean) => void;

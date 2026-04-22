@@ -42,7 +42,7 @@ export const Default: Story = {
   ],
 };
 
-export const StateDriven: Story = {
+export const StateAPI: Story = {
   render: () => (
     <VStack gap={4}>
       <VStack gap={1}>

@@ -1102,10 +1102,10 @@ type Currency = 'KRW' | 'USD' | 'EUR';
     <>
       <Option value="KRW">원화 (₩)</Option>
       <Option value="USD">달러 ($)</Option>
-      <Option value="JPY">엔화 (¥)</Option>  {/* ❌ 'JPY' is not assignable to Currency */}
+      <Option value="JPY">엔화 (¥)</Option> {/* ❌ 'JPY' is not assignable to Currency */}
     </>
   )}
-</Select>
+</Select>;
 ```
 
 ---

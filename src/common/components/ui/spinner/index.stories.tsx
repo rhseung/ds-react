@@ -37,7 +37,7 @@ export const Overview: Story = {
 
 const SIZES = ['sm', 'md', 'lg'] as const;
 
-export const StateDriven: Story = {
+export const StateAPI: Story = {
   render: () => (
     <VStack gap={4}>
       <VStack gap={1}>

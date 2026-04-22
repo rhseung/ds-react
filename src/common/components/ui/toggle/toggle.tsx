@@ -1,9 +1,15 @@
-import { type CSSProperties, type ComponentProps } from 'react';
+import { type CSSProperties, type ComponentProps, type MouseEvent } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import {
   type AccentProps,
   type RenderProp,
@@ -13,7 +19,7 @@ import {
 } from '@/common/utils';
 
 import { toggle } from './styles';
-import { useToggle } from './use-toggle';
+import { useToggle, type ToggleStore } from './use-toggle';
 
 export function Toggle({
   asChild,
@@ -25,6 +31,7 @@ export function Toggle({
   className,
   style,
   children,
+  store,
   disabled,
   pressed,
   defaultPressed,
@@ -42,12 +49,13 @@ export function Toggle({
   ...props
 }: Toggle.Props) {
   const size = useComponentSize(localSize);
-  const { state, handlers, dataProps } = useToggle({
-    disabled,
-    pressed,
-    defaultPressed,
-    onPressedChange,
-    onClick,
+  const internalStore = useToggle({ disabled, pressed, defaultPressed, onPressedChange });
+  const {
+    state,
+    store: activeStore,
+    handlers,
+    dataProps,
+  } = useComponentBehavior(internalStore, store, {
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -59,6 +67,11 @@ export function Toggle({
     onKeyUp,
   });
 
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    activeStore.set((prev) => ({ toggled: !prev.toggled }));
+    onClick?.(e);
+  };
+
   const Comp = asChild ? Slot : 'button';
 
   return (
@@ -66,7 +79,7 @@ export function Toggle({
       <Comp
         type="button"
         aria-pressed={state.toggled}
-        disabled={disabled}
+        disabled={state.disabled}
         className={toggle({
           variant,
           tone,
@@ -74,10 +87,11 @@ export function Toggle({
           icon,
           className: resolveRenderProp(className, state),
         })}
-        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
+        style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
         {...props}
         {...dataProps}
         {...handlers}
+        onClick={handleClick}
       >
         {resolveRenderProp(children, state)}
         <StateMask />
@@ -87,7 +101,8 @@ export function Toggle({
 }
 
 export namespace Toggle {
-  export type State = ReturnType<typeof useToggle>['state'];
+  export type State = StoreState<ToggleStore>;
+  export type Store = ToggleStore;
 
   export interface Props
     extends
@@ -97,6 +112,7 @@ export namespace Toggle {
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
+    store?: Store;
     pressed?: boolean;
     defaultPressed?: boolean;
     onPressedChange?: (pressed: boolean) => void;

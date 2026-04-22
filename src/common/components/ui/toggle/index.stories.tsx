@@ -7,7 +7,7 @@ import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive'
 import { Button } from '@/common/components/ui/button';
 import { SizeContext } from '@/common/hooks';
 
-import { Toggle } from '.';
+import { Toggle, useToggle } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -99,26 +99,69 @@ export const Controlled: Story = {
   },
 };
 
-export const StateDriven: Story = {
-  render: () => (
-    <VStack gap={4}>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          children 함수 — 외부 state 없이 toggled 상태로 콘텐츠 분기
-        </Text>
-        <HStack gap={2}>
-          <Toggle tone="default" variant="outline">
-            {(state) => (state.toggled ? '켜짐 ✓' : '꺼짐')}
+export const StateAPI: Story = {
+  render: () => {
+    const store = useToggle();
+    return (
+      <VStack gap={8} className="items-start">
+        <HStack gap={8} className="items-start">
+          <Toggle store={store} tone="default">
+            토글
           </Toggle>
-          <Toggle tone="default" variant="ghost">
-            {(state) =>
-              state.hovered && !state.toggled ? '클릭하여 켜기' : state.toggled ? 'ON' : 'OFF'
-            }
-          </Toggle>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.state
+            </Text>
+            {(['hovered', 'focused', 'active', 'toggled', 'disabled'] as const).map((key) => (
+              <Text key={key} size="xs" color="neutral-text-weak">
+                {key}: {String(store.get(s => s[key]))}
+              </Text>
+            ))}
+            <Text size="xs" color="neutral-text-weak">
+              active toggled: {String(store.get(s => s.toggled && !s.disabled))}
+            </Text>
+          </VStack>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.set()
+            </Text>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.toggled)}
+              onPressedChange={(v) => store.set({ toggled: v })}
+            >
+              toggled 토글
+            </Toggle>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.disabled)}
+              onPressedChange={(v) => store.set({ disabled: v })}
+            >
+              disabled 토글
+            </Toggle>
+          </VStack>
         </HStack>
+
+        <VStack gap={4}>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — 외부 state 없이 toggled 상태로 콘텐츠 분기
+            </Text>
+            <HStack gap={2}>
+              <Toggle tone="default" variant="outline">
+                {(state) => (state.toggled ? '켜짐 ✓' : '꺼짐')}
+              </Toggle>
+              <Toggle tone="default" variant="ghost">
+                {(state) =>
+                  state.hovered && !state.toggled ? '클릭하여 켜기' : state.toggled ? 'ON' : 'OFF'
+                }
+              </Toggle>
+            </HStack>
+          </VStack>
+        </VStack>
       </VStack>
-    </VStack>
-  ),
+    );
+  },
 };
 
 type NotificationSettings = {

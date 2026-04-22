@@ -1,9 +1,10 @@
 import { type ComponentProps, type JSX, type ReactNode } from 'react';
 
+import { isFunction } from 'es-toolkit';
+
 import { CheckboxGroupAll } from './checkbox-group.all';
 import { CheckboxGroupItem } from './checkbox-group.item';
-import { CheckboxGroupCtx } from './context';
-import { type CheckboxGroupState, useCheckboxGroupState } from './use-checkbox-group';
+import { CheckboxGroupContext, useCheckboxGroupContextValue } from './context';
 
 export function CheckboxGroup<T>({
   value,
@@ -12,22 +13,21 @@ export function CheckboxGroup<T>({
   children,
   ...props
 }: CheckboxGroup.Props<T>) {
-  const state = useCheckboxGroupState<T>({ value, defaultValue, onChange });
+  const ctx = useCheckboxGroupContextValue<T>({ value, defaultValue, onChange });
 
-  const resolvedChildren =
-    typeof children === 'function'
-      ? children({
-          Item: CheckboxGroupItem<T>,
-          All: CheckboxGroupAll,
-        })
-      : children;
+  const resolvedChildren = isFunction(children)
+    ? children({
+        Item: CheckboxGroupItem<T>,
+        All: CheckboxGroupAll,
+      })
+    : children;
 
   return (
-    <CheckboxGroupCtx.Provider value={state as CheckboxGroupState<unknown>}>
+    <CheckboxGroupContext.Provider value={ctx as CheckboxGroupContext<unknown>}>
       <div role="group" {...props}>
         {resolvedChildren}
       </div>
-    </CheckboxGroupCtx.Provider>
+    </CheckboxGroupContext.Provider>
   );
 }
 

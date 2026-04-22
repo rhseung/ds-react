@@ -35,7 +35,7 @@ import { cn } from '@/common/utils';
 import { Button } from '../button';
 import { Divider } from '../divider';
 
-import { TextArea } from '.';
+import { TextArea, useTextArea } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -477,65 +477,106 @@ export const WithSlots: Story = {
   },
 };
 
-export const StateDriven: Story = {
-  render: () => (
-    <VStack gap={4} className="w-96">
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          className 함수 — focused 시 shadow 추가
-        </Text>
-        <TextArea
-          placeholder="포커스해보세요"
-          rows={3}
-          className={(state) => cn(state.focused && 'shadow-md')}
-        />
-      </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          children 함수 — filled 시 전송 버튼 활성화
-        </Text>
-        <TextArea placeholder="내용을 입력하면 전송 버튼이 활성화됩니다" autoResize rows={2}>
-          {(state) => (
-            <>
-              <TextArea.Input />
-              <Divider />
-              <HStack gap={2} className="items-center px-2.5 py-1.5">
-                <Spacer />
-                <Button
-                  size="sm"
-                  variant="solid"
-                  tone="default"
-                  disabled={!state.filled}
-                  aria-label="전송"
-                >
-                  <IconArrowUp size={14} />
-                  전송
-                </Button>
-              </HStack>
-            </>
-          )}
-        </TextArea>
-      </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          children 함수 — filled 시 완료 아이콘 표시
-        </Text>
-        <TextArea placeholder="입력 완료 시 체크 아이콘이 나타납니다" rows={3}>
-          {(state) => (
-            <>
-              <TextArea.Input />
-              {state.filled && (
-                <HStack gap={1} className="text-accent items-center px-2.5 py-1 text-xs">
-                  <IconCheck size={12} />
-                  <span>입력 완료</span>
-                </HStack>
+export const StateAPI: Story = {
+  render: () => {
+    const store = useTextArea();
+
+    return (
+      <VStack gap={8} className="items-start">
+        <HStack gap={8} className="items-start">
+          <TextArea store={store} placeholder="입력하세요" rows={3} className="w-48" />
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.state
+            </Text>
+            {(['hovered', 'focused', 'active', 'value', 'disabled'] as const).map((key) => (
+              <Text key={key} size="xs" color="neutral-text-weak">
+                {key}: {String(store.get(s => s[key]))}
+              </Text>
+            ))}
+            <Text size="xs" color="neutral-text-weak">
+              length: {store.get(s => s.value.length)}
+            </Text>
+            <Text size="xs" color="neutral-text-weak">
+              lines: {store.get(s => s.value.split('\n').length)}
+            </Text>
+          </VStack>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.set()
+            </Text>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.disabled)}
+              onPressedChange={(v) => store.set({ disabled: v })}
+            >
+              disabled 토글
+            </Toggle>
+            <Button size="sm" onClick={() => store.set({ value: '' })}>
+              초기화
+            </Button>
+          </VStack>
+        </HStack>
+
+        <VStack gap={4} className="w-96">
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              className 함수 — focused 시 shadow 추가
+            </Text>
+            <TextArea
+              placeholder="포커스해보세요"
+              rows={3}
+              className={(state) => cn(state.focused && 'shadow-md')}
+            />
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — filled 시 전송 버튼 활성화
+            </Text>
+            <TextArea placeholder="내용을 입력하면 전송 버튼이 활성화됩니다" autoResize rows={2}>
+              {(state) => (
+                <>
+                  <TextArea.Input />
+                  <Divider />
+                  <HStack gap={2} className="items-center px-2.5 py-1.5">
+                    <Spacer />
+                    <Button
+                      size="sm"
+                      variant="solid"
+                      tone="default"
+                      disabled={!state.filled}
+                      aria-label="전송"
+                    >
+                      <IconArrowUp size={14} />
+                      전송
+                    </Button>
+                  </HStack>
+                </>
               )}
-            </>
-          )}
-        </TextArea>
+            </TextArea>
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — filled 시 완료 아이콘 표시
+            </Text>
+            <TextArea placeholder="입력 완료 시 체크 아이콘이 나타납니다" rows={3}>
+              {(state) => (
+                <>
+                  <TextArea.Input />
+                  {state.filled && (
+                    <HStack gap={1} className="text-accent items-center px-2.5 py-1 text-xs">
+                      <IconCheck size={12} />
+                      <span>입력 완료</span>
+                    </HStack>
+                  )}
+                </>
+              )}
+            </TextArea>
+          </VStack>
+        </VStack>
       </VStack>
-    </VStack>
-  ),
+    );
+  },
 };
 
 export const Overview: Story = {
@@ -574,9 +615,7 @@ export const ContextPropagation: Story = {
             SizeContext: {size}
           </Text>
           <SizeContext.Provider value={size}>
-            {/* 컨텍스트 상속 */}
             <TextArea placeholder="상속" />
-            {/* 명시값이 컨텍스트보다 우선 */}
             <TextArea
               size={size === 'lg' ? 'sm' : 'lg'}
               placeholder={`override → ${size === 'lg' ? 'sm' : 'lg'}`}

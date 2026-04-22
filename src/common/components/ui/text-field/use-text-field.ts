@@ -1,36 +1,41 @@
-import { type ChangeEvent } from 'react';
+import { useState } from 'react';
 
-import { useControllable, interactionDataProps, useInteraction } from '@/common/hooks';
+import { isFunction } from 'es-toolkit';
 
-type UseTextFieldOptions = {
-  disabled?: boolean;
+import { useControllable, type Store, useInteraction } from '@/common/hooks';
+
+export type UseTextFieldOptions = {
   value?: string;
   defaultValue?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onValueChange?: (value: string) => void;
+  disabled?: boolean;
 };
 
 export function useTextField({
-  disabled,
   value,
-  defaultValue,
-  onChange,
-}: UseTextFieldOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLDivElement>({ disabled });
-  const [currentValue, setCurrentValue] = useControllable(value, defaultValue ?? '');
+  defaultValue = '',
+  onValueChange,
+  disabled = false,
+}: UseTextFieldOptions = {}): Store<{ value: string }> {
+  const [valueState, setValue] = useControllable(value, defaultValue, onValueChange);
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction<HTMLDivElement>({
+    disabled: disabledState,
+  });
 
-  const inputHandlers = {
-    onChange(e: ChangeEvent<HTMLInputElement>) {
-      setCurrentValue(e.target.value);
-      onChange?.(e);
-    },
-  };
-
-  const newState = { ...state, filled: currentValue.length > 0 };
+  const state = { ...interaction, disabled: disabledState, value: valueState };
 
   return {
-    state: newState,
     handlers,
-    inputHandlers,
-    dataProps: interactionDataProps(newState),
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+      if (p.value != null) setValue(p.value);
+    },
   };
 }
+
+export type TextFieldStore = ReturnType<typeof useTextField>;

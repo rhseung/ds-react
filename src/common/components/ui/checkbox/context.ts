@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 import { type useCheckbox } from './use-checkbox';
 
 interface CheckboxContextValue {
-  state: ReturnType<typeof useCheckbox>['state'];
+  state: ReturnType<ReturnType<typeof useCheckbox>['get']>;
 }
 
 export const CheckboxContext = createContext<CheckboxContextValue | null>(null);

@@ -3,10 +3,11 @@ import { type CSSProperties, type ComponentProps } from 'react';
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps } from '@/common/components/utils';
+import { type StoreState, useComponentBehavior } from '@/common/hooks';
 import { type RenderProp, resolveRenderProp } from '@/common/utils';
 
 import { divider } from './styles';
-import { useDivider } from './use-divider';
+import { useDivider, type DividerStore } from './use-divider';
 
 export function Divider({
   orientation,
@@ -14,6 +15,7 @@ export function Divider({
   style,
   children,
   asChild = false,
+  store,
   disabled,
   onPointerEnter,
   onPointerLeave,
@@ -26,8 +28,8 @@ export function Divider({
   onKeyUp,
   ...props
 }: Divider.Props) {
-  const { state, handlers, dataProps } = useDivider({
-    disabled,
+  const internalStore = useDivider({ disabled });
+  const { state, handlers, dataProps } = useComponentBehavior(internalStore, store, {
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -56,13 +58,15 @@ export function Divider({
 }
 
 export namespace Divider {
-  export type State = ReturnType<typeof useDivider>['state'];
+  export type State = StoreState<DividerStore>;
+  export type Store = DividerStore;
 
   export interface Props
     extends
       Omit<ComponentProps<'div'>, 'className' | 'style' | 'children'>,
       VariantProps<typeof divider>,
       SlotProps<State> {
+    store?: Store;
     disabled?: boolean;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;

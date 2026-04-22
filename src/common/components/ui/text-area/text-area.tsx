@@ -2,7 +2,13 @@ import { type CSSProperties, type ReactNode } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import {
   type AccentProps,
   type RenderProp,
@@ -15,7 +21,7 @@ import {
 import { InputContext, type InputContextValue } from './context';
 import { textArea } from './styles';
 import { TextAreaInput } from './text-area.input';
-import { useTextArea } from './use-text-area';
+import { useTextArea, type TextAreaStore } from './use-text-area';
 
 export function TextArea({
   variant = 'outline',
@@ -27,6 +33,7 @@ export function TextArea({
   resize = 'vertical',
   autoResize = false,
   children = <TextArea.Input />,
+  store,
   disabled,
   value,
   defaultValue,
@@ -34,14 +41,17 @@ export function TextArea({
   ...inputProps
 }: TextArea.Props) {
   const size = useComponentSize(sizeProp);
-  const { state, handlers, inputHandlers, dataProps } = useTextArea({
-    disabled,
-    value,
-    defaultValue,
-    onChange,
-  });
+  const internalStore = useTextArea({ disabled, value, defaultValue });
+  const {
+    state,
+    store: activeStore,
+    handlers,
+    dataProps,
+  } = useComponentBehavior<{ value: string }, HTMLDivElement>(internalStore, store);
 
-  const resolvedChildren = resolveRenderProp(children, state);
+  const filled = state.value.length > 0;
+  const fullState = { ...state, filled };
+  const resolvedChildren = resolveRenderProp(children, fullState);
 
   if (!containsType(resolvedChildren, TextArea.Input))
     throw new Error('TextArea: children must include <TextArea.Input />');
@@ -49,19 +59,28 @@ export function TextArea({
   return (
     <SizeContext.Provider value={size}>
       <InputContext.Provider
-        value={{ ...inputProps, disabled, value, autoResize, ...inputHandlers }}
+        value={{
+          ...inputProps,
+          disabled: state.disabled,
+          value: state.value,
+          autoResize,
+          onChange(e) {
+            activeStore.set({ value: e.target.value });
+            onChange?.(e);
+          },
+        }}
       >
         <div
           className={textArea({
             variant,
             tone,
             size,
-            className: resolveRenderProp(className, state),
+            className: resolveRenderProp(className, fullState),
           })}
           style={mergeObjects(
-            color ? colorVars(color) : undefined,
+            colorVars(color),
             { resize: autoResize ? 'none' : resize },
-            resolveRenderProp(style, state),
+            resolveRenderProp(style, fullState),
           )}
           {...dataProps}
           {...handlers}
@@ -74,7 +93,8 @@ export function TextArea({
 }
 
 export namespace TextArea {
-  export type State = ReturnType<typeof useTextArea>['state'];
+  export type State = StoreState<TextAreaStore> & { filled: boolean };
+  export type Store = TextAreaStore;
 
   export const Input = TextAreaInput;
   export namespace Input {
@@ -89,6 +109,7 @@ export namespace TextArea {
     size?: ComponentSize;
     autoResize?: boolean;
     resize?: CSSProperties['resize'];
+    store?: Store;
     value?: string;
     defaultValue?: string;
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;

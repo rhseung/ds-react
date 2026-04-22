@@ -1,40 +1,48 @@
-import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 
-import {
-  interactionDataProps,
-  useControllable,
-  useInteraction,
-  type UseInteractionOptions,
-} from '@/common/hooks';
+import { isFunction } from 'es-toolkit';
 
-type UseCheckboxOptions = UseInteractionOptions<HTMLSpanElement> & {
+import { useControllable, type Store, useInteraction } from '@/common/hooks';
+
+export type UseCheckboxOptions = {
   checked?: boolean;
   defaultChecked?: boolean;
-  onChange?: (checked: boolean) => void;
   indeterminate?: boolean;
   disabled?: boolean;
+  onChange?: (checked: boolean) => void;
 };
 
 export function useCheckbox({
-  disabled,
   checked: checkedProp,
   defaultChecked = false,
+  indeterminate,
+  disabled = false,
   onChange,
-  indeterminate = false,
-  ...eventHandlers
-}: UseCheckboxOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLSpanElement>({ disabled, ...eventHandlers });
-  const [checked, setChecked] = useControllable(checkedProp, defaultChecked, onChange);
-  const newState = { ...state, checked, indeterminate };
+}: UseCheckboxOptions = {}): Store<{ checked: boolean; indeterminate: boolean }> {
+  const [checkedState, setChecked] = useControllable(checkedProp, defaultChecked, onChange);
+  const [indeterminateState, setIndeterminate] = useControllable(indeterminate, false, undefined);
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setChecked(e.target.checked);
+  const state = {
+    ...interaction,
+    disabled: disabledState,
+    checked: checkedState,
+    indeterminate: indeterminateState,
   };
 
   return {
-    state: newState,
     handlers,
-    handleChange,
-    dataProps: interactionDataProps(newState),
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+      if (p.checked != null) setChecked(p.checked);
+      if (p.indeterminate != null) setIndeterminate(p.indeterminate);
+    },
   };
 }
+
+export type CheckboxStore = ReturnType<typeof useCheckbox>;

@@ -1,6 +1,6 @@
 import { createClientOnlyFn, createIsomorphicFn } from '@tanstack/react-start';
 
-import { isNil, isPlainObject } from 'es-toolkit';
+import { isNil, isPlainObject, take } from 'es-toolkit';
 import { create } from 'zustand';
 
 const BREAKPOINTS = {
@@ -76,7 +76,7 @@ export function useResponsiveValue<T>(value: ResponsiveValue<T> | undefined): T 
   if (isNil(value)) return undefined;
   if (!isPlainObject(value)) return value;
 
-  const upTo = BREAKPOINT_ORDER.slice(0, BREAKPOINT_ORDER.indexOf(breakpoint) + 1);
+  const upTo = take(BREAKPOINT_ORDER, BREAKPOINT_ORDER.indexOf(breakpoint) + 1);
   const bp = upTo.findLast((bp) => bp in value);
   return bp ? value[bp] : undefined;
 }

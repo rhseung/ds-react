@@ -17,10 +17,11 @@ import { useForm } from 'react-hook-form';
 
 import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
+import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
 
-import { TextField } from '.';
+import { TextField, useTextField } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -304,68 +305,106 @@ export const WithReactHookForm: Story = {
   },
 };
 
-export const StateDriven: Story = {
+export const StateAPI: Story = {
   render: () => {
+    const store = useTextField();
     const [query, setQuery] = useState('');
 
     return (
-      <VStack gap={4} className="w-80">
-        <VStack gap={1}>
-          <Text size="xs" color="neutral-text-weak" className="font-semibold">
-            className 함수 — focused 시 shadow 추가
-          </Text>
-          <TextField
-            placeholder="포커스해보세요"
-            tone="default"
-            className={(state) => cn(state.focused && 'shadow-md')}
-          />
-        </VStack>
-        <VStack gap={1}>
-          <Text size="xs" color="neutral-text-weak" className="font-semibold">
-            children 함수 — filled 시 clear 버튼 노출
-          </Text>
-          <TextField
-            placeholder="입력하면 X 버튼이 나타납니다"
-            tone="default"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          >
-            {(state) => (
-              <>
-                <IconSearch size={14} className="text-neutral-text-weak shrink-0" />
-                <TextField.Input />
-                {state.filled && (
-                  <button
-                    type="button"
-                    className="text-neutral-text-weak hover:text-neutral-text shrink-0 transition-colors"
-                    onClick={() => setQuery('')}
-                  >
-                    <IconX size={14} />
-                  </button>
-                )}
-              </>
-            )}
-          </TextField>
-        </VStack>
-        <VStack gap={1}>
-          <Text size="xs" color="neutral-text-weak" className="font-semibold">
-            children 함수 — filled 여부에 따라 suffix 색상 변경
-          </Text>
-          <TextField placeholder="금액 입력" tone="default" type="number">
-            {(state) => (
-              <>
-                <TextField.Input />
-                <span
-                  className={cn(
-                    'shrink-0 text-sm transition-colors',
-                    state.filled ? 'text-accent font-semibold' : 'text-neutral-text-weak',
+      <VStack gap={8} className="items-start">
+        <HStack gap={8} className="items-start">
+          <TextField store={store} placeholder="입력하세요" tone="default" className="w-48" />
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.state
+            </Text>
+            {(['hovered', 'focused', 'active', 'value', 'disabled'] as const).map((key) => (
+              <Text key={key} size="xs" color="neutral-text-weak">
+                {key}: {String(store.get(s => s[key]))}
+              </Text>
+            ))}
+            <Text size="xs" color="neutral-text-weak">
+              length: {store.get(s => s.value.length)}
+            </Text>
+            <Text size="xs" color="neutral-text-weak">
+              filled: {String(store.get(s => s.value.length > 0))}
+            </Text>
+          </VStack>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.set()
+            </Text>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.disabled)}
+              onPressedChange={(v) => store.set({ disabled: v })}
+            >
+              disabled 토글
+            </Toggle>
+            <Button size="sm" onClick={() => store.set({ value: '' })}>
+              초기화
+            </Button>
+          </VStack>
+        </HStack>
+
+        <VStack gap={4} className="w-80">
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              className 함수 — focused 시 shadow 추가
+            </Text>
+            <TextField
+              placeholder="포커스해보세요"
+              tone="default"
+              className={(state) => cn(state.focused && 'shadow-md')}
+            />
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — filled 시 clear 버튼 노출
+            </Text>
+            <TextField
+              placeholder="입력하면 X 버튼이 나타납니다"
+              tone="default"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            >
+              {(state) => (
+                <>
+                  <IconSearch size={14} className="text-neutral-text-weak shrink-0" />
+                  <TextField.Input />
+                  {state.filled && (
+                    <button
+                      type="button"
+                      className="text-neutral-text-weak hover:text-neutral-text shrink-0 transition-colors"
+                      onClick={() => setQuery('')}
+                    >
+                      <IconX size={14} />
+                    </button>
                   )}
-                >
-                  원
-                </span>
-              </>
-            )}
-          </TextField>
+                </>
+              )}
+            </TextField>
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — filled 여부에 따라 suffix 색상 변경
+            </Text>
+            <TextField placeholder="금액 입력" tone="default" type="number">
+              {(state) => (
+                <>
+                  <TextField.Input />
+                  <span
+                    className={cn(
+                      'shrink-0 text-sm transition-colors',
+                      state.filled ? 'text-accent font-semibold' : 'text-neutral-text-weak',
+                    )}
+                  >
+                    원
+                  </span>
+                </>
+              )}
+            </TextField>
+          </VStack>
         </VStack>
       </VStack>
     );
@@ -381,12 +420,10 @@ export const ContextPropagation: Story = {
             SizeContext: {size}
           </Text>
           <SizeContext.Provider value={size}>
-            {/* 컨텍스트 상속 */}
             <TextField placeholder="상속" tone="default">
               <IconSearch size={16} className="text-neutral-text-weak shrink-0" />
               <TextField.Input />
             </TextField>
-            {/* 명시값이 컨텍스트보다 우선, 자식에게도 명시값을 전파 */}
             <TextField
               size={size === 'lg' ? 'sm' : 'lg'}
               placeholder={`override → ${size === 'lg' ? 'sm' : 'lg'}`}

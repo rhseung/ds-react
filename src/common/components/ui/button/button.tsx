@@ -3,7 +3,13 @@ import { type CSSProperties, type ComponentProps } from 'react';
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import {
   type AccentProps,
   type RenderProp,
@@ -13,7 +19,7 @@ import {
 } from '@/common/utils';
 
 import { button } from './styles';
-import { useButton } from './use-button';
+import { useButton, type ButtonStore } from './use-button';
 
 export function Button({
   asChild,
@@ -25,6 +31,7 @@ export function Button({
   className,
   style,
   children,
+  store: externalStore,
   disabled,
   onPointerEnter,
   onPointerLeave,
@@ -38,8 +45,8 @@ export function Button({
   ...props
 }: Button.Props) {
   const size = useComponentSize(localSize);
-  const { state, handlers, dataProps } = useButton({
-    disabled,
+  const internalStore = useButton({ disabled });
+  const { state, handlers, dataProps } = useComponentBehavior(internalStore, externalStore, {
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -56,7 +63,7 @@ export function Button({
   return (
     <SizeContext.Provider value={size}>
       <Comp
-        disabled={disabled}
+        disabled={state.disabled}
         className={button({
           variant,
           tone,
@@ -64,7 +71,7 @@ export function Button({
           icon,
           className: resolveRenderProp(className, state),
         })}
-        style={mergeObjects(color ? colorVars(color) : undefined, resolveRenderProp(style, state))}
+        style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
         {...props}
         {...dataProps}
         {...handlers}
@@ -77,8 +84,8 @@ export function Button({
 }
 
 export namespace Button {
-  export type State = ReturnType<typeof useButton>['state'];
-
+  export type State = StoreState<ButtonStore>;
+  export type Store = ButtonStore;
   export interface Props
     extends
       Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
@@ -87,6 +94,7 @@ export namespace Button {
       AccentProps {
     size?: ComponentSize;
     icon?: boolean;
+    store?: Store;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;
   }

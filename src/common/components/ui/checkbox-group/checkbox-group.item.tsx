@@ -2,10 +2,10 @@ import { useContext, useEffect } from 'react';
 
 import { Checkbox } from '@/common/components/ui/checkbox';
 
-import { CheckboxGroupCtx } from './context';
+import { CheckboxGroupContext } from './context';
 
 export function CheckboxGroupItem<T>({ value, ...checkboxProps }: CheckboxGroupItem.Props<T>) {
-  const { register, unregister, toggle, values } = useContext(CheckboxGroupCtx)!;
+  const { register, unregister, toggle, values } = useContext(CheckboxGroupContext)!;
 
   useEffect(() => {
     register(value);

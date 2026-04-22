@@ -1,13 +1,29 @@
-import { interactionDataProps, useInteraction, type UseInteractionOptions } from '@/common/hooks';
+import { useState } from 'react';
 
-type UseBadgeOptions = UseInteractionOptions<HTMLSpanElement>;
+import { isFunction } from 'es-toolkit';
 
-export function useBadge({ disabled, ...eventHandlers }: UseBadgeOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLSpanElement>({ disabled, ...eventHandlers });
+import { type Store, useInteraction } from '@/common/hooks';
+
+export type UseBadgeOptions = {
+  disabled?: boolean;
+};
+
+export function useBadge({ disabled = false }: UseBadgeOptions = {}): Store<Record<never, never>> {
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
+
+  const state = { ...interaction, disabled: disabledState };
 
   return {
-    state,
     handlers,
-    dataProps: interactionDataProps(state),
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+    },
   };
 }
+
+export type BadgeStore = ReturnType<typeof useBadge>;

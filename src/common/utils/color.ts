@@ -19,7 +19,8 @@ type AccentCSSVars = {
     | `--ids-on-accent${CSSShade}`]: string;
 };
 
-export function colorVars(color: Color): Record<string, string> {
+export function colorVars(color: Color | undefined): Record<string, string> | undefined {
+  if (!color) return undefined;
   return {
     '--ids-accent': `var(--ids-${color})`,
     '--ids-accent-contrast': `var(--ids-${color}-contrast)`,

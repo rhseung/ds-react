@@ -6,7 +6,7 @@ import type {
   ElementType,
 } from 'react';
 
-import { union } from 'es-toolkit';
+import { isFunction, union } from 'es-toolkit';
 
 import { cn } from './cn';
 
@@ -26,7 +26,7 @@ export function mergeRefs<T>(
 ): RefCallback<T> {
   return (value) => {
     refs.forEach((ref) => {
-      if (typeof ref === 'function') {
+      if (isFunction(ref)) {
         ref(value);
       } else if (ref) {
         ref.current = value as T;
@@ -47,7 +47,7 @@ export function mergeObjects(...objects: (object | undefined)[]): object | undef
 }
 
 const isEventHandler = (key: string, baseValue: unknown, nextValue: unknown) =>
-  key.startsWith('on') && (typeof baseValue === 'function' || typeof nextValue === 'function');
+  key.startsWith('on') && (isFunction(baseValue) || isFunction(nextValue));
 
 export function mergeProps<T extends ElementType>(
   baseProps: ComponentPropsWithRef<T>,

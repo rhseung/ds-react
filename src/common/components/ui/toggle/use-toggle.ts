@@ -1,39 +1,41 @@
-import type { MouseEvent } from 'react';
+import { useState } from 'react';
 
-import {
-  interactionDataProps,
-  useControllable,
-  useInteraction,
-  type UseInteractionOptions,
-} from '@/common/hooks';
+import { isFunction } from 'es-toolkit';
 
-type UseToggleOptions = UseInteractionOptions<HTMLButtonElement> & {
+import { useControllable, type Store, useInteraction } from '@/common/hooks';
+
+export type UseToggleOptions = {
   pressed?: boolean;
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
 };
 
 export function useToggle({
-  disabled,
   pressed,
   defaultPressed = false,
   onPressedChange,
-  onClick,
-  ...eventHandlers
-}: UseToggleOptions = {}) {
-  const { state, handlers } = useInteraction<HTMLButtonElement>({ disabled, ...eventHandlers });
+  disabled = false,
+}: UseToggleOptions = {}): Store<{ toggled: boolean }> {
   const [toggled, setToggled] = useControllable(pressed, defaultPressed, onPressedChange);
-  const newState = { ...state, toggled };
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({
+    disabled: disabledState,
+  });
 
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    setToggled((p) => !p);
-    onClick?.(e);
-  };
+  const state = { ...interaction, disabled: disabledState, toggled };
 
   return {
-    state: newState,
-    handlers: { ...handlers, onClick: handleClick },
-    dataProps: interactionDataProps(newState),
+    handlers,
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+      if (p.toggled != null) setToggled(p.toggled);
+    },
   };
 }
+
+export type ToggleStore = ReturnType<typeof useToggle>;

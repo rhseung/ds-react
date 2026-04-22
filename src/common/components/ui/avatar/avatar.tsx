@@ -1,6 +1,14 @@
 import { type CSSProperties, type ComponentProps, type ReactNode, useState } from 'react';
 
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import { take } from 'es-toolkit';
+
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import {
   type AccentProps,
   type RenderProp,
@@ -13,7 +21,7 @@ import { AvatarFallback } from './avatar.fallback';
 import { AvatarImage } from './avatar.image';
 import { AvatarContext } from './context';
 import { avatar } from './styles';
-import { useAvatar } from './use-avatar';
+import { useAvatar, type AvatarStore } from './use-avatar';
 
 export function Avatar({
   src,
@@ -25,6 +33,7 @@ export function Avatar({
   className,
   style,
   children,
+  store,
   disabled,
   onPointerEnter,
   onPointerLeave,
@@ -38,8 +47,8 @@ export function Avatar({
   ...props
 }: Avatar.Props) {
   const size = useComponentSize(localSize);
-  const { state, handlers, dataProps } = useAvatar({
-    disabled,
+  const internalStore = useAvatar({ disabled });
+  const { state, handlers, dataProps } = useComponentBehavior(internalStore, store, {
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -61,10 +70,8 @@ export function Avatar({
   }
 
   const initials = name
-    ? name
-        .split(' ')
+    ? take(name.split(' '), 2)
         .map((n) => n[0])
-        .slice(0, 2)
         .join('')
         .toUpperCase()
     : '?';
@@ -81,10 +88,7 @@ export function Avatar({
       <SizeContext.Provider value={size}>
         <span
           className={avatar({ size, tone, className: resolveRenderProp(className, state) })}
-          style={mergeObjects(
-            color ? colorVars(color) : undefined,
-            resolveRenderProp(style, state),
-          )}
+          style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
           {...props}
           {...dataProps}
           {...handlers}
@@ -97,7 +101,8 @@ export function Avatar({
 }
 
 export namespace Avatar {
-  export type State = ReturnType<typeof useAvatar>['state'];
+  export type State = StoreState<AvatarStore>;
+  export type Store = AvatarStore;
 
   export const Image = AvatarImage;
   export namespace Image {
@@ -119,6 +124,7 @@ export namespace Avatar {
     src?: string;
     name?: string;
     alt?: string;
+    store?: Store;
     disabled?: boolean;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;

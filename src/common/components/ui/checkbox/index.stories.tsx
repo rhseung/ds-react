@@ -4,8 +4,11 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
+import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
+
+import { useCheckbox } from './use-checkbox';
 
 import { Checkbox } from '.';
 
@@ -171,43 +174,100 @@ export const IndicatorAsChild: Story = {
   ),
 };
 
-export const StateDriven: Story = {
-  render: () => (
-    <VStack gap={4}>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          className 함수 — 체크 시 ring 추가
-        </Text>
-        <Checkbox
-          defaultChecked
-          className={(state) => cn(state.checked && 'ring-accent ring-2 ring-offset-2')}
-        />
-      </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          style 함수 — 호버 시 scale 증가
-        </Text>
-        <Checkbox style={(state) => ({ transform: state.hovered ? 'scale(1.2)' : undefined })} />
-      </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          Indicator asChild — 커스텀 아이콘 교체
-        </Text>
-        <HStack gap={2} className="items-center">
-          <Checkbox defaultChecked>
-            <Checkbox.Indicator asChild>
-              <span style={{ fontSize: 10 }}>★</span>
-            </Checkbox.Indicator>
-          </Checkbox>
-          <Checkbox indeterminate>
-            <Checkbox.Indicator asChild>
-              <span style={{ fontSize: 10 }}>–</span>
-            </Checkbox.Indicator>
-          </Checkbox>
+export const StateAPI: Story = {
+  render: () => {
+    const store = useCheckbox({ defaultChecked: false });
+    return (
+      <VStack gap={8} className="items-start">
+        <HStack gap={8} className="items-start">
+          <VStack gap={2}>
+            <Checkbox id="store" store={store} />
+            <Label htmlFor="store">체크박스</Label>
+          </VStack>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.state
+            </Text>
+            <VStack gap={1}>
+              {(
+                ['hovered', 'focused', 'active', 'checked', 'indeterminate', 'disabled'] as const
+              ).map((key) => (
+                <Text key={key} size="xs" color="neutral-text-weak">
+                  {key}: {String(store.get(s => s[key]))}
+                </Text>
+              ))}
+              <Text size="xs" color="neutral-text-weak">
+                checked && !disabled: {String(store.get(s => s.checked === true && !s.disabled))}
+              </Text>
+            </VStack>
+          </VStack>
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.set()
+            </Text>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.checked === true)}
+              onPressedChange={(v) => store.set({ checked: v })}
+            >
+              checked 토글
+            </Toggle>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.indeterminate === true)}
+              onPressedChange={(v) => store.set({ indeterminate: v })}
+            >
+              indeterminate 토글
+            </Toggle>
+            <Toggle
+              size="sm"
+              pressed={store.get(s => s.disabled)}
+              onPressedChange={(v) => store.set({ disabled: v })}
+            >
+              disabled 토글
+            </Toggle>
+          </VStack>
         </HStack>
+
+        <VStack gap={4}>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              className 함수 — 체크 시 ring 추가
+            </Text>
+            <Checkbox
+              defaultChecked
+              className={(state) => cn(state.checked && 'ring-accent ring-2 ring-offset-2')}
+            />
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              style 함수 — 호버 시 scale 증가
+            </Text>
+            <Checkbox
+              style={(state) => ({ transform: state.hovered ? 'scale(1.2)' : undefined })}
+            />
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              Indicator asChild — 커스텀 아이콘 교체
+            </Text>
+            <HStack gap={2} className="items-center">
+              <Checkbox defaultChecked>
+                <Checkbox.Indicator asChild>
+                  <span style={{ fontSize: 10 }}>★</span>
+                </Checkbox.Indicator>
+              </Checkbox>
+              <Checkbox indeterminate>
+                <Checkbox.Indicator asChild>
+                  <span style={{ fontSize: 10 }}>–</span>
+                </Checkbox.Indicator>
+              </Checkbox>
+            </HStack>
+          </VStack>
+        </VStack>
       </VStack>
-    </VStack>
-  ),
+    );
+  },
 };
 
 export const ContextPropagation: Story = {

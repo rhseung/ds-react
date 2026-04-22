@@ -2,10 +2,10 @@ import { useContext } from 'react';
 
 import { Checkbox } from '@/common/components/ui/checkbox';
 
-import { CheckboxGroupCtx } from './context';
+import { CheckboxGroupContext } from './context';
 
 export function CheckboxGroupAll(props: CheckboxGroupAll.Props) {
-  const { values, allValues, toggleAll } = useContext(CheckboxGroupCtx)!;
+  const { values, allValues, toggleAll } = useContext(CheckboxGroupContext)!;
   const allChecked = allValues.length > 0 && values.length === allValues.length;
   const someChecked = values.length > 0 && values.length < allValues.length;
 

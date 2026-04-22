@@ -1,8 +1,9 @@
 import { HStack, VStack, Text } from '@/common/components/primitive';
+import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
 
-import { Avatar } from '.';
+import { Avatar, useAvatar } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -125,71 +126,100 @@ export const Sizes: Story = {
   ),
 };
 
-export const StateDriven: Story = {
-  render: () => (
-    <VStack gap={4}>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          className 함수 — 호버 시 ring 추가
-        </Text>
-        <HStack gap={2} className="items-center">
-          <Avatar
-            name="홍길동"
-            tone="default"
-            className={(state) =>
-              cn(
-                'cursor-pointer transition-shadow',
-                state.hovered && 'ring-accent ring-2 ring-offset-2',
-              )
-            }
-          />
-          <Avatar
-            name="Kim AI"
-            color="secondary"
-            tone="default"
-            className={(state) =>
-              cn(
-                'cursor-pointer transition-shadow',
-                state.hovered && 'ring-accent ring-2 ring-offset-2',
-              )
-            }
-          />
+export const StateAPI: Story = {
+  render: () => {
+    const store = useAvatar({ disabled: false });
+    return (
+      <VStack gap={8} className="items-start">
+        <HStack gap={8} className="items-start">
+          <Avatar store={store} name="홍길동" />
+          <VStack gap={2}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              store.state
+            </Text>
+            {(['hovered', 'focused', 'active', 'disabled'] as const).map((key) => (
+              <Text key={key} size="xs" color="neutral-text-weak">
+                {key}: {String(store.get(s => s[key]))}
+              </Text>
+            ))}
+            <Text size="xs" color="neutral-text-weak">
+              interactive: {String(store.get(s => s.hovered || s.focused))}
+            </Text>
+          </VStack>
+          <Toggle
+            size="sm"
+            pressed={store.get(s => s.disabled)}
+            onPressedChange={(v) => store.set({ disabled: v })}
+          >
+            disabled 토글
+          </Toggle>
         </HStack>
+
+        <VStack gap={4}>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              className 함수 — 호버 시 ring 추가
+            </Text>
+            <HStack gap={2} className="items-center">
+              <Avatar
+                name="홍길동"
+                tone="default"
+                className={(state) =>
+                  cn(
+                    'cursor-pointer transition-shadow',
+                    state.hovered && 'ring-accent ring-2 ring-offset-2',
+                  )
+                }
+              />
+              <Avatar
+                name="Kim AI"
+                color="secondary"
+                tone="default"
+                className={(state) =>
+                  cn(
+                    'cursor-pointer transition-shadow',
+                    state.hovered && 'ring-accent ring-2 ring-offset-2',
+                  )
+                }
+              />
+            </HStack>
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              style 함수 — 호버 시 scale 확대
+            </Text>
+            <HStack gap={2} className="items-center">
+              <Avatar
+                name="홍길동"
+                tone="weak"
+                style={(state) => ({
+                  transform: state.hovered ? 'scale(1.15)' : undefined,
+                  transition: 'transform 100ms',
+                })}
+              />
+            </HStack>
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — 호버 시 이니셜 강조
+            </Text>
+            <Avatar name="홍길동" tone="default" className="cursor-pointer">
+              {(state) =>
+                state.hovered ? (
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>HG</span>
+                ) : (
+                  <>
+                    <Avatar.Image />
+                    <Avatar.Fallback />
+                  </>
+                )
+              }
+            </Avatar>
+          </VStack>
+        </VStack>
       </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          style 함수 — 호버 시 scale 확대
-        </Text>
-        <HStack gap={2} className="items-center">
-          <Avatar
-            name="홍길동"
-            tone="weak"
-            style={(state) => ({
-              transform: state.hovered ? 'scale(1.15)' : undefined,
-              transition: 'transform 100ms',
-            })}
-          />
-        </HStack>
-      </VStack>
-      <VStack gap={1}>
-        <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          children 함수 — 호버 시 이니셜 강조
-        </Text>
-        <Avatar name="홍길동" tone="default" className="cursor-pointer">
-          {(state) =>
-            state.hovered ? (
-              <span style={{ fontSize: 12, fontWeight: 700 }}>HG</span>
-            ) : (
-              <>
-                <Avatar.Image />
-                <Avatar.Fallback />
-              </>
-            )
-          }
-        </Avatar>
-      </VStack>
-    </VStack>
-  ),
+    );
+  },
 };
 
 export const ContextPropagation: Story = {

@@ -3,11 +3,17 @@ import { type CSSProperties, type ComponentProps } from 'react';
 import { type VariantProps } from 'tailwind-variants';
 
 import { Slot, type SlotProps } from '@/common/components/utils';
-import { SizeContext, useComponentSize, type ComponentSize } from '@/common/hooks';
+import {
+  SizeContext,
+  type StoreState,
+  useComponentBehavior,
+  useComponentSize,
+  type ComponentSize,
+} from '@/common/hooks';
 import { type RenderProp, resolveRenderProp } from '@/common/utils';
 
 import { spinner } from './styles';
-import { useSpinner } from './use-spinner';
+import { useSpinner, type SpinnerStore } from './use-spinner';
 
 export function Spinner({
   size: sizeProp,
@@ -15,6 +21,7 @@ export function Spinner({
   style,
   children,
   asChild = false,
+  store,
   disabled,
   onPointerEnter,
   onPointerLeave,
@@ -28,8 +35,8 @@ export function Spinner({
   ...props
 }: Spinner.Props) {
   const size = useComponentSize(sizeProp);
-  const { state, handlers, dataProps } = useSpinner({
-    disabled,
+  const internalStore = useSpinner({ disabled });
+  const { state, handlers, dataProps } = useComponentBehavior(internalStore, store, {
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
@@ -60,7 +67,8 @@ export function Spinner({
 }
 
 export namespace Spinner {
-  export type State = ReturnType<typeof useSpinner>['state'];
+  export type State = StoreState<SpinnerStore>;
+  export type Store = SpinnerStore;
 
   export interface Props
     extends
@@ -68,6 +76,7 @@ export namespace Spinner {
       Omit<VariantProps<typeof spinner>, 'size'>,
       SlotProps<State> {
     size?: ComponentSize;
+    store?: Store;
     disabled?: boolean;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;

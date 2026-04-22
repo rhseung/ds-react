@@ -104,31 +104,37 @@ Do **not** put components that use `@/features/*`, `useTranslation`, or feature 
 
 #### `{Component}.State` type
 
-Every interactive component must export a `State` type under its namespace. Derive it from the hook's return type — do **not** redeclare the same fields manually.
+Every interactive component must export a `State` type under its namespace. Use `StoreState<XStore>` (from `@/common/hooks`) — do **not** redeclare the same fields manually, and do not use `ReturnType` on `get` directly (generic `get` returns `unknown` via `ReturnType`).
 
 **`State` must be declared before `Props` in the namespace**, because `Props` references `State` via `RenderProp`.
 
 ```ts
 // use-button.ts — single source of truth
-export function useButton(...) {
-  return { state, handlers, dataProps };
+export function useButton(...): Store<Record<never, never>> {
+  // returns { get, handlers, set } — the Store<D> shape
 }
+export type ButtonStore = ReturnType<typeof useButton>;
 
 // button/index.tsx
+import { type StoreState } from '@/common/hooks';
+import { type ButtonStore } from './use-button';
+
 export namespace Button {
-  export type State = ReturnType<typeof useButton>['state']; // ✅ declared first
-  export interface Props { // ✅ can now reference State
+  export type State = StoreState<ButtonStore>; // ✅ declared first, correctly typed
+  export interface Props {                     // ✅ can now reference State
     className?: RenderProp<State, string>;
   }
 }
 ```
+
+`StoreState<S>` extracts the state type from `Store<D>` via parameter inference: `Parameters<NonNullable<Parameters<S['get']>[0]>>[0]`. This correctly resolves where `ReturnType` cannot (generic default not resolved by `ReturnType`).
 
 This avoids the `Button.State` type diverging from the actual runtime state shape.
 
 ```tsx
 // ✅
 export namespace Button {
-  export type State = ReturnType<typeof useButton>['state'];
+  export type State = StoreState<ButtonStore>;
 
   export interface Props
     extends
@@ -400,29 +406,49 @@ Reasons:
 
 #### `use[Component]` hook pattern
 
-Do **not** call `useInteraction` directly inside a component. Always wrap it in a component-specific hook (`use-button.ts`, `use-toggle.ts`, etc.) that returns `state`, `handlers`, and `dataProps` together. See `use-button.ts` and `use-toggle.ts` as reference implementations.
+Do **not** call `useInteraction` directly inside a component. Always wrap it in a component-specific hook (`use-button.ts`, `use-toggle.ts`, etc.) that returns a `Store<D>` — `{ get, handlers, set }`. See `use-button.ts` and `use-toggle.ts` as reference implementations.
 
 ```ts
 // use-button.ts
-export function useButton({ disabled, onClick, ...eventHandlers }: UseButtonOptions = {}) {
-  const { state, handlers } = useInteraction({ disabled, ...eventHandlers });
+export function useButton({ disabled = false }: UseButtonOptions = {}): Store<Record<never, never>> {
+  const [disabledState, setDisabled] = useState(disabled);
+  const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({ disabled: disabledState });
+  const state = { ...interaction, disabled: disabledState };
+
   return {
-    state,
-    handlers: { ...handlers, onClick },
-    dataProps: interactionDataProps(state), // e.g. { 'data-hovered': true, ... }
+    handlers,
+    get<T = typeof state>(selector?: (s: typeof state) => T): T {
+      return (selector ? selector(state) : state) as T;
+    },
+    set(partialOrFn) {
+      const p = isFunction(partialOrFn) ? partialOrFn(state) : partialOrFn;
+      if (p.disabled != null) setDisabled(p.disabled);
+    },
   };
 }
+export type ButtonStore = ReturnType<typeof useButton>;
 ```
 
-To add a custom state, extend `state` before passing it to `interactionDataProps`.
+`store.get()` supports an optional **selector** for deriving values without exposing raw state:
+
+```ts
+store.get()                              // full state snapshot
+store.get(s => s.disabled)              // single field
+store.get(s => s.value.length > 0)      // derived — "filled" state
+store.get(s => s.hovered || s.focused)  // compound condition
+```
+
+To add a custom state, extend `state` before returning.
 
 ```ts
 // use-toggle.ts — adding a 'toggled' state
-const newState = { ...state, toggled };
+const state = { ...interaction, disabled: disabledState, toggled };
 return {
-  state: newState,
-  handlers: { ...handlers, onClick: handleClick },
-  dataProps: interactionDataProps(newState), // 'data-toggled' is generated automatically
+  handlers,
+  get<T = typeof state>(selector?: (s: typeof state) => T): T {
+    return (selector ? selector(state) : state) as T;
+  },
+  set(partialOrFn) { ... },
 };
 ```
 
