@@ -193,11 +193,11 @@ export const StateAPI: Story = {
                 ['hovered', 'focused', 'active', 'checked', 'indeterminate', 'disabled'] as const
               ).map((key) => (
                 <Text key={key} size="xs" color="neutral-text-weak">
-                  {key}: {String(store.get(s => s[key]))}
+                  {key}: {String(store.get((s) => s[key]))}
                 </Text>
               ))}
               <Text size="xs" color="neutral-text-weak">
-                checked && !disabled: {String(store.get(s => s.checked === true && !s.disabled))}
+                checked && !disabled: {String(store.get((s) => s.checked === true && !s.disabled))}
               </Text>
             </VStack>
           </VStack>
@@ -207,21 +207,21 @@ export const StateAPI: Story = {
             </Text>
             <Toggle
               size="sm"
-              pressed={store.get(s => s.checked === true)}
+              pressed={store.get((s) => s.checked === true)}
               onPressedChange={(v) => store.set({ checked: v })}
             >
               checked 토글
             </Toggle>
             <Toggle
               size="sm"
-              pressed={store.get(s => s.indeterminate === true)}
+              pressed={store.get((s) => s.indeterminate === true)}
               onPressedChange={(v) => store.set({ indeterminate: v })}
             >
               indeterminate 토글
             </Toggle>
             <Toggle
               size="sm"
-              pressed={store.get(s => s.disabled)}
+              pressed={store.get((s) => s.disabled)}
               onPressedChange={(v) => store.set({ disabled: v })}
             >
               disabled 토글
@@ -246,6 +246,25 @@ export const StateAPI: Story = {
             <Checkbox
               style={(state) => ({ transform: state.hovered ? 'scale(1.2)' : undefined })}
             />
+          </VStack>
+          <VStack gap={1}>
+            <Text size="xs" color="neutral-text-weak" className="font-semibold">
+              children 함수 — 상태에 따라 다른 콘텐츠
+            </Text>
+            <HStack gap={2} className="items-center">
+              <Checkbox defaultChecked>
+                {(state) =>
+                  state.checked ? (
+                    <Checkbox.Indicator />
+                  ) : (
+                    <span style={{ fontSize: 8, color: 'currentColor' }}>?</span>
+                  )
+                }
+              </Checkbox>
+              <Checkbox indeterminate>
+                {(state) => (state.indeterminate ? <Checkbox.Indicator /> : null)}
+              </Checkbox>
+            </HStack>
           </VStack>
           <VStack gap={1}>
             <Text size="xs" color="neutral-text-weak" className="font-semibold">

@@ -51,8 +51,10 @@ export namespace CheckboxGroup {
     onChange?: (value: T[]) => void;
     children?:
       | ((args: {
-          Item: (props: CheckboxGroup.Item.Props<T>) => JSX.Element;
-          All: (props: CheckboxGroup.All.Props) => JSX.Element;
+          Item: ((props: CheckboxGroup.Item.Props<T>) => JSX.Element) &
+            Pick<typeof CheckboxGroupItem, 'Indicator'>;
+          All: ((props: CheckboxGroup.All.Props) => JSX.Element) &
+            Pick<typeof CheckboxGroupAll, 'Indicator'>;
         }) => ReactNode)
       | ReactNode;
   }

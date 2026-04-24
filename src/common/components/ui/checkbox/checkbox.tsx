@@ -68,7 +68,7 @@ export function Checkbox({
             onChange={(e) => activeStore.set({ checked: e.target.checked })}
             {...inputProps}
           />
-          {children}
+          {resolveRenderProp(children, state)}
           <StateMask />
         </span>
       </SizeContext.Provider>
@@ -98,7 +98,7 @@ export namespace Checkbox {
     defaultChecked?: boolean;
     onChange?: (checked: boolean) => void;
     indeterminate?: boolean;
-    children?: ReactNode;
+    children?: RenderProp<State, ReactNode>;
     className?: RenderProp<State, string>;
     style?: RenderProp<State, CSSProperties>;
   }

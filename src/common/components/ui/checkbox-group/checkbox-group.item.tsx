@@ -18,6 +18,11 @@ export function CheckboxGroupItem<T>({ value, ...checkboxProps }: CheckboxGroupI
 }
 
 export namespace CheckboxGroupItem {
+  export const Indicator = Checkbox.Indicator;
+  export namespace Indicator {
+    export type Props = Checkbox.Indicator.Props;
+  }
+
   export type Props<T> = { value: T } & Omit<
     Checkbox.Props,
     'checked' | 'defaultChecked' | 'onChange' | 'indeterminate' | 'value'

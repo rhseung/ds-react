@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { Label, Text, VStack } from '@/common/components/primitive';
-import { Checkbox } from '@/common/components/ui/checkbox';
 
 import { CheckboxGroup } from '.';
 
@@ -101,9 +100,13 @@ export const WithCustomIndicator: Story = {
             <>
               <Label className="flex items-center gap-2 font-semibold">
                 <All>
-                  <Checkbox.Indicator asChild>
-                    <span style={{ fontSize: 10 }}>★</span>
-                  </Checkbox.Indicator>
+                  {(state) =>
+                    state.indeterminate ? (
+                      <span style={{ fontSize: 10 }}>—</span>
+                    ) : state.checked ? (
+                      <span style={{ fontSize: 10 }}>★</span>
+                    ) : null
+                  }
                 </All>
                 전체 선택
               </Label>
@@ -111,9 +114,7 @@ export const WithCustomIndicator: Story = {
                 {FRUITS.map((fruit) => (
                   <Label key={fruit} className="flex items-center gap-2">
                     <Item value={fruit}>
-                      <Checkbox.Indicator asChild>
-                        <span style={{ fontSize: 10 }}>★</span>
-                      </Checkbox.Indicator>
+                      {(state) => (state.checked ? <span style={{ fontSize: 10 }}>★</span> : null)}
                     </Item>
                     {FRUIT_LABELS[fruit]}
                   </Label>

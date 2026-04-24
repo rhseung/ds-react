@@ -20,6 +20,11 @@ export function CheckboxGroupAll(props: CheckboxGroupAll.Props) {
 }
 
 export namespace CheckboxGroupAll {
+  export const Indicator = Checkbox.Indicator;
+  export namespace Indicator {
+    export type Props = Checkbox.Indicator.Props;
+  }
+
   export type Props = Omit<
     Checkbox.Props,
     'checked' | 'defaultChecked' | 'onChange' | 'indeterminate'

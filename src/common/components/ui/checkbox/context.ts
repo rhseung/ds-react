@@ -1,9 +1,11 @@
 import { createContext, useContext } from 'react';
 
-import { type useCheckbox } from './use-checkbox';
+import { type StoreState } from '@/common/hooks';
+
+import { type CheckboxStore } from './use-checkbox';
 
 interface CheckboxContextValue {
-  state: ReturnType<ReturnType<typeof useCheckbox>['get']>;
+  state: StoreState<CheckboxStore>;
 }
 
 export const CheckboxContext = createContext<CheckboxContextValue | null>(null);
