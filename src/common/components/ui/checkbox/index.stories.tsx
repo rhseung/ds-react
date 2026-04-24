@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
-import { Toggle } from '@/common/components/ui/toggle';
+import { RadioGroup } from '@/common/components/ui/radio-group';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
 
@@ -205,27 +205,66 @@ export const StateAPI: Story = {
             <Text size="xs" color="neutral-text-weak" className="font-semibold">
               store.set()
             </Text>
-            <Toggle
-              size="sm"
-              pressed={store.get((s) => s.checked === true)}
-              onPressedChange={(v) => store.set({ checked: v })}
+            <RadioGroup<boolean>
+              value={store.get((s) => s.checked === true)}
+              onChange={(v) => store.set({ checked: v })}
             >
-              checked 토글
-            </Toggle>
-            <Toggle
-              size="sm"
-              pressed={store.get((s) => s.indeterminate === true)}
-              onPressedChange={(v) => store.set({ indeterminate: v })}
+              {({ Item }) => (
+                <HStack gap={2} className="items-center">
+                  <Text size="xs" color="neutral-text-weak" className="w-24">
+                    checked
+                  </Text>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={true} size="sm" />
+                    켜짐
+                  </Label>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={false} size="sm" />
+                    꺼짐
+                  </Label>
+                </HStack>
+              )}
+            </RadioGroup>
+            <RadioGroup<boolean>
+              value={store.get((s) => s.indeterminate === true)}
+              onChange={(v) => store.set({ indeterminate: v })}
             >
-              indeterminate 토글
-            </Toggle>
-            <Toggle
-              size="sm"
-              pressed={store.get((s) => s.disabled)}
-              onPressedChange={(v) => store.set({ disabled: v })}
+              {({ Item }) => (
+                <HStack gap={2} className="items-center">
+                  <Text size="xs" color="neutral-text-weak" className="w-24">
+                    indeterminate
+                  </Text>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={true} size="sm" />
+                    켜짐
+                  </Label>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={false} size="sm" />
+                    꺼짐
+                  </Label>
+                </HStack>
+              )}
+            </RadioGroup>
+            <RadioGroup<boolean>
+              value={store.get((s) => s.disabled)}
+              onChange={(v) => store.set({ disabled: v })}
             >
-              disabled 토글
-            </Toggle>
+              {({ Item }) => (
+                <HStack gap={2} className="items-center">
+                  <Text size="xs" color="neutral-text-weak" className="w-24">
+                    disabled
+                  </Text>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={true} size="sm" />
+                    켜짐
+                  </Label>
+                  <Label className="flex items-center gap-1.5">
+                    <Item value={false} size="sm" />
+                    꺼짐
+                  </Label>
+                </HStack>
+              )}
+            </RadioGroup>
           </VStack>
         </HStack>
 
