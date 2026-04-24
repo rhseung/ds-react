@@ -3,6 +3,7 @@ type IDSErrorContextMap = {
   'children/required': { component: string; expected: string };
   'slot/invalid-child': { received: string };
   'lib/unsupported': { key: string; value: string };
+  'icon/empty-variant-map': { displayName: string };
 };
 
 export type IDSErrorCode = keyof IDSErrorContextMap;
@@ -14,6 +15,8 @@ const messages: { [C in IDSErrorCode]: (ctx: IDSErrorContextMap[C]) => string } 
   'slot/invalid-child': (ctx) =>
     `Slot's first child must be a valid React element, but got: ${ctx.received}.`,
   'lib/unsupported': (ctx) => `Unsupported ${ctx.key}: "${ctx.value}".`,
+  'icon/empty-variant-map': (ctx) =>
+    `${ctx.displayName} must have at least one variant registered.`,
 };
 
 function format<C extends IDSErrorCode>(code: C, ctx: IDSErrorContextMap[C]): string {
