@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Avatar, Badge, Button, Spinner } from '@/common/components/ui';
+import { Button } from '@/common/components/ui';
 import { ThemeProvider } from '@/common/components/utils';
 import type { Theme } from '@/common/stores';
-import { colorVars } from '@/common/utils';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -126,78 +125,44 @@ export const Nested: StoryObj<{
   ),
 };
 
+const SWATCH_GROUPS: {
+  cssVar: string;
+  textVar: string;
+  label: string;
+}[][] = COLORS.map((color) => [
+  { cssVar: `--ids-${color}`, textVar: `--ids-on-${color}`, label: color },
+  { cssVar: `--ids-${color}-weak`, textVar: `--ids-on-${color}-weak`, label: `${color} weak` },
+  {
+    cssVar: `--ids-${color}-contrast`,
+    textVar: `--ids-on-${color}-contrast`,
+    label: `${color} contrast`,
+  },
+  { cssVar: `--ids-on-${color}`, textVar: `--ids-${color}`, label: `on ${color}` },
+  {
+    cssVar: `--ids-on-${color}-weak`,
+    textVar: `--ids-${color}-weak`,
+    label: `on ${color} weak`,
+  },
+  {
+    cssVar: `--ids-on-${color}-contrast`,
+    textVar: `--ids-${color}-contrast`,
+    label: `on ${color} contrast`,
+  },
+]);
+
 export const Palette: StoryObj = {
   render: () => (
-    <div className="flex flex-col gap-10 p-8">
-      {/* Color swatches — all 9 at once */}
-      <div className="flex gap-2">
-        {COLORS.map((color) =>
-          TONES.map((tone) => (
+    <div className="flex flex-col gap-6 p-8">
+      {SWATCH_GROUPS.map((group) => (
+        <div key={group[0].label} className="flex gap-2">
+          {group.map((swatch) => (
             <TokenSwatch
-              key={`${color}-${tone}`}
-              cssVar={tone === 'default' ? `--ids-${color}` : `--ids-${color}-${tone}`}
-              textVar={tone === 'default' ? `--ids-on-${color}` : `--ids-on-${color}-${tone}`}
-              label={tone === 'default' ? color : `${color} ${tone}`}
+              key={swatch.label}
+              cssVar={swatch.cssVar}
+              textVar={swatch.textVar}
+              label={swatch.label}
             />
-          )),
-        )}
-      </div>
-
-      {/* Components — one row per color, all tones/variants mixed */}
-      {COLORS.map((color) => (
-        <div key={color} className="flex flex-col gap-3">
-          <p className="text-neutral-text-weak text-xs font-semibold tracking-widest uppercase">
-            {color}
-          </p>
-
-          {/* Buttons — all variants × all tones */}
-          <div className="flex flex-wrap items-center gap-2">
-            {(['solid', 'elevated', 'outline', 'ghost'] as const).map((variant) =>
-              TONES.map((tone) => (
-                <Button key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
-                  {variant}
-                </Button>
-              )),
-            )}
-          </div>
-
-          {/* Badges + Avatars + Spinners — all together */}
-          <div className="flex flex-wrap items-center gap-3">
-            {(['solid', 'outline', 'ghost'] as const).map((variant) =>
-              TONES.map((tone) => (
-                <Badge key={`${variant}-${tone}`} variant={variant} color={color} tone={tone}>
-                  {tone}
-                </Badge>
-              )),
-            )}
-            {(['sm', 'md', 'lg'] as const).map((size) =>
-              TONES.map((tone) => (
-                <Avatar
-                  key={`${size}-${tone}`}
-                  name="Hong Gildong"
-                  size={size}
-                  color={color}
-                  tone={tone}
-                />
-              )),
-            )}
-            {(['sm', 'md', 'lg'] as const).map((size) =>
-              TONES.map((tone) => (
-                <Spinner
-                  key={`${size}-${tone}`}
-                  size={size}
-                  className={
-                    tone === 'default'
-                      ? 'text-accent'
-                      : tone === 'weak'
-                        ? 'text-accent-weak'
-                        : 'text-accent-contrast'
-                  }
-                  style={colorVars(color)}
-                />
-              )),
-            )}
-          </div>
+          ))}
         </div>
       ))}
     </div>

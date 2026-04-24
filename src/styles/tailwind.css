@@ -38,8 +38,8 @@
   --shadow-md: var(--ids-shadow-md);
   --shadow-lg: var(--ids-shadow-lg);
   --shadow-xl: var(--ids-shadow-xl);
-  --shadow-bevel: var(--ids-shadow-bevel);
-  --shadow-bevel-active: var(--ids-shadow-bevel-active);
+  --shadow-elevated: var(--ids-shadow-elevated);
+  --shadow-elevated-active: var(--ids-shadow-elevated-active);
 
   /* Accent (active color role — defaults to primary, overridable per-component via colorVars()) */
   --color-accent: var(--ids-accent);

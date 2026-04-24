@@ -34,7 +34,7 @@
 [data-theme='light'] {
   --ids-state-mask: 0;
   --ids-state-mask-hovered: 0.06;
-  --ids-state-mask-pressed: 0.2;
+  --ids-state-mask-pressed: 0.16;
 }
 
 [data-theme='dark'] {

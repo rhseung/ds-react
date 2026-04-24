@@ -20,9 +20,9 @@ export const button = tv({
     variant: {
       solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
       elevated:
-        'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled shadow-bevel data-active:translate-y-px data-active:shadow-bevel-active data-active:scale-100',
+        'bg-accent text-on-accent outline -outline-offset-1 outline-accent-contrast/15 data-disabled:bg-neutral-bg-disabled data-disabled:outline-neutral-border shadow-elevated data-active:scale-100',
       outline:
-        'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:inset-ring-neutral-border data-disabled:bg-transparent',
+        'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:border-neutral-border data-disabled:bg-transparent',
       ghost: 'bg-transparent text-accent',
     },
     tone: {

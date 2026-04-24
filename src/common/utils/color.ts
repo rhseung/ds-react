@@ -65,6 +65,7 @@ export function generateAccentVars(hex: string, theme: Theme): AccentCSSVars {
     '--ids-on-accent': p.onMain,
     '--ids-on-accent-contrast': p.onContrast,
     '--ids-on-accent-weak': p.onWeak,
+
     '--ids-primary': p.main,
     '--ids-primary-contrast': p.contrast,
     '--ids-primary-weak': p.weak,

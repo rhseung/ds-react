@@ -71,7 +71,7 @@ Enforced by `eslint-plugin-import-x`:
 Do **not** use order-based names like `primary` / `secondary` for component variants. Use visual/structural descriptors instead:
 
 - **`solid`** — filled background (highest emphasis)
-- **`soft`** — tinted/muted background (medium emphasis)
+- **`elevated`** — filled background with depth shadow (high emphasis with lift)
 - **`outline`** — border only, transparent background (low emphasis)
 - **`ghost`** — no border, no background (lowest emphasis)
 
