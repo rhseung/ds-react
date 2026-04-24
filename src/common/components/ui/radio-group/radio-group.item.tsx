@@ -6,7 +6,9 @@ export function RadioGroupItem<T>({ value, ...radioProps }: RadioGroupItem.Props
   const store = useRadioGroupContext<T>();
   const selectedValue = store.get((s) => s.value);
 
-  return <Radio checked={value === selectedValue} onChange={() => store.select(value)} {...radioProps} />;
+  return (
+    <Radio checked={value === selectedValue} onChange={() => store.select(value)} {...radioProps} />
+  );
 }
 
 export namespace RadioGroupItem {

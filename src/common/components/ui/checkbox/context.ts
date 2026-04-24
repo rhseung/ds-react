@@ -13,6 +13,7 @@ export const CheckboxContext = createContext<CheckboxContextValue | null>(null);
 
 export function useCheckboxContext() {
   const ctx = useContext(CheckboxContext);
-  if (!ctx) IDSError.throw('context/missing', { component: 'Checkbox.Indicator', parent: '<Checkbox>' });
+  if (!ctx)
+    IDSError.throw('context/missing', { component: 'Checkbox.Indicator', parent: '<Checkbox>' });
   return ctx;
 }

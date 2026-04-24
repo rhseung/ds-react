@@ -8,6 +8,7 @@ export const RadioGroupContext = createContext<RadioGroupStore<unknown> | null>(
 
 export function useRadioGroupContext<T>(): RadioGroupStore<T> {
   const ctx = useContext(RadioGroupContext);
-  if (!ctx) IDSError.throw('context/missing', { component: 'RadioGroup.Item', parent: '<RadioGroup>' });
+  if (!ctx)
+    IDSError.throw('context/missing', { component: 'RadioGroup.Item', parent: '<RadioGroup>' });
   return ctx as RadioGroupStore<T>;
 }
