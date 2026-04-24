@@ -1,4 +1,5 @@
 export * from './avatar';
+export * from './icon';
 export * from './checkbox';
 export * from './checkbox-group';
 export * from './text-area';

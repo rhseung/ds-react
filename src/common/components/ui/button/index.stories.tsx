@@ -1,7 +1,6 @@
-import { IconCheck, IconDownload, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
-
 import { Box, HStack, VStack, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
+import { Icons } from '@/common/components/ui/icon';
 import { Spinner } from '@/common/components/ui/spinner';
 import { TextField } from '@/common/components/ui/text-field';
 import { Toggle } from '@/common/components/ui/toggle';
@@ -67,7 +66,7 @@ export const IconOnly: Story = {
                 </Text>
                 {TONES.map((tone) => (
                   <Button key={tone} size="md" icon variant={variant} color={color} tone={tone}>
-                    <IconSearch size={16} />
+                    <Icons.Search />
                   </Button>
                 ))}
               </>
@@ -82,7 +81,7 @@ export const IconOnly: Story = {
 export const Loading: Story = {
   render: () => (
     <HStack gap={3}>
-      {(['solid', 'outline', 'ghost'] as const).map((variant) => (
+      {(['solid', 'elevated', 'outline', 'ghost'] as const).map((variant) => (
         <Button key={variant} variant={variant} tone="default" disabled>
           <Spinner size="sm" />
           로딩 중
@@ -96,7 +95,6 @@ const VARIANTS = ['solid', 'elevated', 'outline', 'ghost'] as const;
 const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 const TONES = ['default', 'weak', 'contrast'] as const;
 const SIZES = ['sm', 'md', 'lg'] as const;
-const ICON_SIZE = { sm: 14, md: 16, lg: 18 } as const;
 
 export const Overview: Story = {
   render: () => (
@@ -120,7 +118,7 @@ export const Overview: Story = {
                 </Text>
                 {TONES.map((tone) => (
                   <Button key={tone} variant={variant} color={color} tone={tone}>
-                    <IconCheck size={16} />
+                    <Icons.Check />
                     확인
                   </Button>
                 ))}
@@ -142,19 +140,19 @@ export const Sizes: Story = {
             {size}
           </Text>
           <Button size={size} tone="default">
-            <IconPlus size={ICON_SIZE[size]} />
+            <Icons.Plus />
             추가
           </Button>
           <Button size={size} variant="outline" tone="default">
-            <IconDownload size={ICON_SIZE[size]} />
+            <Icons.Download />
             내보내기
           </Button>
           <Button size={size} variant="ghost" color="tertiary" tone="default">
-            <IconTrash size={ICON_SIZE[size]} />
+            <Icons.Trash />
             삭제
           </Button>
           <Button size={size} icon tone="default">
-            <IconSearch size={ICON_SIZE[size]} />
+            <Icons.Search />
           </Button>
         </HStack>
       ))}
@@ -173,11 +171,11 @@ export const ContextPropagation: Story = {
           <SizeContext.Provider value={size}>
             <HStack gap={2} className="items-center">
               <Button tone="default">
-                <IconPlus size={ICON_SIZE[size]} />
+                <Icons.Plus />
                 추가
               </Button>
               <Button icon tone="default">
-                <IconSearch size={ICON_SIZE[size]} />
+                <Icons.Search />
               </Button>
               <TextField placeholder="텍스트 필드" tone="default" className="w-48" />
               <Badge tone="default">뱃지</Badge>

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { IconBold, IconItalic, IconUnderline } from '@tabler/icons-react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
+import { Icons } from '@/common/components/ui/icon';
 import { SizeContext } from '@/common/hooks';
 
 import { Toggle, useToggle } from '.';
@@ -225,10 +225,10 @@ export const ToolbarGroup: Story = {
     return (
       <HStack gap={1}>
         <Toggle icon variant="ghost" tone="default" pressed={bold} onPressedChange={setBold}>
-          <IconBold size={16} />
+          <Icons.Bold />
         </Toggle>
         <Toggle icon variant="ghost" tone="default" pressed={italic} onPressedChange={setItalic}>
-          <IconItalic size={16} />
+          <Icons.Italic />
         </Toggle>
         <Toggle
           icon
@@ -237,7 +237,7 @@ export const ToolbarGroup: Story = {
           pressed={underline}
           onPressedChange={setUnderline}
         >
-          <IconUnderline size={16} />
+          <Icons.Underline />
         </Toggle>
       </HStack>
     );
@@ -256,7 +256,7 @@ export const Sizes: Story = {
             굵게
           </Toggle>
           <Toggle size={size} icon tone="default" defaultPressed>
-            <IconBold size={16} />
+            <Icons.Bold />
           </Toggle>
         </HStack>
       ))}
@@ -278,7 +278,7 @@ export const ContextPropagation: Story = {
                 굵게
               </Toggle>
               <Toggle icon tone="default" defaultPressed>
-                <IconBold size={16} />
+                <Icons.Bold />
               </Toggle>
             </HStack>
           </SizeContext.Provider>

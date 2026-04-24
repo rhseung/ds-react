@@ -1,33 +1,8 @@
 import { useState } from 'react';
 
-import {
-  IconArrowUp,
-  IconCheck,
-  IconAt,
-  IconBlockquote,
-  IconBold,
-  IconCode,
-  IconCopy,
-  IconH1,
-  IconH2,
-  IconItalic,
-  IconLink,
-  IconList,
-  IconListNumbers,
-  IconMicrophone,
-  IconPaperclip,
-  IconPhoto,
-  IconPlayerPlay,
-  IconPlus,
-  IconSend2,
-  IconStrikethrough,
-  IconTable,
-  IconTag,
-  IconWorld,
-} from '@tabler/icons-react';
-
 import { HStack, VStack, Spacer, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
+import { Icons } from '@/common/components/ui/icon';
 import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
@@ -146,13 +121,13 @@ export const WithSlots: Story = {
                 aria-label="음성 녹음"
                 color={recording ? 'tertiary' : undefined}
               >
-                <IconMicrophone size={14} />
+                <Icons.Microphone />
               </Toggle>
               <Button size="sm" icon variant="ghost" tone="default" aria-label="파일 첨부">
-                <IconPaperclip size={14} />
+                <Icons.Paperclip />
               </Button>
               <Button size="sm" icon variant="ghost" tone="default" aria-label="이미지 첨부">
-                <IconPhoto size={14} />
+                <Icons.Photo />
               </Button>
               <Spacer />
               <Button
@@ -163,7 +138,7 @@ export const WithSlots: Story = {
                 disabled={!chatValue.trim()}
                 aria-label="전송"
               >
-                <IconSend2 size={14} />
+                <Icons.Send2 />
               </Button>
             </HStack>
           </TextArea>
@@ -190,7 +165,7 @@ export const WithSlots: Story = {
                 onPressedChange={setBold}
                 aria-label="굵게"
               >
-                <IconBold size={14} />
+                <Icons.Bold />
               </Toggle>
               <Toggle
                 size="sm"
@@ -201,7 +176,7 @@ export const WithSlots: Story = {
                 onPressedChange={setItalic}
                 aria-label="기울임"
               >
-                <IconItalic size={14} />
+                <Icons.Italic />
               </Toggle>
               <Toggle
                 size="sm"
@@ -212,7 +187,7 @@ export const WithSlots: Story = {
                 onPressedChange={setStrike}
                 aria-label="취소선"
               >
-                <IconStrikethrough size={14} />
+                <Icons.Strikethrough />
               </Toggle>
               <Toggle
                 size="sm"
@@ -223,7 +198,7 @@ export const WithSlots: Story = {
                 onPressedChange={setCode}
                 aria-label="코드"
               >
-                <IconCode size={14} />
+                <Icons.Code />
               </Toggle>
               <Divider orientation="vertical" className="mx-1 h-4" />
               <Toggle
@@ -235,7 +210,7 @@ export const WithSlots: Story = {
                 onPressedChange={setH1}
                 aria-label="제목 1"
               >
-                <IconH1 size={14} />
+                <Icons.H1 />
               </Toggle>
               <Toggle
                 size="sm"
@@ -246,7 +221,7 @@ export const WithSlots: Story = {
                 onPressedChange={setH2}
                 aria-label="제목 2"
               >
-                <IconH2 size={14} />
+                <Icons.H2 />
               </Toggle>
               <Toggle
                 size="sm"
@@ -257,20 +232,20 @@ export const WithSlots: Story = {
                 onPressedChange={setBlockquote}
                 aria-label="인용"
               >
-                <IconBlockquote size={14} />
+                <Icons.Blockquote />
               </Toggle>
               <Divider orientation="vertical" className="mx-1 h-4" />
               <Button size="sm" icon variant="ghost" tone="default" aria-label="링크">
-                <IconLink size={14} />
+                <Icons.Link />
               </Button>
               <Button size="sm" icon variant="ghost" tone="default" aria-label="순서 없는 목록">
-                <IconList size={14} />
+                <Icons.List />
               </Button>
               <Button size="sm" icon variant="ghost" tone="default" aria-label="순서 있는 목록">
-                <IconListNumbers size={14} />
+                <Icons.List variant="numbers" />
               </Button>
               <Button size="sm" icon variant="ghost" tone="default" aria-label="표">
-                <IconTable size={14} />
+                <Icons.Table />
               </Button>
             </HStack>
             <Divider />
@@ -314,10 +289,10 @@ export const WithSlots: Story = {
               </span>
               <Spacer />
               <Button size="sm" icon variant="ghost" tone="default" aria-label="복사">
-                <IconCopy size={14} />
+                <Icons.Copy />
               </Button>
               <Button size="sm" icon variant="solid" tone="default" aria-label="실행">
-                <IconPlayerPlay size={14} />
+                <Icons.PlayerPlay />
               </Button>
             </HStack>
           </TextArea>
@@ -335,7 +310,7 @@ export const WithSlots: Story = {
             rows={4}
           >
             <HStack gap={1.5} className="flex-wrap items-center px-2.5 py-1.5">
-              <IconTag size={12} className="text-neutral-text-weak shrink-0" />
+              <Icons.Tag size="sm" className="text-neutral-text-weak shrink-0" />
               {tags.map((tag) => (
                 <Badge key={tag} size="sm" variant="outline" tone="weak">
                   {tag}
@@ -363,7 +338,7 @@ export const WithSlots: Story = {
             <Divider />
             <HStack gap={2} className="items-center px-2.5 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="이미지 첨부">
-                <IconPhoto size={14} />
+                <Icons.Photo />
               </Button>
               <Spacer />
               <span className="text-xs">
@@ -399,7 +374,7 @@ export const WithSlots: Story = {
           >
             <HStack className="px-2.5 pt-2.5 pb-1">
               <button className="text-neutral-text border-neutral-border bg-neutral-bg-subtle hover:bg-neutral-bg inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors">
-                <IconAt size={13} />
+                <Icons.At size="sm" />
                 Add context
               </button>
             </HStack>
@@ -407,11 +382,11 @@ export const WithSlots: Story = {
             <Divider />
             <HStack gap={2} className="items-center px-2 py-1.5">
               <Button size="sm" icon variant="ghost" tone="default" aria-label="첨부">
-                <IconPaperclip size={14} />
+                <Icons.Paperclip />
               </Button>
               <span className="text-neutral-text-weak text-xs">Auto</span>
               <HStack gap={1} className="items-center">
-                <IconWorld size={13} className="text-neutral-text-weak" />
+                <Icons.World size="sm" className="text-neutral-text-weak" />
                 <span className="text-neutral-text-weak text-xs">All Sources</span>
               </HStack>
               <Spacer />
@@ -424,7 +399,7 @@ export const WithSlots: Story = {
                 className="rounded-full"
                 aria-label="전송"
               >
-                <IconArrowUp size={14} />
+                <Icons.ArrowUp />
               </Button>
             </HStack>
           </TextArea>
@@ -452,7 +427,7 @@ export const WithSlots: Story = {
                 className="rounded-full"
                 aria-label="추가"
               >
-                <IconPlus size={14} />
+                <Icons.Plus />
               </Button>
               <span className="text-neutral-text-weak text-xs">Auto</span>
               <Spacer />
@@ -467,7 +442,7 @@ export const WithSlots: Story = {
                 className="rounded-full"
                 aria-label="전송"
               >
-                <IconArrowUp size={14} />
+                <Icons.ArrowUp />
               </Button>
             </HStack>
           </TextArea>
@@ -547,7 +522,7 @@ export const StateAPI: Story = {
                       disabled={!state.filled}
                       aria-label="전송"
                     >
-                      <IconArrowUp size={14} />
+                      <Icons.ArrowUp />
                       전송
                     </Button>
                   </HStack>
@@ -565,7 +540,7 @@ export const StateAPI: Story = {
                   <TextArea.Input />
                   {state.filled && (
                     <HStack gap={1} className="text-accent items-center px-2.5 py-1 text-xs">
-                      <IconCheck size={12} />
+                      <Icons.Check size="sm" />
                       <span>입력 완료</span>
                     </HStack>
                   )}

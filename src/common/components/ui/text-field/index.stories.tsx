@@ -1,22 +1,10 @@
 import { useState } from 'react';
 
-import {
-  IconAt,
-  IconCalendar,
-  IconCurrencyWon,
-  IconEye,
-  IconEyeOff,
-  IconFilter,
-  IconHash,
-  IconLink,
-  IconLock,
-  IconSearch,
-  IconX,
-} from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 
 import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
+import { Icons } from '@/common/components/ui/icon';
 import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
@@ -132,35 +120,35 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="검색하세요"
       >
-        <IconSearch size={16} className={iconClass} />
+        <Icons.Search className={iconClass} />
         <TextField.Input />
         {query && (
           <button type="button" onClick={() => setQuery('')} className={iconBtnClass}>
-            <IconX size={16} />
+            <Icons.X />
           </button>
         )}
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="필터 검색">
-        <IconSearch size={16} className={iconClass} />
+        <Icons.Search className={iconClass} />
         <TextField.Input />
         <button type="button" className={iconBtnClass}>
-          <IconFilter size={16} />
+          <Icons.Filter />
         </button>
         <button type="button" className={iconBtnClass}>
-          <IconX size={16} />
+          <Icons.X />
         </button>
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="example@email.com">
-        <IconAt size={16} className={iconClass} />
+        <Icons.At className={iconClass} />
         <TextField.Input />
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="도메인 입력">
         <span className="text-neutral-text-weak shrink-0 text-sm">https://</span>
         <TextField.Input />
-        <IconLink size={16} className={iconClass} />
+        <Icons.Link className={iconClass} />
       </TextField>
 
       <TextField
@@ -169,15 +157,15 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
         type={visible ? 'text' : 'password'}
         placeholder="비밀번호"
       >
-        <IconLock size={16} className={iconClass} />
+        <Icons.Lock className={iconClass} />
         <TextField.Input />
         <button type="button" onClick={() => setVisible((v) => !v)} className={iconBtnClass}>
-          {visible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+          {visible ? <Icons.Eye variant="off" /> : <Icons.Eye />}
         </button>
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="0" type="number">
-        <IconCurrencyWon size={16} className={iconClass} />
+        <Icons.CurrencyWon className={iconClass} />
         <TextField.Input />
         <span className="text-neutral-text-weak shrink-0 text-sm">원</span>
       </TextField>
@@ -188,13 +176,13 @@ function IconExamples({ variant }: { variant: (typeof VARIANTS)[number] }) {
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="태그명">
-        <IconHash size={16} className={iconClass} />
+        <Icons.Hash className={iconClass} />
         <TextField.Input />
       </TextField>
 
       <TextField variant={variant} tone="default" placeholder="YYYY-MM-DD">
         <TextField.Input />
-        <IconCalendar size={16} className={iconClass} />
+        <Icons.Calendar className={iconClass} />
       </TextField>
     </VStack>
   );
@@ -370,7 +358,7 @@ export const StateAPI: Story = {
             >
               {(state) => (
                 <>
-                  <IconSearch size={14} className="text-neutral-text-weak shrink-0" />
+                  <Icons.Search className="text-neutral-text-weak shrink-0" />
                   <TextField.Input />
                   {state.filled && (
                     <button
@@ -378,7 +366,7 @@ export const StateAPI: Story = {
                       className="text-neutral-text-weak hover:text-neutral-text shrink-0 transition-colors"
                       onClick={() => setQuery('')}
                     >
-                      <IconX size={14} />
+                      <Icons.X />
                     </button>
                   )}
                 </>
@@ -421,7 +409,7 @@ export const ContextPropagation: Story = {
           </Text>
           <SizeContext.Provider value={size}>
             <TextField placeholder="상속" tone="default">
-              <IconSearch size={16} className="text-neutral-text-weak shrink-0" />
+              <Icons.Search className="text-neutral-text-weak shrink-0" />
               <TextField.Input />
             </TextField>
             <TextField

@@ -1,0 +1,45 @@
+import {
+  IconTable,
+  IconTableAlias,
+  IconTableColumn,
+  IconTableDashed,
+  IconTableDown,
+  IconTableExport,
+  IconTableFilled,
+  IconTableHeart,
+  IconTableImport,
+  IconTableMinus,
+  IconTableOff,
+  IconTableOptions,
+  IconTablePlus,
+  IconTableRow,
+  IconTableShare,
+  IconTableShortcut,
+  IconTableSpark,
+} from '@tabler/icons-react';
+
+import { createIcon } from '../create-icon';
+
+export const TableIcon = createIcon(
+  'TableIcon',
+  {
+    outline: (props) => <IconTable {...props} />,
+    filled: (props) => <IconTableFilled {...props} />,
+    off: (props) => <IconTableOff {...props} />,
+    dashed: (props) => <IconTableDashed {...props} />,
+    column: (props) => <IconTableColumn {...props} />,
+    row: (props) => <IconTableRow {...props} />,
+    plus: (props) => <IconTablePlus {...props} />,
+    minus: (props) => <IconTableMinus {...props} />,
+    down: (props) => <IconTableDown {...props} />,
+    export: (props) => <IconTableExport {...props} />,
+    import: (props) => <IconTableImport {...props} />,
+    alias: (props) => <IconTableAlias {...props} />,
+    options: (props) => <IconTableOptions {...props} />,
+    shortcut: (props) => <IconTableShortcut {...props} />,
+    heart: (props) => <IconTableHeart {...props} />,
+    share: (props) => <IconTableShare {...props} />,
+    spark: (props) => <IconTableSpark {...props} />,
+  },
+  'outline',
+);
