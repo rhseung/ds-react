@@ -8,9 +8,7 @@ export type UseButtonOptions = {
   disabled?: boolean;
 };
 
-export function useButton({ disabled = false }: UseButtonOptions = {}): Store<
-  Record<never, never>
-> {
+export function useButton({ disabled = false }: UseButtonOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
   const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({
     disabled: disabledState,

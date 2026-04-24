@@ -8,9 +8,7 @@ export type UseSpinnerOptions = {
   disabled?: boolean;
 };
 
-export function useSpinner({ disabled = false }: UseSpinnerOptions = {}): Store<
-  Record<never, never>
-> {
+export function useSpinner({ disabled = false }: UseSpinnerOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
   const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
 

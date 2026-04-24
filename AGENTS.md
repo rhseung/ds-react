@@ -110,7 +110,7 @@ Every interactive component must export a `State` type under its namespace. Use 
 
 ```ts
 // use-button.ts — single source of truth
-export function useButton(...): Store<Record<never, never>> {
+export function useButton(...): Store<{}> {
   // returns { get, handlers, set } — the Store<D> shape
 }
 export type ButtonStore = ReturnType<typeof useButton>;
@@ -410,9 +410,11 @@ Do **not** call `useInteraction` directly inside a component. Always wrap it in 
 
 ```ts
 // use-button.ts
-export function useButton({ disabled = false }: UseButtonOptions = {}): Store<Record<never, never>> {
+export function useButton({ disabled = false }: UseButtonOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
-  const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({ disabled: disabledState });
+  const { state: interaction, handlers } = useInteraction<HTMLButtonElement>({
+    disabled: disabledState,
+  });
   const state = { ...interaction, disabled: disabledState };
 
   return {
@@ -432,10 +434,10 @@ export type ButtonStore = ReturnType<typeof useButton>;
 `store.get()` supports an optional **selector** for deriving values without exposing raw state:
 
 ```ts
-store.get()                              // full state snapshot
-store.get(s => s.disabled)              // single field
-store.get(s => s.value.length > 0)      // derived — "filled" state
-store.get(s => s.hovered || s.focused)  // compound condition
+store.get(); // full state snapshot
+store.get((s) => s.disabled); // single field
+store.get((s) => s.value.length > 0); // derived — "filled" state
+store.get((s) => s.hovered || s.focused); // compound condition
 ```
 
 To add a custom state, extend `state` before returning.

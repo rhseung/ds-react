@@ -8,7 +8,7 @@ export type UseBadgeOptions = {
   disabled?: boolean;
 };
 
-export function useBadge({ disabled = false }: UseBadgeOptions = {}): Store<Record<never, never>> {
+export function useBadge({ disabled = false }: UseBadgeOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
   const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
 

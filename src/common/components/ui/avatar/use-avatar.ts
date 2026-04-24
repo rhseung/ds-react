@@ -8,9 +8,7 @@ export type UseAvatarOptions = {
   disabled?: boolean;
 };
 
-export function useAvatar({ disabled = false }: UseAvatarOptions = {}): Store<
-  Record<never, never>
-> {
+export function useAvatar({ disabled = false }: UseAvatarOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
   const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
 

@@ -8,9 +8,7 @@ export type UseDividerOptions = {
   disabled?: boolean;
 };
 
-export function useDivider({ disabled = false }: UseDividerOptions = {}): Store<
-  Record<never, never>
-> {
+export function useDivider({ disabled = false }: UseDividerOptions = {}): Store<{}> {
   const [disabledState, setDisabled] = useState(disabled);
   const { state: interaction, handlers } = useInteraction({ disabled: disabledState });
 
