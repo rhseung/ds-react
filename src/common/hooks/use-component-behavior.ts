@@ -10,6 +10,15 @@ import {
   type UseInteractionOptions,
 } from './use-interaction';
 
+export type GroupStore<D extends object> = {
+  get<T = D>(selector?: (state: D) => T): T;
+  set(partial: Partial<D> | ((prev: D) => Partial<D>)): void;
+};
+
+export type GroupStoreState<S extends GroupStore<object>> = Parameters<
+  NonNullable<Parameters<S['get']>[0]>
+>[0];
+
 export type Store<D extends object> = {
   handlers: InteractionHandlers;
   get<T = InteractionState & D>(selector?: (state: InteractionState & D) => T): T;

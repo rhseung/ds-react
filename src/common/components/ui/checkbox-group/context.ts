@@ -1,50 +1,13 @@
-import { createContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 
-import { union, without, xor } from 'es-toolkit';
+import { IDSError } from '@/common/utils';
 
-import { useControllable } from '@/common/hooks';
+import { type CheckboxGroupStore } from './use-checkbox-group';
 
-export type CheckboxGroupContext<T> = {
-  values: readonly T[];
-  allValues: readonly T[];
-  toggle: (v: T) => void;
-  toggleAll: () => void;
-  register: (v: T) => void;
-  unregister: (v: T) => void;
-};
+export const CheckboxGroupContext = createContext<CheckboxGroupStore<unknown> | null>(null);
 
-type UseCheckboxGroupContextOptions<T> = {
-  value?: T[];
-  defaultValue?: T[];
-  onChange?: (value: T[]) => void;
-};
-
-export function useCheckboxGroupContextValue<T>({
-  value,
-  defaultValue = [],
-  onChange,
-}: UseCheckboxGroupContextOptions<T> = {}): CheckboxGroupContext<T> {
-  const [values, setValues] = useControllable(value, defaultValue, onChange);
-  const [allValues, setAllValues] = useState<T[]>([]);
-
-  function toggle(v: T) {
-    setValues(xor(values, [v]));
-  }
-
-  function toggleAll() {
-    const allChecked = allValues.length > 0 && values.length === allValues.length;
-    setValues(allChecked ? [] : [...allValues]);
-  }
-
-  function register(v: T) {
-    setAllValues((prev) => union(prev, [v]));
-  }
-
-  function unregister(v: T) {
-    setAllValues((prev) => without(prev, v));
-  }
-
-  return { values, allValues, toggle, toggleAll, register, unregister };
+export function useCheckboxGroupContext<T>(): CheckboxGroupStore<T> {
+  const ctx = useContext(CheckboxGroupContext);
+  if (!ctx) IDSError.throw('context/missing', { component: 'CheckboxGroup.Item / CheckboxGroup.All', parent: '<CheckboxGroup>' });
+  return ctx as CheckboxGroupStore<T>;
 }
-
-export const CheckboxGroupContext = createContext<CheckboxGroupContext<unknown> | null>(null);

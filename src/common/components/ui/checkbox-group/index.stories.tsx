@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { Label, Text, VStack } from '@/common/components/primitive';
+import { Button } from '@/common/components/ui/button';
 
-import { CheckboxGroup } from '.';
+import { CheckboxGroup, useCheckboxGroup } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -126,6 +127,42 @@ export const WithCustomIndicator: Story = {
         <Text size="xs" color="neutral-text-weak">
           선택됨: {values.join(', ') || '없음'}
         </Text>
+      </VStack>
+    );
+  },
+};
+
+export const WithStore: Story = {
+  render: () => {
+    const store = useCheckboxGroup<Fruit>({ defaultValue: ['banana'] });
+    const { values } = store.get();
+
+    return (
+      <VStack gap={2}>
+        <CheckboxGroup store={store}>
+          {({ Item }) =>
+            FRUITS.map((fruit) => (
+              <Label key={fruit} className="flex items-center gap-2">
+                <Item value={fruit} />
+                {FRUIT_LABELS[fruit]}
+              </Label>
+            ))
+          }
+        </CheckboxGroup>
+        <Text size="xs" color="neutral-text-weak">
+          선택됨: {values.join(', ') || '없음'}
+        </Text>
+        <VStack gap={2} className="flex-row">
+          <Button size="sm" onClick={() => store.set({ values: [] })}>
+            초기화
+          </Button>
+          <Button size="sm" onClick={() => store.toggleAll()}>
+            전체 선택/해제
+          </Button>
+          <Button size="sm" onClick={() => store.toggle('apple')}>
+            사과 토글
+          </Button>
+        </VStack>
       </VStack>
     );
   },

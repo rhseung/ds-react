@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { Label, Text, VStack } from '@/common/components/primitive';
+import { Button } from '@/common/components/ui/button';
 
-import { RadioGroup } from '.';
+import { RadioGroup, useRadioGroup } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -197,6 +198,38 @@ export const WithColors: Story = {
         <Text size="xs" color="neutral-text-weak">
           선택됨: {value}
         </Text>
+      </VStack>
+    );
+  },
+};
+
+export const WithStore: Story = {
+  render: () => {
+    const store = useRadioGroup<Lang>({ defaultValue: 'ko' });
+    const { value } = store.get();
+
+    return (
+      <VStack gap={2}>
+        <RadioGroup store={store}>
+          {({ Item }) =>
+            LANGS.map((lang) => (
+              <Label key={lang} className="flex items-center gap-2">
+                <Item value={lang} />
+                {LANG_LABELS[lang]}
+              </Label>
+            ))
+          }
+        </RadioGroup>
+        <Text size="xs" color="neutral-text-weak">
+          선택됨: {value ?? '없음'}
+        </Text>
+        <VStack gap={2} className="flex-row">
+          {LANGS.map((lang) => (
+            <Button key={lang} size="sm" onClick={() => store.select(lang)}>
+              {LANG_LABELS[lang]} 선택
+            </Button>
+          ))}
+        </VStack>
       </VStack>
     );
   },

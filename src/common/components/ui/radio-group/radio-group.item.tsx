@@ -1,13 +1,12 @@
-import { useContext } from 'react';
-
 import { Radio } from '@/common/components/ui/radio';
 
-import { RadioGroupContext } from './context';
+import { useRadioGroupContext } from './context';
 
 export function RadioGroupItem<T>({ value, ...radioProps }: RadioGroupItem.Props<T>) {
-  const { value: selectedValue, select } = useContext(RadioGroupContext)!;
+  const store = useRadioGroupContext<T>();
+  const selectedValue = store.get((s) => s.value);
 
-  return <Radio checked={value === selectedValue} onChange={() => select(value)} {...radioProps} />;
+  return <Radio checked={value === selectedValue} onChange={() => store.select(value)} {...radioProps} />;
 }
 
 export namespace RadioGroupItem {

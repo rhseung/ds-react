@@ -1,31 +1,13 @@
-import { createContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 
-export type RadioGroupContext<T> = {
-  value: T | undefined;
-  select: (v: T) => void;
-};
+import { IDSError } from '@/common/utils';
 
-type UseRadioGroupContextOptions<T> = {
-  value?: T;
-  defaultValue?: T;
-  onChange?: (value: T) => void;
-};
+import { type RadioGroupStore } from './use-radio-group';
 
-export function useRadioGroupContextValue<T>({
-  value: controlledValue,
-  defaultValue,
-  onChange,
-}: UseRadioGroupContextOptions<T> = {}): RadioGroupContext<T> {
-  const [internalValue, setInternalValue] = useState<T | undefined>(defaultValue);
-  const isControlled = controlledValue !== undefined;
-  const value = isControlled ? controlledValue : internalValue;
+export const RadioGroupContext = createContext<RadioGroupStore<unknown> | null>(null);
 
-  function select(v: T) {
-    if (!isControlled) setInternalValue(v);
-    onChange?.(v);
-  }
-
-  return { value, select };
+export function useRadioGroupContext<T>(): RadioGroupStore<T> {
+  const ctx = useContext(RadioGroupContext);
+  if (!ctx) IDSError.throw('context/missing', { component: 'RadioGroup.Item', parent: '<RadioGroup>' });
+  return ctx as RadioGroupStore<T>;
 }
-
-export const RadioGroupContext = createContext<RadioGroupContext<unknown> | null>(null);
