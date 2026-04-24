@@ -114,11 +114,11 @@ export const StateAPI: Story = {
             </Text>
             {(['hovered', 'focused', 'active', 'toggled', 'disabled'] as const).map((key) => (
               <Text key={key} size="xs" color="neutral-text-weak">
-                {key}: {String(store.get(s => s[key]))}
+                {key}: {String(store.get((s) => s[key]))}
               </Text>
             ))}
             <Text size="xs" color="neutral-text-weak">
-              active toggled: {String(store.get(s => s.toggled && !s.disabled))}
+              active toggled: {String(store.get((s) => s.toggled && !s.disabled))}
             </Text>
           </VStack>
           <VStack gap={2}>
@@ -127,14 +127,14 @@ export const StateAPI: Story = {
             </Text>
             <Toggle
               size="sm"
-              pressed={store.get(s => s.toggled)}
+              pressed={store.get((s) => s.toggled)}
               onPressedChange={(v) => store.set({ toggled: v })}
             >
               toggled 토글
             </Toggle>
             <Toggle
               size="sm"
-              pressed={store.get(s => s.disabled)}
+              pressed={store.get((s) => s.disabled)}
               onPressedChange={(v) => store.set({ disabled: v })}
             >
               disabled 토글

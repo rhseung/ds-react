@@ -139,16 +139,16 @@ export const StateAPI: Story = {
             </Text>
             {(['hovered', 'focused', 'active', 'disabled'] as const).map((key) => (
               <Text key={key} size="xs" color="neutral-text-weak">
-                {key}: {String(store.get(s => s[key]))}
+                {key}: {String(store.get((s) => s[key]))}
               </Text>
             ))}
             <Text size="xs" color="neutral-text-weak">
-              interactive: {String(store.get(s => s.hovered || s.focused))}
+              interactive: {String(store.get((s) => s.hovered || s.focused))}
             </Text>
           </VStack>
           <Toggle
             size="sm"
-            pressed={store.get(s => s.disabled)}
+            pressed={store.get((s) => s.disabled)}
             onPressedChange={(v) => store.set({ disabled: v })}
           >
             disabled 토글
