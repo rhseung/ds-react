@@ -4,11 +4,11 @@ import { tv } from '@/common/utils';
 export const checkboxBox = tv({
   base: [
     'relative inline-flex shrink-0 cursor-pointer items-center justify-center rounded-sm align-middle',
-    'inset-ring inset-ring-neutral-border bg-transparent text-transparent',
+    'outline outline-neutral-border bg-transparent text-transparent',
     'transition-colors duration-fast',
-    'data-checked:inset-ring-accent data-checked:bg-accent data-checked:text-on-accent',
-    'data-indeterminate:inset-ring-accent data-indeterminate:bg-accent data-indeterminate:text-on-accent',
-    'data-disabled:cursor-not-allowed data-disabled:inset-ring-neutral-border data-disabled:bg-neutral-bg-disabled data-disabled:text-neutral-text-disabled',
+    'data-checked:outline-accent data-checked:bg-accent data-checked:text-on-accent',
+    'data-indeterminate:outline-accent data-indeterminate:bg-accent data-indeterminate:text-on-accent',
+    'data-disabled:cursor-not-allowed data-disabled:outline-neutral-border data-disabled:bg-neutral-bg-disabled data-disabled:text-neutral-text-disabled',
   ],
   variants: {
     size: {

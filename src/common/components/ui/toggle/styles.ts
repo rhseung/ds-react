@@ -20,9 +20,9 @@ export const toggle = tv({
     variant: {
       solid: 'bg-accent text-on-accent data-disabled:bg-neutral-bg-disabled',
       elevated:
-        'bg-accent text-on-accent outline -outline-offset-1 outline-accent-contrast/15 data-disabled:bg-neutral-bg-disabled data-disabled:outline-neutral-border shadow-elevated data-active:scale-100',
+        'bg-accent text-on-accent outline outline-accent-contrast/15 data-disabled:bg-neutral-bg-disabled data-disabled:outline-neutral-border shadow-elevated data-active:scale-100',
       outline:
-        'inset-ring inset-ring-accent bg-transparent text-accent data-disabled:border-neutral-border data-disabled:bg-transparent',
+        'outline outline-accent bg-transparent text-accent data-disabled:outline-neutral-border data-disabled:bg-transparent',
       ghost: 'bg-transparent text-accent',
     },
     tone: {
@@ -39,7 +39,7 @@ export const toggle = tv({
     // weak tone
     { tone: 'weak', variant: 'solid', class: 'bg-accent-weak text-on-accent-weak' },
     { tone: 'weak', variant: 'elevated', class: 'bg-accent-weak text-on-accent-weak' },
-    { tone: 'weak', variant: 'outline', class: 'inset-ring-accent-weak text-accent-weak' },
+    { tone: 'weak', variant: 'outline', class: 'outline-accent-weak text-accent-weak' },
     { tone: 'weak', variant: 'ghost', class: 'text-accent-weak' },
     // contrast tone
     { tone: 'contrast', variant: 'solid', class: 'bg-accent-contrast text-on-accent-contrast' },
@@ -47,7 +47,7 @@ export const toggle = tv({
     {
       tone: 'contrast',
       variant: 'outline',
-      class: 'inset-ring-accent-contrast text-accent-contrast',
+      class: 'outline-accent-contrast text-accent-contrast',
     },
     { tone: 'contrast', variant: 'ghost', class: 'text-accent-contrast' },
   ],
