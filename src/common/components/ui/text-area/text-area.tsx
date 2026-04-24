@@ -14,6 +14,7 @@ import {
   type RenderProp,
   colorVars,
   containsType,
+  IDSError,
   mergeObjects,
   resolveRenderProp,
 } from '@/common/utils';
@@ -54,7 +55,7 @@ export function TextArea({
   const resolvedChildren = resolveRenderProp(children, fullState);
 
   if (!containsType(resolvedChildren, TextArea.Input))
-    throw new Error('TextArea: children must include <TextArea.Input />');
+    IDSError.warn('children/required', { component: 'TextArea', expected: '<TextArea.Input />' });
 
   return (
     <SizeContext.Provider value={size}>

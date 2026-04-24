@@ -14,6 +14,7 @@ import {
   type RenderProp,
   colorVars,
   containsType,
+  IDSError,
   mergeObjects,
   resolveRenderProp,
 } from '@/common/utils';
@@ -53,7 +54,7 @@ export function TextField({
   });
 
   if (!containsType(resolvedChildren, TextField.Input))
-    throw new Error('TextField: children must include <TextField.Input />');
+    IDSError.warn('children/required', { component: 'TextField', expected: '<TextField.Input />' });
 
   return (
     <SizeContext.Provider value={size}>

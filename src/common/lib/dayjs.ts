@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
+import { IDSError } from '@/common/utils';
+
 import { i18n } from './i18n';
 
 import type { Language } from './languages';
@@ -18,7 +20,7 @@ const handleChangeLanguage = async (lng: Language) => {
     dayjs.locale(lng);
 
     const loader = loaderMap[lng];
-    if (!loader) throw new Error(`Unsupported language: ${lng}`);
+    if (!loader) IDSError.throw('lib/unsupported', { key: 'language', value: lng });
 
     if (lng !== 'en') {
       const locale = await loader();

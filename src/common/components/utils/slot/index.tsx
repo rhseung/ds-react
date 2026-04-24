@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { type RenderProp, mergeChildren, mergeProps, mergeRefs } from '@/common/utils';
+import { type RenderProp, IDSError, mergeChildren, mergeProps, mergeRefs } from '@/common/utils';
 
 export type SlotProps<S = void> = [S] extends [void]
   ? { asChild?: boolean; children?: ReactNode }
@@ -20,7 +20,7 @@ export const Slot = forwardRef<HTMLElement, PropsWithChildren<HTMLAttributes<HTM
     const [rootElement, ...siblings] = childArray;
 
     if (!isValidElement<{ children?: ReactNode }>(rootElement)) {
-      throw new Error(`Slot's first child must be a valid React element, but got: ${rootElement}`);
+      IDSError.throw('slot/invalid-child', { received: String(rootElement) });
     }
 
     const merged = mergeProps(rootElement.props, props);

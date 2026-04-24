@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import { type StoreState } from '@/common/hooks';
+import { IDSError } from '@/common/utils';
 
 import { type RadioStore } from './use-radio';
 
@@ -12,6 +13,6 @@ export const RadioContext = createContext<RadioContextValue | null>(null);
 
 export function useRadioContext() {
   const ctx = useContext(RadioContext);
-  if (!ctx) throw new Error('[IDS] Radio.Indicator must be used inside <Radio>');
+  if (!ctx) IDSError.throw('context/missing', { component: 'Radio.Indicator', parent: '<Radio>' });
   return ctx;
 }

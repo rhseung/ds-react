@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react';
 
+import { IDSError } from '@/common/utils';
+
 export type ImageStatus = 'idle' | 'loaded' | 'error';
 
 interface AvatarContextValue {
@@ -13,6 +15,6 @@ export const AvatarContext = createContext<AvatarContextValue | null>(null);
 
 export function useAvatarContext() {
   const ctx = useContext(AvatarContext);
-  if (!ctx) throw new Error('[IDS] Avatar.Image and Avatar.Fallback must be used inside <Avatar>');
+  if (!ctx) IDSError.throw('context/missing', { component: 'Avatar.Image / Avatar.Fallback', parent: '<Avatar>' });
   return ctx;
 }
