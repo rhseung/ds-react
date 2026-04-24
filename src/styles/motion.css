@@ -27,12 +27,20 @@
    The overlay color (currentColor) is set by the StateMask
    component, keeping the token color-independent.
 
+   inherits: false ensures each element starts from 0 —
+   a hovered parent cannot bleed its state into nested components.
+
    See: src/common/components/utils/state-mask.tsx
    ------------------------------------------------------------- */
 
+@property --ids-state-mask {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
 :root,
 [data-theme='light'] {
-  --ids-state-mask: 0;
   --ids-state-mask-hovered: 0.06;
   --ids-state-mask-pressed: 0.16;
 }
@@ -42,15 +50,12 @@
   --ids-state-mask-pressed: 0.14;
 }
 
-[data-hovered] {
+[data-hovered] > [data-ids-state-mask] {
   --ids-state-mask: var(--ids-state-mask-hovered);
 }
 
-[data-active] {
-  --ids-state-mask: var(--ids-state-mask-pressed);
-}
-
-[data-toggled] {
+[data-active] > [data-ids-state-mask],
+[data-toggled] > [data-ids-state-mask] {
   --ids-state-mask: var(--ids-state-mask-pressed);
 }
 
