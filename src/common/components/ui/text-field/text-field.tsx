@@ -12,6 +12,7 @@ import {
 import {
   type AccentProps,
   type RenderProp,
+  type StoreOrControlled,
   colorVars,
   containsType,
   IDSError,
@@ -99,18 +100,21 @@ export namespace TextField {
     export type Props = TextFieldInput.Props;
   }
 
-  export interface Props
-    extends
-      Omit<InputContextValue, 'color' | 'value' | 'defaultValue' | 'onChange'>,
-      Omit<VariantProps<typeof textField>, 'size'>,
-      AccentProps {
-    size?: ComponentSize;
-    store?: Store;
-    value?: string;
-    defaultValue?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    className?: RenderProp<State, string>;
-    style?: RenderProp<State, CSSProperties>;
-    children?: RenderProp<State, ReactNode>;
-  }
+  export type Props = StoreOrControlled<
+    Store,
+    {
+      value?: string;
+      defaultValue?: string;
+      onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+      disabled?: boolean;
+    },
+    Omit<InputContextValue, 'color' | 'value' | 'defaultValue' | 'onChange' | 'disabled'> &
+      Omit<VariantProps<typeof textField>, 'size'> &
+      AccentProps & {
+        size?: ComponentSize;
+        className?: RenderProp<State, string>;
+        style?: RenderProp<State, CSSProperties>;
+        children?: RenderProp<State, ReactNode>;
+      }
+  >;
 }

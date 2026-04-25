@@ -13,6 +13,7 @@ import {
 import {
   type AccentProps,
   type RenderProp,
+  type StoreOrControlled,
   colorVars,
   mergeObjects,
   resolveRenderProp,
@@ -104,19 +105,22 @@ export namespace Toggle {
   export type State = StoreState<ToggleStore>;
   export type Store = ToggleStore;
 
-  export interface Props
-    extends
-      Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
-      Omit<VariantProps<typeof toggle>, 'size'>,
-      SlotProps<State>,
-      AccentProps {
-    size?: ComponentSize;
-    icon?: boolean;
-    store?: Store;
-    pressed?: boolean;
-    defaultPressed?: boolean;
-    onPressedChange?: (pressed: boolean) => void;
-    className?: RenderProp<State, string>;
-    style?: RenderProp<State, CSSProperties>;
-  }
+  export type Props = StoreOrControlled<
+    Store,
+    {
+      pressed?: boolean;
+      defaultPressed?: boolean;
+      onPressedChange?: (pressed: boolean) => void;
+      disabled?: boolean;
+    },
+    Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children' | 'disabled'> &
+      Omit<VariantProps<typeof toggle>, 'size'> &
+      SlotProps<State> &
+      AccentProps & {
+        size?: ComponentSize;
+        icon?: boolean;
+        className?: RenderProp<State, string>;
+        style?: RenderProp<State, CSSProperties>;
+      }
+  >;
 }

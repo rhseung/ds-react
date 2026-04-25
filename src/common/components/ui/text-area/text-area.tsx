@@ -12,6 +12,7 @@ import {
 import {
   type AccentProps,
   type RenderProp,
+  type StoreOrControlled,
   colorVars,
   containsType,
   IDSError,
@@ -102,20 +103,26 @@ export namespace TextArea {
     export type Props = TextAreaInput.Props;
   }
 
-  export interface Props
-    extends
-      Omit<InputContextValue, 'autoResize' | 'color' | 'value' | 'defaultValue' | 'onChange'>,
-      Omit<VariantProps<typeof textArea>, 'size'>,
-      AccentProps {
-    size?: ComponentSize;
-    autoResize?: boolean;
-    resize?: CSSProperties['resize'];
-    store?: Store;
-    value?: string;
-    defaultValue?: string;
-    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    className?: RenderProp<State, string>;
-    style?: RenderProp<State, CSSProperties>;
-    children?: RenderProp<State, ReactNode>;
-  }
+  export type Props = StoreOrControlled<
+    Store,
+    {
+      value?: string;
+      defaultValue?: string;
+      onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+      disabled?: boolean;
+    },
+    Omit<
+      InputContextValue,
+      'autoResize' | 'color' | 'value' | 'defaultValue' | 'onChange' | 'disabled'
+    > &
+      Omit<VariantProps<typeof textArea>, 'size'> &
+      AccentProps & {
+        size?: ComponentSize;
+        autoResize?: boolean;
+        resize?: CSSProperties['resize'];
+        className?: RenderProp<State, string>;
+        style?: RenderProp<State, CSSProperties>;
+        children?: RenderProp<State, ReactNode>;
+      }
+  >;
 }

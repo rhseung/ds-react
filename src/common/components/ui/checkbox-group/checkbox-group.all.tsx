@@ -26,6 +26,6 @@ export namespace CheckboxGroupAll {
 
   export type Props = Omit<
     Checkbox.Props,
-    'checked' | 'defaultChecked' | 'onChange' | 'indeterminate'
+    'checked' | 'defaultChecked' | 'onChange' | 'indeterminate' | 'store'
   >;
 }

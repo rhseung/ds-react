@@ -13,6 +13,7 @@ import {
 import {
   type AccentProps,
   type RenderProp,
+  type StoreOrControlled,
   colorVars,
   mergeObjects,
   resolveRenderProp,
@@ -86,16 +87,17 @@ export function Button({
 export namespace Button {
   export type State = StoreState<ButtonStore>;
   export type Store = ButtonStore;
-  export interface Props
-    extends
-      Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children'>,
-      Omit<VariantProps<typeof button>, 'size'>,
-      SlotProps<State>,
-      AccentProps {
-    size?: ComponentSize;
-    icon?: boolean;
-    store?: Store;
-    className?: RenderProp<State, string>;
-    style?: RenderProp<State, CSSProperties>;
-  }
+  export type Props = StoreOrControlled<
+    Store,
+    { disabled?: boolean },
+    Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children' | 'disabled'> &
+      Omit<VariantProps<typeof button>, 'size'> &
+      SlotProps<State> &
+      AccentProps & {
+        size?: ComponentSize;
+        icon?: boolean;
+        className?: RenderProp<State, string>;
+        style?: RenderProp<State, CSSProperties>;
+      }
+  >;
 }

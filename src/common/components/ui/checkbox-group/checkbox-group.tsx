@@ -3,6 +3,7 @@ import { type ComponentProps, type JSX, type ReactNode } from 'react';
 import { isFunction } from 'es-toolkit';
 
 import { type GroupStoreState } from '@/common/hooks';
+import { type StoreOrControlled } from '@/common/utils';
 
 import { CheckboxGroupAll } from './checkbox-group.all';
 import { CheckboxGroupItem } from './checkbox-group.item';
@@ -20,21 +21,7 @@ type CheckboxGroupChildren<T> =
     }) => ReactNode)
   | ReactNode;
 
-type PropsWithStore<T> = DivProps & {
-  store: CheckboxGroupStore<T>;
-  value?: never;
-  defaultValue?: never;
-  onChange?: never;
-  children?: CheckboxGroupChildren<T>;
-};
-
-type PropsWithoutStore<T> = DivProps & {
-  store?: never;
-  value?: T[];
-  defaultValue?: T[];
-  onChange?: (value: T[]) => void;
-  children?: CheckboxGroupChildren<T>;
-};
+type CheckboxGroupBase<T> = DivProps & { children?: CheckboxGroupChildren<T> };
 
 export function CheckboxGroup<T>({
   store: externalStore,
@@ -66,7 +53,11 @@ export function CheckboxGroup<T>({
 export namespace CheckboxGroup {
   export type Store<T> = CheckboxGroupStore<T>;
   export type State<T> = GroupStoreState<Store<T>>;
-  export type Props<T> = PropsWithStore<T> | PropsWithoutStore<T>;
+  export type Props<T> = StoreOrControlled<
+    CheckboxGroupStore<T>,
+    { value?: T[]; defaultValue?: T[]; onChange?: (value: T[]) => void },
+    CheckboxGroupBase<T>
+  >;
 
   export const Item = CheckboxGroupItem;
   export namespace Item {

@@ -19,6 +19,6 @@ export namespace RadioGroupItem {
 
   export type Props<T> = { value: T } & Omit<
     Radio.Props,
-    'checked' | 'defaultChecked' | 'onChange' | 'value'
+    'checked' | 'defaultChecked' | 'onChange' | 'value' | 'store'
   >;
 }

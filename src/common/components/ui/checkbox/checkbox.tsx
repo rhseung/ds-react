@@ -11,6 +11,7 @@ import {
 import {
   type AccentProps,
   type RenderProp,
+  type StoreOrControlled,
   colorVars,
   mergeObjects,
   resolveRenderProp,
@@ -85,21 +86,33 @@ export namespace Checkbox {
     export type Props = CheckboxIndicator.Props;
   }
 
-  export interface Props
-    extends
-      Omit<
-        ComponentProps<'input'>,
-        'color' | 'type' | 'size' | 'onChange' | 'className' | 'style' | 'children'
-      >,
-      AccentProps {
-    size?: ComponentSize;
-    store?: Store;
-    checked?: boolean;
-    defaultChecked?: boolean;
-    onChange?: (checked: boolean) => void;
-    indeterminate?: boolean;
-    children?: RenderProp<State, ReactNode>;
-    className?: RenderProp<State, string>;
-    style?: RenderProp<State, CSSProperties>;
-  }
+  export type Props = StoreOrControlled<
+    Store,
+    {
+      checked?: boolean;
+      defaultChecked?: boolean;
+      onChange?: (checked: boolean) => void;
+      indeterminate?: boolean;
+      disabled?: boolean;
+    },
+    Omit<
+      ComponentProps<'input'>,
+      | 'color'
+      | 'type'
+      | 'size'
+      | 'onChange'
+      | 'className'
+      | 'style'
+      | 'children'
+      | 'checked'
+      | 'defaultChecked'
+      | 'disabled'
+    > &
+      AccentProps & {
+        size?: ComponentSize;
+        children?: RenderProp<State, ReactNode>;
+        className?: RenderProp<State, string>;
+        style?: RenderProp<State, CSSProperties>;
+      }
+  >;
 }

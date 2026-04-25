@@ -3,6 +3,7 @@ import { type ComponentProps, type JSX, type ReactNode } from 'react';
 import { isFunction } from 'es-toolkit';
 
 import { type GroupStoreState } from '@/common/hooks';
+import { type StoreOrControlled } from '@/common/utils';
 
 import { RadioGroupContext } from './context';
 import { RadioGroupItem } from './radio-group.item';
@@ -17,21 +18,7 @@ type RadioGroupChildren<T> =
     }) => ReactNode)
   | ReactNode;
 
-type PropsWithStore<T> = DivProps & {
-  store: RadioGroupStore<T>;
-  value?: never;
-  defaultValue?: never;
-  onChange?: never;
-  children?: RadioGroupChildren<T>;
-};
-
-type PropsWithoutStore<T> = DivProps & {
-  store?: never;
-  value?: T;
-  defaultValue?: T;
-  onChange?: (value: T) => void;
-  children?: RadioGroupChildren<T>;
-};
+type RadioGroupBase<T> = DivProps & { children?: RadioGroupChildren<T> };
 
 export function RadioGroup<T>({
   store: externalStore,
@@ -58,7 +45,11 @@ export function RadioGroup<T>({
 export namespace RadioGroup {
   export type Store<T> = RadioGroupStore<T>;
   export type State<T> = GroupStoreState<Store<T>>;
-  export type Props<T> = PropsWithStore<T> | PropsWithoutStore<T>;
+  export type Props<T> = StoreOrControlled<
+    RadioGroupStore<T>,
+    { value?: T; defaultValue?: T; onChange?: (value: T) => void },
+    RadioGroupBase<T>
+  >;
 
   export const Item = RadioGroupItem;
   export namespace Item {

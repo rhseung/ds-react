@@ -1,4 +1,10 @@
-import { IconTrash, IconTrashFilled, IconTrashOff, IconTrashX, IconTrashXFilled } from '@tabler/icons-react';
+import {
+  IconTrash,
+  IconTrashFilled,
+  IconTrashOff,
+  IconTrashX,
+  IconTrashXFilled,
+} from '@tabler/icons-react';
 
 import { createIcon } from '../create-icon';
 

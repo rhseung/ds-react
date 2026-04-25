@@ -1,4 +1,10 @@
-import { IconLink, IconLinkFilled, IconLinkMinus, IconLinkOff, IconLinkPlus } from '@tabler/icons-react';
+import {
+  IconLink,
+  IconLinkFilled,
+  IconLinkMinus,
+  IconLinkOff,
+  IconLinkPlus,
+} from '@tabler/icons-react';
 
 import { createIcon } from '../create-icon';
 
