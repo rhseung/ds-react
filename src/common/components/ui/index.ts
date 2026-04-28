@@ -11,3 +11,4 @@ export * from './text-field';
 export * from './spinner';
 export * from './toggle';
 export * from './icon-toggle';
+export * from './switch';
