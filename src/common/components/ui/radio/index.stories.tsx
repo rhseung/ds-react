@@ -116,9 +116,19 @@ export const IndicatorAsChild: Story = {
       </VStack>
       <VStack gap={1}>
         <Text size="xs" color="neutral-text-weak" className="font-semibold">
-          asChild — 커스텀 엘리먼트로 교체
+          asChild — 커스텀 엘리먼트 (data-checked 속성 자동 전달)
         </Text>
         <HStack gap={3} className="items-center">
+          <Radio defaultChecked>
+            <Radio.Indicator asChild>
+              <span className={cn('block rounded-sm bg-current data-checked:bg-current')} />
+            </Radio.Indicator>
+          </Radio>
+          <Radio>
+            <Radio.Indicator asChild>
+              <span className={cn('block rounded-sm bg-current data-checked:bg-current')} />
+            </Radio.Indicator>
+          </Radio>
           <Radio defaultChecked>
             <Radio.Indicator asChild>
               <span style={{ fontSize: 10 }}>★</span>

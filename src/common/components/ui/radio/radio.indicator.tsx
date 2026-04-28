@@ -9,14 +9,23 @@ export function RadioIndicator({ asChild = false, children }: RadioIndicator.Pro
   const { state } = useRadioContext();
   const size = useComponentSize();
 
+  if (asChild) {
+    return (
+      <SizeContext.Provider value={size}>
+        <Slot
+          data-checked={state.checked || undefined}
+          data-disabled={state.disabled || undefined}
+        >
+          {children}
+        </Slot>
+      </SizeContext.Provider>
+    );
+  }
+
   return (
     <SizeContext.Provider value={size}>
-      {asChild ? (
-        <Slot>{children}</Slot>
-      ) : (
-        state.checked && (
-          <span className={cn('block rounded-full bg-current', RADIO_DOT_SIZE[size])} aria-hidden />
-        )
+      {state.checked && (
+        <span className={cn('block rounded-full bg-current', RADIO_DOT_SIZE[size])} aria-hidden />
       )}
     </SizeContext.Provider>
   );
