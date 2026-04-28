@@ -27,7 +27,6 @@ export function Button({
   variant = 'solid',
   tone = 'default',
   size: localSize,
-  icon,
   color,
   className,
   style,
@@ -69,7 +68,6 @@ export function Button({
           variant,
           tone,
           size,
-          icon,
           className: resolveRenderProp(className, state),
         })}
         style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
@@ -91,11 +89,10 @@ export namespace Button {
     Store,
     { disabled?: boolean },
     Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children' | 'disabled'> &
-      Omit<VariantProps<typeof button>, 'size'> &
+      Omit<VariantProps<typeof button>, 'size' | 'icon'> &
       SlotProps<State> &
       AccentProps & {
         size?: ComponentSize;
-        icon?: boolean;
         className?: RenderProp<State, string>;
         style?: RenderProp<State, CSSProperties>;
       }

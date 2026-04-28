@@ -1,6 +1,7 @@
 import { Box, HStack, VStack, Text } from '@/common/components/primitive';
 import { Badge } from '@/common/components/ui/badge';
 import { Icons } from '@/common/components/ui/icon';
+import { IconButton } from '@/common/components/ui/icon-button';
 import { Spinner } from '@/common/components/ui/spinner';
 import { TextField } from '@/common/components/ui/text-field';
 import { Toggle } from '@/common/components/ui/toggle';
@@ -65,9 +66,14 @@ export const IconOnly: Story = {
                   {color}
                 </Text>
                 {TONES.map((tone) => (
-                  <Button key={tone} size="md" icon variant={variant} color={color} tone={tone}>
-                    <Icons.Search />
-                  </Button>
+                  <IconButton
+                    key={tone}
+                    size="md"
+                    variant={variant}
+                    color={color}
+                    tone={tone}
+                    icon={<Icons.Search />}
+                  />
                 ))}
               </>
             ))}
@@ -151,9 +157,7 @@ export const Sizes: Story = {
             <Icons.Trash />
             삭제
           </Button>
-          <Button size={size} icon tone="default">
-            <Icons.Search />
-          </Button>
+          <IconButton size={size} tone="default" icon={<Icons.Search />} />
         </HStack>
       ))}
     </VStack>
@@ -174,9 +178,7 @@ export const ContextPropagation: Story = {
                 <Icons.Plus />
                 추가
               </Button>
-              <Button icon tone="default">
-                <Icons.Search />
-              </Button>
+              <IconButton tone="default" icon={<Icons.Search />} />
               <TextField placeholder="텍스트 필드" tone="default" className="w-48" />
               <Badge tone="default">뱃지</Badge>
               <Spinner />

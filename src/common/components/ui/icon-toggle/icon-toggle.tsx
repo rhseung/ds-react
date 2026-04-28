@@ -1,8 +1,8 @@
-import { type CSSProperties, type ComponentProps, type MouseEvent } from 'react';
+import { type CSSProperties, type ComponentProps, type MouseEvent, type ReactElement } from 'react';
 
 import { type VariantProps } from 'tailwind-variants';
 
-import { Slot, type SlotProps, StateMask } from '@/common/components/utils';
+import { StateMask } from '@/common/components/utils';
 import {
   SizeContext,
   type StoreState,
@@ -19,18 +19,17 @@ import {
   resolveRenderProp,
 } from '@/common/utils';
 
-import { toggle } from './styles';
-import { useToggle, type ToggleStore } from './use-toggle';
+import { iconToggle } from './styles';
+import { useIconToggle, type IconToggleStore } from './use-icon-toggle';
 
-export function Toggle({
-  asChild,
+export function IconToggle({
   variant = 'solid',
   tone = 'default',
   size: localSize,
+  icon,
   color,
   className,
   style,
-  children,
   store,
   disabled,
   pressed,
@@ -47,9 +46,9 @@ export function Toggle({
   onKeyDown,
   onKeyUp,
   ...props
-}: Toggle.Props) {
+}: IconToggle.Props) {
   const size = useComponentSize(localSize);
-  const internalStore = useToggle({ disabled, pressed, defaultPressed, onPressedChange });
+  const internalStore = useIconToggle({ disabled, pressed, defaultPressed, onPressedChange });
   const {
     state,
     store: activeStore,
@@ -72,18 +71,17 @@ export function Toggle({
     onClick?.(e);
   };
 
-  const Comp = asChild ? Slot : 'button';
-
   return (
     <SizeContext.Provider value={size}>
-      <Comp
+      <button
         type="button"
         aria-pressed={state.toggled}
         disabled={state.disabled}
-        className={toggle({
+        className={iconToggle({
           variant,
           tone,
           size,
+          icon: true,
           className: resolveRenderProp(className, state),
         })}
         style={mergeObjects(colorVars(color), resolveRenderProp(style, state))}
@@ -92,17 +90,16 @@ export function Toggle({
         {...handlers}
         onClick={handleClick}
       >
-        {resolveRenderProp(children, state)}
+        {icon}
         <StateMask />
-      </Comp>
+      </button>
     </SizeContext.Provider>
   );
 }
 
-export namespace Toggle {
-  export type State = StoreState<ToggleStore>;
-  export type Store = ToggleStore;
-
+export namespace IconToggle {
+  export type State = StoreState<IconToggleStore>;
+  export type Store = IconToggleStore;
   export type Props = StoreOrControlled<
     Store,
     {
@@ -112,10 +109,10 @@ export namespace Toggle {
       disabled?: boolean;
     },
     Omit<ComponentProps<'button'>, 'color' | 'className' | 'style' | 'children' | 'disabled'> &
-      Omit<VariantProps<typeof toggle>, 'size' | 'icon'> &
-      SlotProps<State> &
+      Omit<VariantProps<typeof iconToggle>, 'size' | 'icon'> &
       AccentProps & {
         size?: ComponentSize;
+        icon: ReactElement;
         className?: RenderProp<State, string>;
         style?: RenderProp<State, CSSProperties>;
       }

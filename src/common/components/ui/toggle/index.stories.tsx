@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Box, HStack, VStack, Label, Text } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { Icons } from '@/common/components/ui/icon';
+import { IconToggle } from '@/common/components/ui/icon-toggle';
 import { SizeContext } from '@/common/hooks';
 
 import { Toggle, useToggle } from '.';
@@ -224,21 +225,27 @@ export const ToolbarGroup: Story = {
 
     return (
       <HStack gap={1}>
-        <Toggle icon variant="ghost" tone="default" pressed={bold} onPressedChange={setBold}>
-          <Icons.Bold />
-        </Toggle>
-        <Toggle icon variant="ghost" tone="default" pressed={italic} onPressedChange={setItalic}>
-          <Icons.Italic />
-        </Toggle>
-        <Toggle
-          icon
+        <IconToggle
+          variant="ghost"
+          tone="default"
+          pressed={bold}
+          onPressedChange={setBold}
+          icon={<Icons.Bold />}
+        />
+        <IconToggle
+          variant="ghost"
+          tone="default"
+          pressed={italic}
+          onPressedChange={setItalic}
+          icon={<Icons.Italic />}
+        />
+        <IconToggle
           variant="ghost"
           tone="default"
           pressed={underline}
           onPressedChange={setUnderline}
-        >
-          <Icons.Underline />
-        </Toggle>
+          icon={<Icons.Underline />}
+        />
       </HStack>
     );
   },
@@ -255,9 +262,7 @@ export const Sizes: Story = {
           <Toggle size={size} tone="default" defaultPressed>
             굵게
           </Toggle>
-          <Toggle size={size} icon tone="default" defaultPressed>
-            <Icons.Bold />
-          </Toggle>
+          <IconToggle size={size} tone="default" defaultPressed icon={<Icons.Bold />} />
         </HStack>
       ))}
     </VStack>
@@ -277,9 +282,7 @@ export const ContextPropagation: Story = {
               <Toggle tone="default" defaultPressed>
                 굵게
               </Toggle>
-              <Toggle icon tone="default" defaultPressed>
-                <Icons.Bold />
-              </Toggle>
+              <IconToggle tone="default" defaultPressed icon={<Icons.Bold />} />
             </HStack>
           </SizeContext.Provider>
         </VStack>
