@@ -13,7 +13,6 @@ export const SwitchContext = createContext<SwitchContextValue | null>(null);
 
 export function useSwitchContext() {
   const ctx = useContext(SwitchContext);
-  if (!ctx)
-    IDSError.throw('context/missing', { component: 'Switch.Thumb', parent: '<Switch>' });
+  if (!ctx) IDSError.throw('context/missing', { component: 'Switch.Thumb', parent: '<Switch>' });
   return ctx;
 }

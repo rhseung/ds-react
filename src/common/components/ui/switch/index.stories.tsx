@@ -5,7 +5,6 @@ import { Toggle } from '@/common/components/ui/toggle';
 import { SizeContext } from '@/common/hooks';
 import { cn } from '@/common/utils';
 
-
 import { Switch, useSwitch } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -175,7 +174,7 @@ export const WithCustomThumb: Story = {
         </Text>
         <Switch tone="default" defaultChecked>
           <Switch.Thumb asChild>
-            <span className={cn('bg-white outline-2 -outline-offset-2 outline-accent')} />
+            <span className={cn('outline-accent bg-white outline-2 -outline-offset-2')} />
           </Switch.Thumb>
         </Switch>
       </VStack>
@@ -193,7 +192,12 @@ export const WithLabel: Story = {
       <VStack gap={4} className="w-72">
         {(
           [
-            { id: 'notifications', label: '알림', checked: notifications, onChange: setNotifications },
+            {
+              id: 'notifications',
+              label: '알림',
+              checked: notifications,
+              onChange: setNotifications,
+            },
             { id: 'marketing', label: '마케팅 수신', checked: marketing, onChange: setMarketing },
             { id: 'updates', label: '업데이트 알림', checked: updates, onChange: setUpdates },
           ] as const

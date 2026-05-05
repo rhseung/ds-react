@@ -12,10 +12,7 @@ export function RadioIndicator({ asChild = false, children }: RadioIndicator.Pro
   if (asChild) {
     return (
       <SizeContext.Provider value={size}>
-        <Slot
-          data-checked={state.checked || undefined}
-          data-disabled={state.disabled || undefined}
-        >
+        <Slot data-checked={state.checked || undefined} data-disabled={state.disabled || undefined}>
           {children}
         </Slot>
       </SizeContext.Provider>

@@ -10,9 +10,9 @@ export const switchTrack = tv({
   ],
   variants: {
     size: {
-      sm: 'h-5 w-9',   // 20 × 36px
-      md: 'h-6 w-11',  // 24 × 44px
-      lg: 'h-7 w-14',  // 28 × 56px
+      sm: 'h-5 w-9', // 20 × 36px
+      md: 'h-6 w-11', // 24 × 44px
+      lg: 'h-7 w-14', // 28 × 56px
     },
   },
   defaultVariants: {

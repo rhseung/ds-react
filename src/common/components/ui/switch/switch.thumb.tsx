@@ -15,11 +15,7 @@ export function SwitchThumb({ asChild = false, children }: SwitchThumb.Props) {
   if (asChild) {
     return (
       <SizeContext.Provider value={size}>
-        <Slot
-          data-checked={dataChecked}
-          data-disabled={dataDisabled}
-          className={className}
-        >
+        <Slot data-checked={dataChecked} data-disabled={dataDisabled} className={className}>
           {children}
         </Slot>
       </SizeContext.Provider>
@@ -28,11 +24,7 @@ export function SwitchThumb({ asChild = false, children }: SwitchThumb.Props) {
 
   return (
     <SizeContext.Provider value={size}>
-      <span
-        data-checked={dataChecked}
-        data-disabled={dataDisabled}
-        className={className}
-      />
+      <span data-checked={dataChecked} data-disabled={dataDisabled} className={className} />
     </SizeContext.Provider>
   );
 }

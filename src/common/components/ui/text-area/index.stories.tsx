@@ -227,10 +227,34 @@ export const WithSlots: Story = {
                 icon={<Icons.Blockquote />}
               />
               <Divider orientation="vertical" className="mx-1 h-4" />
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="링크" icon={<Icons.Link />} />
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="순서 없는 목록" icon={<Icons.List />} />
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="순서 있는 목록" icon={<Icons.List variant="numbers" />} />
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="표" icon={<Icons.Table />} />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="링크"
+                icon={<Icons.Link />}
+              />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="순서 없는 목록"
+                icon={<Icons.List />}
+              />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="순서 있는 목록"
+                icon={<Icons.List variant="numbers" />}
+              />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="표"
+                icon={<Icons.Table />}
+              />
             </HStack>
             <Divider />
             <TextArea.Input />
@@ -272,8 +296,20 @@ export const WithSlots: Story = {
                 {codeValue.split('\n').length} lines
               </span>
               <Spacer />
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="복사" icon={<Icons.Copy />} />
-              <IconButton size="sm" variant="solid" tone="default" aria-label="실행" icon={<Icons.PlayerPlay />} />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="복사"
+                icon={<Icons.Copy />}
+              />
+              <IconButton
+                size="sm"
+                variant="solid"
+                tone="default"
+                aria-label="실행"
+                icon={<Icons.PlayerPlay />}
+              />
             </HStack>
           </TextArea>
         </VStack>
@@ -317,7 +353,13 @@ export const WithSlots: Story = {
             <TextArea.Input />
             <Divider />
             <HStack gap={2} className="items-center px-2.5 py-1.5">
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="이미지 첨부" icon={<Icons.Photo />} />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="이미지 첨부"
+                icon={<Icons.Photo />}
+              />
               <Spacer />
               <span className="text-xs">
                 <span
@@ -359,7 +401,13 @@ export const WithSlots: Story = {
             <TextArea.Input />
             <Divider />
             <HStack gap={2} className="items-center px-2 py-1.5">
-              <IconButton size="sm" variant="ghost" tone="default" aria-label="첨부" icon={<Icons.Paperclip />} />
+              <IconButton
+                size="sm"
+                variant="ghost"
+                tone="default"
+                aria-label="첨부"
+                icon={<Icons.Paperclip />}
+              />
               <span className="text-neutral-text-weak text-xs">Auto</span>
               <HStack gap={1} className="items-center">
                 <Icons.World size="sm" className="text-neutral-text-weak" />
