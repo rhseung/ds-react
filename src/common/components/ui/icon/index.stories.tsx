@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { HStack, Text, VStack } from '@/common/components/primitive';
 import { Button } from '@/common/components/ui/button';
 import { Toggle } from '@/common/components/ui/toggle';
@@ -246,6 +248,200 @@ export const CurrentColor: Story = {
       ))}
     </VStack>
   ),
+};
+
+export const DrawAnimation: Story = {
+  render: () => {
+    const [replayKey, setReplayKey] = useState(0);
+    const replay = () => setReplayKey((k) => k + 1);
+
+    return (
+      <VStack gap={8} className="items-start">
+        <HStack gap={3} className="items-center">
+          <Button size="sm" variant="outline" onClick={replay}>
+            Replay
+          </Button>
+          <Text size="xs" color="neutral-text-weak">
+            애니메이션은 마운트 시 1회 재생됩니다 — Replay로 다시 그리기
+          </Text>
+        </HStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            Default — 기본값 (length 100 / duration 1200ms / ease-standard)
+          </Text>
+          <HStack gap={6} key={`default-${replayKey}`} className="items-center">
+            <Icons.Search className="ids-icon-draw" />
+            <Icons.Star className="ids-icon-draw" />
+            <Icons.Bell className="ids-icon-draw" />
+            <Icons.Heart className="ids-icon-draw" />
+            <Icons.Calendar className="ids-icon-draw" />
+            <Icons.World className="ids-icon-draw" />
+          </HStack>
+        </VStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            Length 보정 — path 길이에 따라 --ids-icon-draw-length 조정
+          </Text>
+          <HStack gap={6} key={`length-${replayKey}`} className="items-end">
+            <VStack gap={1} className="items-center">
+              <Icons.Check
+                className={cn('ids-icon-draw', '[--ids-icon-draw-length:30]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                30 (짧은 path)
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Star
+                className={cn('ids-icon-draw', '[--ids-icon-draw-length:75]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                75 (Star 정확)
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Heart className={cn('ids-icon-draw')} size="lg" />
+              <Text size="xs" color="neutral-text-weak">
+                100 (기본)
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.World
+                className={cn('ids-icon-draw', '[--ids-icon-draw-length:250]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                250 (복잡)
+              </Text>
+            </VStack>
+          </HStack>
+        </VStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            Duration — 속도 제어 (드로잉은 UI 전환보다 길어야 자연스럽습니다)
+          </Text>
+          <HStack gap={6} key={`duration-${replayKey}`} className="items-end">
+            <VStack gap={1} className="items-center">
+              <Icons.Bell
+                className={cn('ids-icon-draw', '[--ids-icon-draw-duration:600ms]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                600ms
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Bell
+                className={cn('ids-icon-draw', '[--ids-icon-draw-duration:900ms]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                900ms
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Bell className={cn('ids-icon-draw')} size="lg" />
+              <Text size="xs" color="neutral-text-weak">
+                1200ms (기본)
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Bell
+                className={cn('ids-icon-draw', '[--ids-icon-draw-duration:2000ms]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                2000ms
+              </Text>
+            </VStack>
+          </HStack>
+        </VStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            Easing — 모션 토큰으로 곡선 제어
+          </Text>
+          <HStack gap={6} key={`ease-${replayKey}`} className="items-end">
+            <VStack gap={1} className="items-center">
+              <Icons.Star className={cn('ids-icon-draw')} size="lg" />
+              <Text size="xs" color="neutral-text-weak">
+                standard (기본)
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Star
+                className={cn('ids-icon-draw', '[--ids-icon-draw-ease:var(--ids-ease-decelerate)]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                decelerate
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Star
+                className={cn('ids-icon-draw', '[--ids-icon-draw-ease:var(--ids-ease-accelerate)]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                accelerate
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Star
+                className={cn('ids-icon-draw', '[--ids-icon-draw-ease:var(--ids-ease-press)]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                press
+              </Text>
+            </VStack>
+            <VStack gap={1} className="items-center">
+              <Icons.Star
+                className={cn('ids-icon-draw', '[--ids-icon-draw-ease:cubic-bezier(0.65,0,0.35,1)]')}
+                size="lg"
+              />
+              <Text size="xs" color="neutral-text-weak">
+                in-out (느림→빠름→느림)
+              </Text>
+            </VStack>
+          </HStack>
+        </VStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            Staggered — --ids-icon-draw-delay로 순차 등장
+          </Text>
+          <HStack gap={6} key={`stagger-${replayKey}`} className="items-center">
+            {[0, 150, 300, 450, 600].map((delay) => (
+              <Icons.Heart
+                key={delay}
+                color="primary"
+                size="lg"
+                className="ids-icon-draw"
+                style={{ ['--ids-icon-draw-delay' as string]: `${delay}ms` }}
+              />
+            ))}
+          </HStack>
+        </VStack>
+
+        <VStack gap={2}>
+          <Text size="xs" color="neutral-text-weak" className="font-semibold">
+            With color — accent 토큰과 함께
+          </Text>
+          <HStack gap={6} key={`color-${replayKey}`} className="items-center">
+            <Icons.Bell color="primary" size="lg" className="ids-icon-draw" />
+            <Icons.Bell color="secondary" size="lg" className="ids-icon-draw" />
+            <Icons.Bell color="tertiary" size="lg" className="ids-icon-draw" />
+          </HStack>
+        </VStack>
+      </VStack>
+    );
+  },
 };
 
 export const StateAPI: Story = {

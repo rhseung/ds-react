@@ -60,6 +60,50 @@
 }
 
 /* -------------------------------------------------------------
+   Icon Draw Animation
+   stroke 기반 SVG 아이콘(tabler-icons 등) 드로잉 애니메이션.
+   `.ids-icon-draw`를 아이콘 루트에 적용하면 자식 path/line 등이
+   마운트 시 한 번 그려진다.
+
+   CSS 변수로 커스터마이즈:
+     --ids-icon-draw-length   (default 100)
+       stroke-dasharray로 쓰일 dash 한 칸의 길이.
+       가장 긴 path 길이 이상이어야 끝까지 그려진다.
+     --ids-icon-draw-duration (default 1200ms)
+       offset이 length에서 0까지 이동하는 데 걸리는 시간.
+       실제 가시 드로잉 시간은 (path 길이 / length) × duration.
+     --ids-icon-draw-ease     (default --ids-ease-standard)
+       offset 보간 곡선. 모션 토큰 또는 cubic-bezier 직접 지정.
+     --ids-icon-draw-delay    (default 0ms)
+       마운트 후 애니메이션 시작까지의 지연.
+       여러 아이콘에 다른 값을 주면 staggered 효과.
+
+   outline 전용 — filled variant는 fill 기반이라 적용되지 않는다.
+   ------------------------------------------------------------- */
+
+@keyframes ids-icon-draw {
+  from {
+    stroke-dashoffset: var(--ids-icon-draw-length, 100);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ids-icon-draw :is(path, line, circle, rect, polyline, polygon) {
+  stroke-dasharray: var(--ids-icon-draw-length, 100);
+  stroke-dashoffset: var(--ids-icon-draw-length, 100);
+  animation: ids-icon-draw var(--ids-icon-draw-duration, 1200ms)
+    var(--ids-icon-draw-ease, var(--ids-ease-standard)) var(--ids-icon-draw-delay, 0ms) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ids-icon-draw :is(path, line, circle, rect, polyline, polygon) {
+    animation-duration: 0ms;
+  }
+}
+
+/* -------------------------------------------------------------
    Reduced Motion
    Duration tokens collapse to 0ms when the user has requested
    reduced motion. Any component using var(--duration-*) or
